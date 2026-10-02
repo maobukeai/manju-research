@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>漫剧研究学习平台 · AI漫剧全流程知识库</title>
+<meta name="description" content="持续追踪 AI漫剧（动态漫画短剧）的开发流程、工具栈、运镜语言、无限画布工作流、大模型应用与变现政策——多模块可视化知识库，每周自动研究更新。">
+<meta name="keywords" content="AI漫剧,动态漫画,短剧,运镜,提示词,无限画布,大模型,变现,制作清单,学习路径,术语表">
+<meta name="author" content="Manju Research Lab">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0f1a">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f4f6fb">
+<meta property="og:type" content="website">
+<meta property="og:title" content="漫剧研究学习平台 · AI漫剧全流程知识库">
+<meta property="og:description" content="把 AI漫剧 做成一门可复制的工业化手艺：九阶段流程 / 实用工具库 / 16种运镜 / 海量提示词模板 / 90天学习路径 / 变现政策，每周自动更新。">
+<meta property="og:site_name" content="Manju Research Lab">
+<meta name="twitter:card" content="summary">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="漫剧研究">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%238b5cf6'/%3E%3Cstop offset='1' stop-color='%2322d3ee'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='24' fill='url(%23g)'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='%23fff' font-family='sans-serif' font-weight='bold'%3E漫%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="icon.svg">
+<script>
+/* 首帧主题预设：在 CSS 渲染前解析用户偏好，避免闪白/闪黑 */
+(function(){try{
+  var p=localStorage.getItem('manju_theme')||'auto';
+  var dark=p==='dark'||(p!=='light'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches);
+  document.documentElement.dataset.theme=dark?'dark':'light';
+}catch(e){}})();
+</script>
+<link rel="stylesheet" href="css/style.css?v=27">
+</head>
+<body>
+<a class="skip" href="#app">跳到主内容</a>
+<div class="app">
+  <aside class="sidebar" id="sidebar" aria-label="站点导航">
+    <div class="brand">
+      <div class="brand-logo">漫</div>
+      <div class="brand-text"><b>漫剧研究学习平台</b><span>MANJU RESEARCH LAB</span></div>
+    </div>
+    <nav id="nav"></nav>
+    <div class="side-foot">
+      <div class="update-chip"><span class="dot"></span>数据更新 <b id="sideUpdated">—</b></div>
+      <div class="side-note">ZCode 自动研究管线持续追踪<br>每周更新研究成果</div>
+    </div>
+  </aside>
+  <div class="backdrop" id="backdrop" aria-hidden="true"></div>
+  <div class="main-wrap">
+    <div class="pbar" id="pbar" aria-hidden="true"></div>
+    <header class="topbar">
+      <button class="icon-btn" id="menuBtn" title="菜单" aria-label="打开导航菜单">☰</button>
+      <div class="search-box">
+        <span class="search-ico" aria-hidden="true">⌕</span>
+        <input id="searchInput" placeholder="搜索工具 / 运镜 / 提示词 / 平台政策 …" autocomplete="off" aria-label="全站搜索">
+        <button class="kbd-hint" id="paletteHint" title="命令面板（Ctrl+K）" aria-label="打开命令面板"><kbd>Ctrl</kbd><kbd>K</kbd></button>
+        <div class="search-drop" id="searchDrop"></div>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn wide" id="paletteBtn" title="命令面板（Ctrl+K）" aria-label="打开命令面板">⌘<span class="pb-txt">面板</span></button>
+        <span class="pill ver-pill" id="verPill" title="数据版本">—</span>
+        <button class="icon-btn" id="themeBtn" title="主题：跟随系统" aria-label="切换主题">🌗</button>
+      </div>
+    </header>
+    <main id="app" tabindex="-1"></main>
+    <footer class="foot">
+      <div>🎬 漫剧研究学习平台 · 数据截至 <b id="footUpdated">—</b> · 基于公开资料整理，实操前请以各平台/工具官方最新条款为准</div>
+<nav class="mob-nav" id="mobNav" aria-label="快捷导航"></nav>
+      <div class="foot-src">研究来源：DataEye / 界面新闻 / 36氪 / 投中网 / 澎湃 / 央视财经 / TMTPost / 经济观察报 / Runway & Vidu 官方指南 / GitHub 开源项目 <span id="footMeta"></span></div>
+    </footer>
+  </div>
+</div>
+
+<!-- 命令面板 -->
+<div class="cp-overlay" id="cpOverlay" hidden>
+  <div class="cp-panel" role="dialog" aria-modal="true" aria-label="命令面板">
+    <div class="cp-head">
+      <span class="cp-ico" aria-hidden="true">⌕</span>
+      <input id="cpInput" placeholder="搜索模块、功能，或输入关键词全局检索…" autocomplete="off" aria-label="命令面板搜索">
+      <kbd>Esc</kbd>
+    </div>
+    <div class="cp-list" id="cpList" role="listbox"></div>
+    <div class="cp-foot"><span><kbd>↑</kbd><kbd>↓</kbd> 选择</span><span><kbd>↵</kbd> 打开</span><span><kbd>Esc</kbd> 关闭</span><span class="cp-brand">MANJU LAB</span></div>
+  </div>
+</div>
+
+<button class="toc-btn" id="tocBtn" title="本页目录" aria-label="打开本页目录">☰</button>
+<div class="toc-panel" id="tocPanel" role="navigation" aria-label="本页目录"></div>
+<div class="kbd-modal" id="kbdModal" hidden>
+  <div class="cp-panel" role="dialog" aria-modal="true" aria-label="键盘快捷键">
+    <div class="cp-head"><span class="cp-ico">⌨</span><b style="font-size:14px">键盘快捷键</b><kbd>Esc 关闭</kbd></div>
+    <div class="kbd-list">
+      <div class="kbd-row"><span>打开 / 关闭 命令面板</span><span><kbd>Ctrl</kbd><kbd>K</kbd></span></div>
+      <div class="kbd-row"><span>聚焦全局搜索</span><span><kbd>/</kbd></span></div>
+      <div class="kbd-row"><span>搜索与面板：选择 / 打开</span><span><kbd>↑</kbd><kbd>↓</kbd><kbd>↵</kbd></span></div>
+      <div class="kbd-row"><span>随机抽一条提示词灵感</span><span><kbd>R</kbd></span></div>
+      <div class="kbd-row"><span>打开本帮助</span><span><kbd>?</kbd></span></div>
+      <div class="kbd-row"><span>关闭弹层</span><span><kbd>Esc</kbd></span></div>
+    </div>
+    <div class="cp-foot"><span>提示：目录、收藏、主题切换也都在命令面板里</span><span class="cp-brand">MANJU LAB</span></div>
+  </div>
+</div>
+<button class="top-btn" id="topBtn" title="回到顶部" aria-label="回到顶部">↑</button>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<noscript>本平台需要启用 JavaScript 才能浏览。</noscript>
+<script src="js/data.js?v=27"></script>
+<script src="js/research-data.js?v=27"></script>
+<script src="js/app.js?v=27"></script>
+<script>
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === '127.0.0.1' || location.hostname === 'localhost')) {
+  window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function(){}); });
+}
+</script>
+</body>
+</html>

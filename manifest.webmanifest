@@ -1,0 +1,14 @@
+{
+  "name": "漫剧研究学习平台",
+  "short_name": "漫剧研究",
+  "description": "AI漫剧全流程知识库：开发流程/工具库/运镜/提示词/无限画布/大模型/变现，每周自动研究更新。",
+  "lang": "zh-CN",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b0f1a",
+  "theme_color": "#0b0f1a",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
