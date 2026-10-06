@@ -2,6 +2,7 @@
    漫剧研究学习平台 · 交互层 v2
    原生JS单页应用：hash路由 / 命令面板 / 全局搜索 / 三态主题
    进场编排 / 工具收藏 / 运镜控制台 / 清单存储 / 最近访问
+   外挂模块自注册：window.MJ.addModule(mod)，feat-*.js 在 app.js 之后同步加载即插即用
    ============================================================ */
 (function () {
   'use strict';
@@ -80,6 +81,8 @@
     glossary: svgWrap('<rect x="5" y="3.5" width="14" height="17" rx="2.5"/><path d="M9 3.5v17M13 8.5h3M13 12h3"/>'),
     docs: svgWrap('<path d="M4.5 5h5.5v14.5H4.5z"/><path d="M10 7h5.5v14.5H10z"/><path d="M15.5 9H20v12.5h-4.5z"/><path d="M6.2 8.5h2M11.7 10.5h2"/>'),
     calc: svgWrap('<rect x="4.5" y="3" width="15" height="18" rx="2.5"/><path d="M8 7h8M8.2 12h.1M12 12h.1M15.8 12h.1M8.2 16h.1M12 16h.1M15.8 16h.1"/>'),
+    earnpath: svgWrap('<path d="M12 20.8v-5.4"/><path d="M12 15.4C12 12.2 9 11.5 5.8 10.7"/><path d="M12 15.4c0-3.2 3-3.9 6.2-4.7"/><circle cx="12" cy="20.6" r="1.2"/><circle cx="5" cy="8.9" r="1.9"/><circle cx="19" cy="8.9" r="1.9"/><circle cx="12" cy="3.9" r="1.9"/><path d="M12 5.8v3.1"/>'),
+    orders: svgWrap('<rect x="3.2" y="7.2" width="17.6" height="13" rx="2.2"/><path d="M9 7.2V5.4A1.9 1.9 0 0 1 10.9 3.5h2.2A1.9 1.9 0 0 1 15 5.4v1.8"/><path d="M3.2 12.6h17.6"/><path d="M10.6 12.6v2.6h2.8v-2.6"/>'),
     genres: svgWrap('<path d="M4.5 4.5h6.4v5.6a3.2 3.2 0 0 1-6.4 0V4.5Z"/><path d="M13.1 8.6h6.4v5.6a3.2 3.2 0 0 1-6.4 0V8.6Z"/><path d="M6.3 6.8h.1M9.1 6.8h.1M6.4 8.6q1.3 1.1 2.6 0"/><path d="M14.9 11h.1M17.7 11h.1M15 12.8q1.3 1.1 2.6 0"/><path d="M6 15.5c1.8 2.4 4 3.6 6.2 3.9"/>'),
     rhythm: svgWrap('<path d="M3 12h4l2.2-5.4 3.6 10.8 2.2-5.4H21"/>'),
     firstfilm: svgWrap('<rect x="3.4" y="4.6" width="17.2" height="16" rx="2.2"/><path d="M3.4 9h17.2M8 2.6v4M16 2.6v4"/><path d="m10.2 12.4 4.8 2.7-4.8 2.7v-5.4Z"/>'),
@@ -105,6 +108,8 @@
     { id: 'learning', ico: 'learning', n: '学习路径', cnt: '90天' },
     { id: 'firstfilm', ico: 'firstfilm', n: '第一部成片', cnt: '7天闭环' },
     { id: 'monetize', ico: 'monetize', n: '变现运营' },
+    { id: 'earnpath', ico: 'earnpath', n: '收益决策树', cnt: '选路径' },
+    { id: 'orders', ico: 'orders', n: '接单实操包', cnt: '报价/合同' },
     { id: 'calc', ico: 'calc', n: '互动计算器', cnt: '成本/收益' },
     { id: 'cases', ico: 'cases', n: '案例拆解', cnt: DB.cases.length + '个' },
     { id: 'rhythm', ico: 'rhythm', n: '节奏练习', cnt: DB.rhythmBank.length + '题' },
@@ -126,6 +131,8 @@
     learning: ['90天学习路径', '第1周跑通第一条片 → 第2-4周形成可复用生产线 → 第2-3月商业化与规模化。'],
     firstfilm: ['「第一部成片」7天闭环', '0基础照做：D1-D7每天做什么 / 用什么工具 / 产出物 / 常见坑——7天产出第一部可发布的AI漫剧单集并衔接第一笔收入；页首有成本速算与7天进度自查清单。页内工具名可直接跳转「工具库」对应条目。'],
     monetize: ['变现与合规', '各平台分账政策、出海机会、商业模式与四条合规红线。'],
+    earnpath: ['收益决策树与对照表', '"我这种背景能赚多少、该走哪条变现路"——先用对照表立预期基准（业余/半职/全职 × 分账/商单/素材/教学），再答6个问题让决策树给出主路径与理由，最后用「互动计算器」算三本账验证。预期管理工具，不是暴富案例墙。'],
+    orders: ['接单/商单实操包', '去哪接单（渠道盘点+门槛抽成）→ 怎么报价（三市场分层+四因子+计算器）→ 作品集（3部样片+数据截图）→ 交付标准 → 合同与定金 → 防骗 → 14天行动计划——报价单/合同条款/话术全部可复制，14天进度保存在本机浏览器。'],
     calc: ['互动计算器', '制作成本计算器 + 收益模拟器——"三本账"不用再心算，参数一调、回本播放量立刻算出来。'],
     cases: ['案例拆解', '2025-2026 年的现象级漫剧，每个案例提炼可复制经验。'],
     rhythm: ['分镜节奏练习', '随机5道剧情拍点题，判断它属于98秒单集结构的哪一段——黄金钩子0-3s/冲突建立3-15s/递进铺垫15-45s/黄金反转45-60s/爽点释放60-80s/卡点留钩80-98s。目标：练出"看到拍点就知道放第几秒"的结构感——最高分保存在本地。'],
@@ -142,7 +149,7 @@
 
   function renderNav() {
     $('#nav').innerHTML = NAV.map((x) =>
-      '<div class="nav-item" data-go="' + x.id + '"><span class="ico">' + ICONS[x.ico] + '</span>' + x.n +
+      '<div class="nav-item" data-go="' + x.id + '"><span class="ico">' + (ICONS[x.ico] || x.ico) + '</span>' + x.n +
       (x.cnt ? '<span class="cnt">' + x.cnt + '</span>' : '') + '</div>').join('');
   }
 
@@ -154,7 +161,7 @@
     nav.innerHTML = ids.map((id) => {
       const n = NAV.find((x) => x.id === id);
       if (!n) return '';
-      return '<button class="mn-item" data-go="' + id + '">' + ICONS[n.ico] + '<span>' + n.n + '</span></button>';
+      return '<button class="mn-item" data-go="' + id + '">' + (ICONS[n.ico] || n.ico) + '<span>' + n.n + '</span></button>';
     }).join('') + '<button class="mn-item" id="mnPalette" title="命令面板（Ctrl+K）">⌘<span>面板</span></button>';
     const pal = document.getElementById('mnPalette');
     if (pal) pal.addEventListener('click', palOpen);
@@ -201,7 +208,7 @@
     let sec = document.getElementById('sec-' + id);
     if (!sec) { sec = document.createElement('section'); sec.className = 'sec'; sec.id = 'sec-' + id; $('#app').appendChild(sec); }
     if (!sec.dataset.rendered) {
-      try { sec.innerHTML = RENDERERS[id](); }
+      try { const out = RENDERERS[id](); if (out !== null) sec.innerHTML = out; }
       catch (err) {
         console.error('render section: ' + id, err);
         sec.innerHTML = '<div class="callout red" style="margin-top:24px"><b>😮 该模块渲染出错：</b>' +
@@ -235,6 +242,8 @@
     if (id === 'hot' && !$('#epDetail').innerHTML) renderEp(0);
     if (id === 'docs' && !$('#docToc').innerHTML) { renderDocToc(''); renderDoc(0); }
     if (id === 'calc') calcCompute();
+    if (id === 'earnpath' && !$('#dtBox').innerHTML) dtRender();
+    if (id === 'orders') { if (!$('#odGrid').innerHTML) renderOdChannels(); odQuoteCompute(); refreshOdProgress(); }
     if (id === 'firstfilm') { ffCostCompute(); refreshFfProgress(); }
     reveal(sec);
     enhanceTables(sec);
@@ -618,7 +627,7 @@
       const ckBox = '<div class="chart-box"><h5>✅ 7天进度自查 <span class="sub">勾选自动保存在本机浏览器</span></h5>' +
         '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><b style="font-size:15px" id="ffPct">0%</b><span class="mini-note" style="margin:0" id="ffNum"></span>' +
         '<button class="copy-btn" id="ffReset" style="margin-left:auto">↻ 重置进度</button></div>' +
-        '<div class="ck-bar" style="margin-top:8px"><div class="ck-fill" id="ffFill"></div></div>' +
+        '<div class="ff-bar"><div class="ff-fill" id="ffFill"></div></div>' +
         '<div class="grid g2" style="margin-top:12px;gap:10px 18px">' + groups + '</div>' +
         '<p class="mini-note" style="margin-top:8px">共' + total + '项 · 与「制作清单」的37项完整版独立保存——第一条片跑通后，正式项目请用完整版。</p></div>';
       /* D1-D7 每日章节 */
@@ -672,6 +681,10 @@
       const comp = M.compliance.map((c) => '<div class="card"><span class="tag h">合规</span><br><b style="display:block;margin-top:6px">' + c.t + '</b><p style="font-size:12.8px;color:var(--tx2);margin-top:5px">' + c.d + '</p></div>').join('');
       return '<h4 class="block-t" style="margin-top:0">各平台政策（2025-2026，政策变动极快，以官方后台为准）</h4>' + platCards +
         '<div class="callout red"><b>收益警示：</b><ul style="margin:6px 0 0;list-style:none;padding:0">' + warn + '</ul></div>' +
+        '<h4 class="block-t">收益预期对照（三分层 × 背景三档 · 预期管理工具而非案例墙）</h4>' +
+        '<p class="mini-note">' + M.incomeMatrix.note + '</p>' +
+        '<div class="grid g3">' + M.incomeMatrix.tiers.map((t) => '<div class="card"><b>' + t.n + '</b><p style="font-size:12.8px;color:var(--tx);margin:4px 0 2px">' + t.v + '</p><p style="font-size:12.4px;color:var(--tx2);margin:0">' + t.d + '</p></div>').join('') + '</div>' +
+        '<div class="grid g3" style="margin-top:10px">' + M.incomeMatrix.bg.map((b) => '<div class="card"><b>' + b.n + '</b><p style="font-size:12.4px;color:var(--tx2);margin:4px 0 2px"><b style="color:var(--tx)">可投入：</b>' + b.hours + '</p><p style="font-size:12.4px;color:var(--tx2);margin:0 0 2px"><b style="color:var(--tx)">现实预期：</b>' + b.exp + '</p><p style="font-size:12.4px;color:var(--tx2);margin:0"><b style="color:var(--tx)">路径：</b>' + b.path + '</p></div>').join('') + '</div>' +
         '<div class="chart-box" style="margin:16px 0"><h5>制作成本阶梯（元/分钟 · 2025-11口径）</h5>' + costLadder() + '</div>' +
         '<h4 class="block-t">出海机会</h4><div class="grid g4">' + ov + '</div>' +
         '<h4 class="block-t">出海平台入驻速查 <span class="sub">模式 / 门槛 / 收益（2026-10）</span></h4>' +
@@ -680,6 +693,127 @@
         '</tbody></table></div>' +
         '<h4 class="block-t">商业模式全景</h4>' + biz +
         '<h4 class="block-t">四条合规红线</h4><div class="grid g2">' + comp + '</div>';
+    },
+
+    earnpath() {
+      const E = DB.earnpath, B = E.bench, T = E.tree;
+      /* §1 基准锚点 */
+      const anchors = '<div class="chart-box" style="margin-bottom:16px"><h5>先立基准：四组数锚定所有收益预期 <span class="sub">口径截至 ' + DB.meta.updated + '</span></h5>' +
+        B.anchors.map((a) => '<div class="bar-row"><span class="b-lab" style="width:auto;flex:0 0 132px;text-align:left;color:var(--gold);font-weight:700">' + a.k + '</span>' +
+          '<span style="flex:1;font-size:12.8px"><b>' + a.v + '</b><br><span style="color:var(--tx3);font-size:11.5px">' + a.src + '</span></span></div>').join('') + '</div>';
+      /* §1 收益预期对照表（投入程度 × 路径） */
+      const matrix = '<div class="tbl-wrap"><table class="tbl"><thead><tr><th style="min-width:96px">投入程度</th>' +
+        B.cols.map((c) => '<th style="min-width:200px">' + c + '</th>').join('') + '</tr></thead><tbody>' +
+        B.rows.map((r) => '<tr><td><b>' + r.bg + '</b><br><span style="font-size:11px;color:var(--tx3)">' + r.assume + '</span></td>' +
+          r.cells.map((c) => '<td><b style="color:var(--gold);font-size:12.8px">' + c.v + '</b>' +
+            '<p style="font-size:12.2px;color:var(--tx);margin:4px 0 3px">' + c.d + '</p>' +
+            '<p style="font-size:11px;color:var(--tx3);margin:0">' + c.src + '</p></td>').join('') + '</tr>').join('') +
+        '</tbody></table></div>';
+      /* §3 三本账计算器入口 */
+      const calcCard = '<div class="card" style="padding:16px 18px"><ul style="margin:0;list-style:disc">' +
+        E.calcBridge.points.map((p) => '<li style="margin:4px 0 4px 18px;padding:2px 0;color:var(--tx2);font-size:13px">' + p + '</li>').join('') +
+        '</ul><div style="margin-top:12px"><button class="btn pri" data-go="calc">打开「互动计算器」算三本账与回本播放量 →</button></div></div>';
+      /* §4 避坑清单 */
+      const pits = E.pitfalls.map((p, i) => '<div class="card"><span class="tag h">坑 ' + String(i + 1).padStart(2, '0') + '</span>' +
+        '<b style="display:block;margin-top:6px">' + p.t + '</b><p style="font-size:12.6px;color:var(--tx2);margin-top:5px">' + p.d + '</p>' +
+        '<p style="font-size:11px;color:var(--tx3);margin:4px 0 0">' + p.src + '</p></div>').join('');
+      /* §5 真实案例对照 */
+      const caseRows = '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>案例（见「案例拆解」）</th><th>路径标签</th><th>发生了什么</th><th>对你的决策启示</th></tr></thead><tbody>' +
+        E.caseMap.map((c) => '<tr><td><b>' + c.n + '</b></td><td><span class="tag ' + (c.tag.indexOf('反面') === 0 ? 'h' : 'c') + '">' + c.tag + '</span></td>' +
+          '<td style="color:var(--tx2)">' + c.d + '</td><td>' + c.lesson + '</td></tr>').join('') + '</tbody></table></div>';
+      return '<div class="callout gold" style="margin-bottom:16px"><b>这页回答一个问题：我这种背景能赚多少、该走哪条变现路。</b>' + E.note + '</div>' +
+        '<h4 class="block-t" style="margin-top:0">① 收益预期对照表 <span class="sub">投入程度 × 变现路径 · 全部数字引用站内已有口径</span></h4>' + anchors + matrix +
+        '<div class="callout" style="margin-top:12px"><b>使用规则：</b>' + B.rule + '</div>' +
+        '<h4 class="block-t">② 变现路径决策树 <span class="sub">' + T.questions.length + '问 · 选项驱动结论 · 纯本地计算不上传</span></h4>' +
+        '<div id="dtBox"></div>' +
+        '<div class="callout" style="margin-top:12px"><b>通用规则：</b>' + T.rule + '</div>' +
+        '<h4 class="block-t">③ 三本账计算器入口 <span class="sub">与「互动计算器」联动</span></h4>' + calcCard +
+        '<h4 class="block-t">④ 避坑清单 <span class="sub">引用「变现运营」收益警示与 research/23 防骗清单</span></h4><div class="grid g2">' + pits + '</div>' +
+        '<h4 class="block-t">⑤ 真实案例对照 <span class="sub">四条路径各有一个可对表的样本</span></h4>' + caseRows +
+        '<div style="margin-top:12px"><button class="btn ghost" data-go="cases">去「案例拆解」看全部' + DB.cases.length + '个案例 →</button></div>';
+    },
+
+    orders() {
+      const O = DB.orders, P = O.pricing;
+      /* §2 报价：三市场分层表 + 四因子 + 计算器 + 报价单模板 */
+      const tierChips = P.tiers.map((t, i) => '<span class="chip' + (i === odTier ? ' on' : '') + '" data-odtier="' + i + '" title="' + esc(t.src) + '">' + t.n + '</span>').join('');
+      const tierRows = '<div class="tbl-wrap"><table class="tbl"><thead><tr><th style="min-width:130px">市场档位</th><th style="min-width:130px">报价口径</th><th>说明与口径来源</th><th style="min-width:200px">使用提示</th></tr></thead><tbody>' +
+        P.tiers.map((t) => {
+          const u = (t.cur === '$' ? '美元/' : '元/') + t.unit;
+          const rng = t.lo === t.hi ? t.lo + u + '起' : t.lo + '-' + t.hi + ' ' + u;
+          return '<tr><td><b>' + t.n + '</b></td><td style="color:var(--gold);font-weight:700;white-space:nowrap">' + rng + '</td>' +
+            '<td style="color:var(--tx2)">' + t.d + '<br><span style="font-size:11px;color:var(--tx3)">' + t.src + '</span></td>' +
+            '<td style="color:var(--tx2);font-size:11.5px">' + t.verd + '</td></tr>';
+        }).join('') + '</tbody></table></div>';
+      const factorCards = P.factors.map((f) => '<div class="card"><span class="tag c">' + f.t + '</span><p style="font-size:12.6px;color:var(--tx2);margin:8px 0 0">' + f.d + '</p></div>').join('');
+      const quoteBox = '<div class="chart-box"><h5>💰 报价参考计算器 <span class="sub">市场档位 × 时长 · 定金即算 · 纯本地计算</span></h5>' +
+        '<div class="tool-filters" style="margin-bottom:10px">' + tierChips + '</div>' +
+        '<div class="calc-grid">' +
+        '<label class="calc-num"><span>时长</span><span class="cn-in"><input type="number" id="od-mins" value="2" step="0.5" min="0"><i>分钟</i></span></label>' +
+        '<label class="calc-num"><span>系列单资产复用折扣</span><span class="cn-in"><input type="number" id="od-reuse" value="0" step="5" min="0" max="40"><i>%</i></span></label>' +
+        '</div><div class="calc-out" id="odQuoteOut"></div>' +
+        '<p class="mini-note">' + P.notes.join('<br>') + '</p>' +
+        '<div class="codebox" style="margin-top:10px"><div class="cb-bar"><span>报价单模板（计算结果自动带入 · 复制后填空即用）</span><button class="copy-btn" id="odQuoteCopy">复制</button></div><pre id="odQuotePre"></pre></div></div>';
+      const scriptCards = O.scripts.map((s) => '<div class="card pf-card"><div class="pf-t">' + s.t + '</div>' +
+        '<p style="font-size:12.4px;color:var(--tx2);margin:6px 0 8px">' + s.d + '</p>' +
+        '<div class="codebox"><div class="cb-bar"><span>话术 · 复制后填空即用</span><button class="copy-btn" data-copy="' + regCopy(s.txt) + '">复制</button></div><pre>' + esc(s.txt) + '</pre></div></div>').join('');
+      /* §3 作品集 */
+      const folioRules = '<div class="callout"><ul style="margin:0;list-style:disc">' + O.folio.rules.map((r) => '<li style="margin:4px 0 4px 18px;padding:2px 0;color:var(--tx2);font-size:13px">' + r + '</li>').join('') + '</ul></div>';
+      const sampleCards = O.folio.samples.map((s) => '<div class="card" data-hl="' + esc(s.n) + '"><b>' + s.n + '</b>' +
+        '<div class="gd-bench" style="margin:6px 0 4px">🎯 对标：' + s.ref + '</div>' +
+        '<p style="font-size:12.6px;color:var(--tx2);margin:0 0 8px">' + s.d + '</p>' +
+        '<span class="tag c">为什么是它：' + s.why + '</span></div>').join('');
+      const proofList = '<div class="chart-box" style="margin-top:12px"><h5>数据与产能证据（甲方看什么）</h5><ul style="margin:0;list-style:disc">' +
+        O.folio.proof.map((p) => '<li style="margin:4px 0 4px 18px;padding:2px 0;color:var(--tx2);font-size:13px">' + p + '</li>').join('') + '</ul></div>';
+      /* §4 交付标准 */
+      const deliveryTbl = '<div class="tbl-wrap"><table class="tbl"><thead><tr><th style="min-width:130px">分组</th><th style="min-width:110px">标准项</th><th>要求</th><th style="min-width:190px">口径出处</th></tr></thead><tbody>' +
+        O.delivery.map((g) => g.items.map((it, ii) =>
+          '<tr><td>' + (ii === 0 ? '<b>' + g.g + '</b>' : '') + '</td><td><b>' + it.t + '</b></td>' +
+          '<td style="color:var(--tx2)">' + it.d + '</td><td style="color:var(--tx3);font-size:11.5px">' + it.src + '</td></tr>').join('')).join('') +
+        '</tbody></table></div>';
+      /* §5 合同与定金 */
+      const flowHtml = '<div class="step-flow">' + O.contract.flow.map((f) => '<div class="step-item"><b>' + f.t + '</b><p>' + f.d + '</p></div>').join('') + '</div>';
+      const clauseRows = '<div class="tbl-wrap"><table class="tbl"><thead><tr><th style="min-width:110px">关键条款</th><th>要点</th><th style="min-width:200px">依据</th></tr></thead><tbody>' +
+        O.contract.clauses.map((c) => '<tr><td><b>' + c.t + '</b></td><td style="color:var(--tx2)">' + c.d + '</td><td style="color:var(--tx3);font-size:11.5px">' + c.src + '</td></tr>').join('') +
+        '</tbody></table></div>';
+      const tplCode = '<div class="codebox"><div class="cb-bar"><span>合同核心条款模板（可复制后按项目调整 · 签约前咨询专业意见）</span><button class="copy-btn" data-copy="' + regCopy(O.contract.tpl) + '">复制</button></div><pre>' + esc(O.contract.tpl) + '</pre></div>';
+      /* §6 防骗 */
+      const scamCards = O.scams.map((s) => '<div class="card" data-hl="' + esc(s.t) + '"><span class="tag h">骗术 · ' + s.t + '</span>' +
+        '<p style="font-size:12.6px;margin:8px 0 4px"><b>识别信号：</b>' + s.sign + '</p>' +
+        '<p style="font-size:12.6px;color:var(--tx2);margin:0 0 6px"><b style="color:var(--ok)">应对：</b>' + s.how + '</p>' +
+        '<p style="font-size:11px;color:var(--tx3);margin:0">' + s.src + '</p></div>').join('');
+      /* §7 14天计划（进度自查复用 ff-ck 样式族，独立存储键） */
+      const ckGroups = O.plan.checklist.map((g, gi) => {
+        const items = g.items.map((it, ii) => '<div class="ff-ck od-ck" data-odck="' + gi + '-' + ii + '"><span class="box"></span><span>' + it + '</span></div>').join('');
+        return '<div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px"><b style="font-size:13px">' + g.d + ' · ' + g.t + '</b><span class="tag" id="odg-' + gi + '">0/' + g.items.length + '</span></div>' + items + '</div>';
+      }).join('');
+      const ckTotal = O.plan.checklist.reduce((a, g) => a + g.items.length, 0);
+      const planBox = '<div class="chart-box"><h5>✅ 14天进度自查 <span class="sub">勾选自动保存在本机浏览器</span></h5>' +
+        '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><b style="font-size:15px" id="odPct">0%</b><span class="mini-note" style="margin:0" id="odNum"></span>' +
+        '<button class="copy-btn" id="odReset" style="margin-left:auto">↻ 重置进度</button></div>' +
+        '<div class="ff-bar"><div class="ff-fill" id="odFill"></div></div>' +
+        '<div class="grid g2" style="margin-top:12px;gap:10px 18px">' + ckGroups + '</div>' +
+        '<p class="mini-note" style="margin-top:8px">共' + ckTotal + '项 · 与「制作清单」「第一部成片」7天清单相互独立保存。</p></div>';
+      const phaseCards = O.plan.phases.map((p) => '<div class="card"><span class="tag c">' + p.d + '</span>' +
+        '<b style="display:block;margin:6px 0 4px">' + p.t + '</b>' +
+        '<p style="font-size:12.6px;color:var(--tx2);margin:0">' + p.d2 + '</p></div>').join('');
+      return '<div class="callout gold" style="margin-bottom:16px"><b>从"会做片子"到"能收钱"。</b>' + O.note + '</div>' +
+        '<h4 class="block-t" style="margin-top:0">① 接单渠道盘点 <span class="sub">垂直平台7个口径：网易·数艺社2026-09-09（research/23§4.1 原文核验）</span></h4>' +
+        '<div class="tool-filters" id="odChips"></div><div class="grid g2" id="odGrid"></div>' +
+        '<div class="callout" style="margin-top:12px"><b>渠道总原则：</b>' + O.channels.extra + '</div>' +
+        '<h4 class="block-t">② 报价方法论 <span class="sub">三市场分层 + 四因子 + 计算器（参照「变现运营」成本阶梯800-1200元/分钟）</span></h4>' + tierRows +
+        '<div class="grid g4" style="margin-top:12px">' + factorCards + '</div>' + quoteBox +
+        '<h4 class="block-t">接单话术 <span class="sub">4段可复制 · 填空即用</span></h4><div class="grid g2">' + scriptCards + '</div>' +
+        '<h4 class="block-t">③ 作品集怎么搭 <span class="sub">3部不同题材样片 + 数据截图（用「案例拆解」案例库的对标思路）</span></h4>' + folioRules +
+        '<div class="grid g3" style="margin-top:12px">' + sampleCards + '</div>' + proofList +
+        '<h4 class="block-t">④ 交付标准清单 <span class="sub">分辨率/时长/字幕/音轨/AI标识合规——AI标识整段引用「变现运营」compliance</span></h4>' + deliveryTbl +
+        '<h4 class="block-t">⑤ 合同与定金 <span class="sub">标准收款流程：research/23§4.3 · 定金30-50%</span></h4>' + flowHtml + clauseRows + tplCode +
+        '<h4 class="block-t">⑥ 防骗指南 <span class="sub">六类骗术 × 识别信号 × 应对（research/23§4.3）</span></h4><div class="grid g2">' + scamCards + '</div>' +
+        '<h4 class="block-t">⑦ 从0到第一单的14天行动计划 <span class="sub">诚实预期：14天=接单准备，不是14天赚到钱（首笔收入第60-90天）</span></h4>' +
+        '<div class="callout" style="margin-bottom:12px">' + O.plan.note + '</div>' +
+        '<div class="grid g4" style="margin-bottom:12px">' + phaseCards + '</div>' + planBox +
+        '<div style="margin-top:12px"><button class="btn pri" data-go="earnpath">用「收益决策树」对表收入预期 →</button> ' +
+        '<button class="btn ghost" data-go="calc">用「互动计算器」算自己的单分钟成本 →</button></div>';
     },
 
     calc() {
@@ -1018,6 +1152,181 @@
       '<button class="btn pri" data-ft-next style="margin-top:12px">' + (st.idx === st.qs.length - 1 ? '看结果 →' : '下一题 →') + '</button>';
   }
   function ftNext() { if (ftState) { ftState.idx++; ftState.picked = null; ftRender(); } }
+
+  /* ---------- 收益决策树（earnpath） ---------- */
+  let dtState = null; /* { answers:{qid:optKey}, hist:[qid], res:结果id|null } */
+  /* 分支路由（research/23§三文字版决策树）：返回 {q:下一问id} 或 {res:结果id} */
+  function epNext(a) {
+    if (!a.folio) return { q: 'folio' };
+    if (a.folio === 'no') return { res: 'prep' };
+    if (!a.time) return { q: 'time' };
+    if (a.time === 'lt10') { /* 每周<10h：轻变现短路（research/23 决策树第2条） */
+      if (!a.write) return { q: 'write' };
+      return { res: a.write === 'can' ? 'script' : 'light' };
+    }
+    if (!a.team) return { q: 'team' };
+    if (a.team === 'team3') { /* 3人+产线：承制/分账档（research/23 决策树第3条） */
+      if (!a.risk) return { q: 'risk' };
+      return { res: a.risk === 'gamble' ? 'teamGamble' : 'team' };
+    }
+    if (!a.budget) return { q: 'budget' };
+    if (a.budget === 'lo') return { res: 'light' }; /* 预算<500元/月：免费档轻变现 */
+    if (!a.write) return { q: 'write' };
+    if (!a.risk) return { q: 'risk' };
+    return { res: a.risk === 'gamble' ? 'soloGamble' : 'solo' };
+  }
+  function dtStartCard() {
+    const T = DB.earnpath.tree;
+    return '<div class="card" style="text-align:center;padding:38px 20px">' +
+      '<div style="font-size:42px">🧭</div><b style="font-size:18px;display:block;margin:10px 0 6px">变现路径决策树</b>' +
+      '<p style="font-size:13px;color:var(--tx2);max-width:560px;margin:0 auto">答 ' + T.questions.length + ' 个问题（作品集 / 每周时间 / 团队 / 写本 / 月预算 / 风险偏好），当场给出推荐路径与理由。分支规则来自 research/23 文字版决策树：没有作品集先补样片、每周&lt;10小时走轻变现、3人+产线走承制、分账作彩票不作主食。</p>' +
+      '<button class="btn pri" data-dt-start style="margin-top:18px">开始作答 →</button></div>';
+  }
+  function dtRender() {
+    const box = $('#dtBox');
+    if (!box) return;
+    if (!dtState) { box.innerHTML = dtStartCard(); return; }
+    if (dtState.res) { box.innerHTML = dtResultCard(dtState.res); return; }
+    const T = DB.earnpath.tree;
+    const nx = epNext(dtState.answers);
+    const q = T.questions.find((x) => x.id === nx.q);
+    if (!q) { dtState.res = 'solo'; box.innerHTML = dtResultCard('solo'); return; }
+    const n = Object.keys(dtState.answers).length;
+    box.innerHTML = '<div class="card quiz-card"><div class="quiz-head"><span class="tag">第 ' + (n + 1) + ' 问 · 最长' + T.questions.length + '问</span><span class="tag c">选项驱动 · 纯本地计算</span></div>' +
+      '<div class="quiz-q">' + esc(q.t) + '</div>' +
+      '<p class="mini-note" style="margin:0">' + esc(q.sub) + '</p>' +
+      '<div class="quiz-opts">' + q.opts.map((o) => '<button class="quiz-opt" data-dt-opt="' + o.k + '"><b style="display:block">' + esc(o.n) + '</b><span style="display:block;font-size:12px;color:var(--tx3);margin-top:3px;font-weight:400">' + esc(o.d) + '</span></button>').join('') + '</div>' +
+      '<div style="margin-top:12px">' + (n ? '<button class="btn ghost" data-dt-back>← 上一题</button> ' : '') + '<button class="btn ghost" data-dt-restart>↻ 重新开始</button></div></div>';
+  }
+  function dtResultCard(id) {
+    const T = DB.earnpath.tree, R = T.results[id] || T.results.solo;
+    const recap = T.questions.filter((q) => dtState.answers[q.id]).map((q) => {
+      const o = q.opts.find((x) => x.k === dtState.answers[q.id]);
+      return '<span class="chip on" style="cursor:default">' + esc(q.s) + '：' + esc(o ? o.n : '—') + '</span>';
+    }).join('');
+    const why = R.why.map((w) => '<li style="margin:4px 0 4px 18px;padding:2px 0;color:var(--tx2);font-size:13px">' + w + '</li>').join('');
+    const dataRows = R.data.map((d) => '<div class="bar-row"><span class="b-lab" style="width:auto;flex:0 0 104px;text-align:left;color:var(--gold);font-weight:700">' + d.t + '</span>' +
+      '<span style="flex:1;font-size:12.6px;color:var(--tx2)">' + d.v + '</span></div>').join('');
+    const steps = R.steps.map((s, i) => '<li style="margin:4px 0 4px 18px;padding:2px 0;color:var(--tx2);font-size:13px"><b style="color:var(--tx)">第' + (i + 1) + '步：</b>' + s + '</li>').join('');
+    return '<div class="card" style="padding:18px 20px"><span class="tag c">' + R.tag + '</span>' +
+      '<b style="display:block;font-size:17px;margin:8px 0 4px">▸ 推荐路径：' + R.title + '</b>' +
+      '<p class="mini-note" style="margin:0">适合谁：' + R.fit + '</p>' +
+      (recap ? '<div class="tool-filters" style="margin:10px 0 0">' + recap + '</div>' : '') +
+      '<div class="chart-box" style="margin-top:12px"><h5>为什么是这条路</h5><ul style="margin:0;list-style:disc">' + why + '</ul></div>' +
+      '<div class="chart-box" style="margin-top:10px"><h5>数据锚点 <span class="sub">口径详见「变现运营」「案例拆解」与 research/23</span></h5>' + dataRows + '</div>' +
+      '<div class="chart-box" style="margin-top:10px"><h5>接下来三步</h5><ul style="margin:0;list-style:disc">' + steps + '</ul></div>' +
+      '<div class="callout red" style="margin-top:12px"><b>最大坑：</b>' + R.pitfall + '</div>' +
+      '<div style="margin-top:14px"><button class="btn pri" data-go="calc">用「互动计算器」验证三本账 →</button> ' +
+      '<button class="btn ghost" data-dt-restart>↻ 重新测一次</button></div></div>';
+  }
+  function dtStart() { dtState = { answers: {}, hist: [], res: null }; dtRender(); }
+  function dtPick(k) {
+    if (!dtState || dtState.res) return;
+    const qid = epNext(dtState.answers).q;
+    if (!qid) return;
+    dtState.answers[qid] = k; dtState.hist.push(qid);
+    const nx = epNext(dtState.answers);
+    if (nx.res) dtState.res = nx.res;
+    dtRender();
+  }
+  function dtBack() {
+    if (!dtState) return;
+    dtState.res = null;
+    const last = dtState.hist.pop();
+    if (last) delete dtState.answers[last];
+    dtRender();
+  }
+  function dtRestart() { dtState = null; dtRender(); }
+
+  /* ---------- 接单实操包：渠道筛选 + 报价计算器 + 14天进度（独立存储，不与「制作清单」「第一部成片」互通） ---------- */
+  const OD_KEY = 'manju_od_progress_v1';
+  let odCat = 'all';
+  let odTier = 3; /* 默认档：商用定制（AI中档 800-1200元/分钟，对齐「变现运营」成本阶梯） */
+  let odQuoteStr = '';
+  function renderOdChannels() {
+    const chips = $('#odChips'), grid = $('#odGrid');
+    if (!grid) return;
+    if (chips) chips.innerHTML = DB.orders.channels.cats.map((c) =>
+      '<span class="chip' + (c.id === odCat ? ' on' : '') + '" data-odcat="' + c.id + '">' + c.n + '</span>').join('') +
+      '<span class="mini-note" style="margin:0">共' + DB.orders.channels.items.length + '个渠道 · 💰=抽成/结算口径（档案未载明即标注自查）</span>';
+    const items = DB.orders.channels.items.filter((c) => odCat === 'all' || c.c === odCat);
+    grid.innerHTML = items.map((c) => '<div class="card" data-hl="' + esc(c.n) + '">' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><b>' + c.n + '</b><span class="tag">' + esc((DB.orders.channels.cats.find((x) => x.id === c.c) || {}).n || '') + '</span></div>' +
+      '<div style="font-size:12.6px;margin-top:8px;color:var(--tx2)"><b style="color:var(--tx)">🎚 门槛：</b>' + c.bar + '</div>' +
+      '<div style="font-size:12.4px;margin-top:4px;color:var(--tx2)">' + c.feat + '</div>' +
+      '<div style="font-size:12.4px;margin-top:6px;color:var(--tx2)"><b style="color:var(--gold)">💰 结算/抽成：</b>' + (c.fee ? c.fee : '档案未载明——以平台结算页为准，报名前自查') + '</div>' +
+      '<p class="mini-note" style="margin:6px 0 0">信源：' + c.src + '</p></div>').join('');
+  }
+  function odQuoteCompute() {
+    const out = $('#odQuoteOut');
+    if (!out) return;
+    const P = DB.orders.pricing;
+    const t = P.tiers[odTier] || P.tiers[0];
+    const mins = calcNum('od-mins');
+    let reuse = calcNum('od-reuse');
+    if (!(reuse > 0)) reuse = 0;
+    if (reuse > 40) reuse = 40;
+    const isUsd = t.cur === '$';
+    const fy = (n) => (isUsd ? '$' : '¥') + Math.round(n).toLocaleString('zh-CN');
+    const unitTxt = (isUsd ? '美元/' : '元/') + t.unit;
+    const priceTxt = t.lo === t.hi ? fy(t.lo) + ' ' + unitTxt + '起' : fy(t.lo) + ' - ' + fy(t.hi) + ' ' + unitTxt;
+    const perM = t.unit === '分钟';
+    let lo = perM ? t.lo * mins : t.lo;
+    let hi = perM ? t.hi * mins : t.hi;
+    if (reuse > 0) { lo *= (1 - reuse / 100); hi *= (1 - reuse / 100); }
+    const mid = (lo + hi) / 2;
+    const row = (l, v) => '<div class="calc-res-row"><span>' + l + '</span><b>' + v + '</b></div>';
+    out.innerHTML = row('报价区间', fy(lo) + ' - ' + fy(hi)) +
+      row('建议定金（30%-50%）', fy(mid * 0.3) + ' - ' + fy(mid * 0.5)) +
+      row('尾款（源文件发出前）', fy(mid * 0.5) + ' - ' + fy(mid * 0.7)) +
+      '<div class="calc-verdict" style="color:var(--gold)">▸ ' + t.verd + '</div>' +
+      (reuse > 0 ? '<div class="calc-verdict" style="color:var(--p2)">▸ 已按系列单资产复用折扣 -' + reuse + '%（research/18口径：续集省30-40%）</div>' : '') +
+      (!perM ? '<div class="calc-verdict" style="color:var(--p2)">▸ 该档按条报价：时长输入不参与计算</div>'
+        : (mins <= 0 ? '<div class="calc-verdict" style="color:var(--hot)">▸ 请输入有效时长</div>' : ''));
+    odQuoteStr = P.quoteTpl
+      .replace(/{{tier}}/g, t.n)
+      .replace(/{{price}}/g, priceTxt)
+      .replace(/{{mins}}/g, perM ? (mins + '分钟/条 × ____条（单集____分钟）') : '按条报价：____条（定制1-3分钟/条口径）')
+      .replace(/{{range}}/g, fy(lo) + ' - ' + fy(hi))
+      .replace(/{{reuseNote}}/g, reuse > 0 ? '（已按系列单资产复用折扣-' + reuse + '%，research/18口径30-40%）' : '')
+      .replace(/{{total}}/g, fy(mid) + '（区间中值；合同按双方确认价填写）')
+      .replace(/{{dep30}}/g, fy(mid * 0.3))
+      .replace(/{{dep50}}/g, fy(mid * 0.5))
+      .replace(/{{tail}}/g, fy(mid * 0.5) + ' - ' + fy(mid * 0.7));
+    const pre = $('#odQuotePre');
+    if (pre) pre.textContent = odQuoteStr;
+  }
+  function refreshOdProgress() {
+    const sec = $('#sec-orders');
+    if (!sec) return;
+    const st = store.get(OD_KEY, {});
+    const boxes = sec.querySelectorAll('.od-ck');
+    let done = 0;
+    boxes.forEach((b) => { const on = !!st[b.dataset.odck]; b.classList.toggle('done', on); if (on) done++; });
+    const pct = boxes.length ? Math.round((done / boxes.length) * 100) : 0;
+    const f = $('#odFill'), p = $('#odPct'), n = $('#odNum');
+    if (f) f.style.width = pct + '%'; if (p) p.textContent = pct + '%';
+    if (n) n.textContent = done + ' / ' + boxes.length + ' 项';
+    DB.orders.plan.checklist.forEach((g, gi) => {
+      const el = document.getElementById('odg-' + gi);
+      if (!el) return;
+      let d = 0;
+      g.items.forEach((_, ii) => { if (st[gi + '-' + ii]) d++; });
+      el.textContent = d + '/' + g.items.length;
+    });
+  }
+  function toggleOdCk(id, el) {
+    const st = store.get(OD_KEY, {});
+    st[id] = !st[id];
+    store.set(OD_KEY, st);
+    el.classList.toggle('done', st[id]);
+    refreshOdProgress();
+  }
+  function resetOdProgress() {
+    store.set(OD_KEY, {});
+    refreshOdProgress();
+    toast('14天进度已重置');
+  }
 
   /* ---------- 第一部成片：成本速算 + 7天进度自查（独立存储，不与「制作清单」互通） ---------- */
   const FF_KEY = 'manju_ff_progress_v1';
@@ -1419,10 +1728,28 @@
     DB.learning.forEach((tr) => tr.items.forEach((it) => push('学习路径', tr.t, it.d + ' ' + it.d2, '#/learning')));
     DB.firstfilm.days.forEach((d) => push('第一部成片', d.d + ' ' + d.t, d.goal + ' ' + d.steps.join(' ') + ' ' + d.pits.join(' '), '#/firstfilm'));
     push('第一部成片', '第一笔收入衔接', DB.firstfilm.income.note + ' ' + DB.firstfilm.income.paths.map((p) => p.n + '：' + p.d).join(' '), '#/firstfilm');
+    DB.earnpath.bench.rows.forEach((r) => push('收益决策树', r.bg + ' · 收益预期对照', r.cells.map((c) => c.v + ' ' + c.d).join(' '), '#/earnpath'));
+    Object.keys(DB.earnpath.tree.results).forEach((k) => { const r = DB.earnpath.tree.results[k]; push('收益决策树', '推荐路径：' + r.title, r.fit + ' ' + r.why.join(' ') + ' ' + r.data.map((d) => d.t + '：' + d.v).join(' '), '#/earnpath'); });
+    DB.earnpath.tree.questions.forEach((q) => push('收益决策树', '决策树问题：' + q.t, q.sub + ' ' + q.opts.map((o) => o.n + ' ' + o.d).join(' '), '#/earnpath'));
+    DB.earnpath.pitfalls.forEach((p) => push('收益决策树', '避坑：' + p.t, p.d, '#/earnpath'));
+    DB.earnpath.caseMap.forEach((c) => push('收益决策树', c.n + '（' + c.tag + '）', c.d + ' ' + c.lesson, '#/earnpath'));
+    DB.orders.channels.items.forEach((c) => push('接单实操包', c.n, c.bar + ' ' + c.feat + ' ' + c.fee + ' ' + c.src, '#/orders'));
+    DB.orders.pricing.tiers.forEach((t) => push('接单实操包', '报价档位：' + t.n, t.d + ' ' + t.src + ' ' + t.verd, '#/orders'));
+    DB.orders.pricing.factors.forEach((f) => push('接单实操包', '报价四因子：' + f.t, f.d, '#/orders'));
+    DB.orders.folio.samples.forEach((s) => push('接单实操包', '作品集样片：' + s.n, s.ref + ' ' + s.d + ' ' + s.why, '#/orders'));
+    DB.orders.delivery.forEach((g) => g.items.forEach((it) => push('接单实操包', '交付标准：' + it.t, it.d + ' ' + it.src, '#/orders')));
+    DB.orders.contract.clauses.forEach((c) => push('接单实操包', '合同条款：' + c.t, c.d, '#/orders'));
+    DB.orders.scams.forEach((s) => push('接单实操包', '防骗：' + s.t, s.sign + ' ' + s.how, '#/orders'));
+    DB.orders.plan.phases.forEach((p) => push('接单实操包', '14天计划：' + p.d + ' ' + p.t, p.d2, '#/orders'));
+    DB.orders.plan.checklist.forEach((g) => push('接单实操包', g.d + ' ' + g.t, g.items.join(' '), '#/orders'));
     DB.glossary.forEach((g) => push('术语表', g.t, g.d, '#/glossary'));
     DB.canvas.tips.forEach((t) => push('无限画布', '画布技巧', t, '#/canvas'));
     DB.canvas.tools.forEach((t) => push('无限画布', t.n, t.cap + ' ' + t.note, '#/canvas'));
     push('大模型', '分镜JSON与自动化', DB.llm.automation.map((a) => a.t + a.d).join(' '), '#/llm');
+    // 自注册模块（window.MJ.addModule）的搜索条目：SEARCH_IDX 每次全量重建后必须重放，否则索引丢失
+    MJ.modules.forEach((m) => {
+      if (Array.isArray(m.search)) m.search.forEach((it) => push(m.name, it.tit, it.txt, '#/' + m.id));
+    });
   }
   let hlIdx = -1, hlList = [];
   function search(q) {
@@ -1600,6 +1927,14 @@
     if (cv) { camFav = !camFav; cv.classList.toggle('on', camFav); renderCams(); return; }
     const gd = e.target.closest('[data-gdcat]');
     if (gd) { genreCat = gd.dataset.gdcat; renderGenres(); return; }
+    const odCh = e.target.closest('[data-odcat]');
+    if (odCh) { odCat = odCh.dataset.odcat; renderOdChannels(); return; }
+    const odT = e.target.closest('[data-odtier]');
+    if (odT) { odTier = +odT.dataset.odtier; $$('[data-odtier]').forEach((c) => c.classList.toggle('on', +c.dataset.odtier === odTier)); odQuoteCompute(); return; }
+    if (e.target.closest('#odQuoteCopy')) { doCopy(regCopy(odQuoteStr || DB.orders.pricing.quoteTpl), document.getElementById('odQuoteCopy')); return; }
+    const odc = e.target.closest('.od-ck');
+    if (odc) { toggleOdCk(odc.dataset.odck, odc); return; }
+    if (e.target.closest('#odReset')) { resetOdProgress(); return; }
     const eps = e.target.closest('[data-ep]');
     if (eps) { renderEp(+eps.dataset.ep); return; }
     if (e.target.closest('[data-tscore]')) { scoreTitle(); return; }
@@ -1617,6 +1952,11 @@
     if (e.target.closest('[data-ft-next]')) { ftNext(); return; }
     const fo = e.target.closest('[data-ft-opt]');
     if (fo) { ftPick(+fo.dataset.ftOpt); return; }
+    if (e.target.closest('[data-dt-start]')) { dtStart(); return; }
+    if (e.target.closest('[data-dt-back]')) { dtBack(); return; }
+    if (e.target.closest('[data-dt-restart]')) { dtRestart(); return; }
+    const dto = e.target.closest('[data-dt-opt]');
+    if (dto) { dtPick(dto.dataset.dtOpt); return; }
     const ffc = e.target.closest('.ff-ck');
     if (ffc) { toggleFfCk(ffc.dataset.ffck, ffc); return; }
     if (e.target.closest('#ffReset')) { resetFfProgress(); return; }
@@ -1648,6 +1988,7 @@
   document.addEventListener('input', (e) => {
     if (e.target.closest('#sec-calc')) calcCompute();
     if (e.target.closest('#sec-firstfilm')) ffCostCompute();
+    if (e.target.closest('#sec-orders')) odQuoteCompute();
     if (e.target.id === 'docSearch') renderDocToc(e.target.value.trim());
     if (e.target.id === 'toolSearch') { toolQ = e.target.value.trim(); renderTools(toolCat); }
     if (e.target.id === 'glSearch') { glQ = e.target.value.trim(); renderGlossary(); }
@@ -1731,8 +2072,64 @@
     else if (e.key === 'r' || e.key === 'R') { e.preventDefault(); randomInsp(); }
   });
 
+  /* ---------- 自注册模块机制（window.MJ · 供 js/feat-*.js 外挂扩展调用） ---------- */
+  let mjReady = false;
+  const MJ_ON = new Set(); // 已安装模块 id
+  function mjInstall(mod) {
+    // 导航插入：默认排在 glossary（行业术语表）之后、docs/log 之前；after 指向不存在的 id 时回退 glossary
+    let at = NAV.findIndex((x) => x.id === (mod.after || 'glossary'));
+    if (at < 0) at = NAV.findIndex((x) => x.id === 'glossary');
+    NAV.splice(at + 1, 0, { id: mod.id, ico: mod.icon, n: mod.name, cnt: mod.cnt });
+    // 渲染器：返回 null 表示 render(el, ctx) 已自行写入 section（route() 对 null 不做 innerHTML 赋值）
+    RENDERERS[mod.id] = function () {
+      const sec = document.getElementById('sec-' + mod.id);
+      if (sec) { mod.render(sec, MJ); if (typeof mod.mount === 'function') mod.mount(sec, MJ); }
+      return null;
+    };
+    if (Array.isArray(mod.sub)) SECTION_SUB[mod.id] = mod.sub;
+    if (Array.isArray(mod.search)) mod.search.forEach((it) =>
+      SEARCH_IDX.push({ sec: mod.name, tit: it.tit, txt: String(it.txt).replace(/<[^>]+>/g, ''), go: '#/' + mod.id }));
+    if (!document.getElementById('sec-' + mod.id)) {
+      const s = document.createElement('section'); s.className = 'sec'; s.id = 'sec-' + mod.id; $('#app').appendChild(s);
+    }
+    renderNav();
+    MJ_ON.add(mod.id);
+    if (mjReady && current === mod.id) route();
+  }
+  function addModule(mod) {
+    if (!mod || typeof mod !== 'object' || typeof mod.id !== 'string' || !mod.id ||
+      typeof mod.name !== 'string' || !mod.name || typeof mod.icon !== 'string' || !mod.icon ||
+      typeof mod.render !== 'function') {
+      console.warn('[MJ] addModule 拒绝：至少需要 id / icon / name（非空字符串）与 render(el, ctx)（函数）');
+      return false;
+    }
+    if (NAV.some((x) => x.id === mod.id) || Object.prototype.hasOwnProperty.call(RENDERERS, mod.id) ||
+      MJ.modules.some((m) => m.id === mod.id)) {
+      console.warn('[MJ] addModule 拒绝：id「' + mod.id + '」已存在于 NAV / RENDERERS');
+      return false;
+    }
+    MJ.modules.push(mod);
+    if (!mjReady) return true; // init 前只登记入队，init() 开头统一排水安装（兜底，同步脚本序下不会发生）
+    try { mjInstall(mod); } catch (err) { console.warn('[MJ] 安装模块「' + mod.id + '」失败：', err); return false; }
+    return true;
+  }
+  window.MJ = {
+    ready: false,
+    DB: window.DB,
+    esc: esc,
+    store: store,
+    toast: toast,
+    regCopy: regCopy,
+    go: function (id) { location.hash = '#/' + id; },
+    modules: [],
+    addModule: addModule,
+  };
+
   /* ---------- 启动 ---------- */
   function init() {
+    // 自注册模块排水：MJ 未就绪期间到达的注册请求（含 __MJ_QUEUE 兜底队列）统一安装
+    (Array.isArray(window.__MJ_QUEUE) ? window.__MJ_QUEUE.splice(0) : []).forEach((m) => addModule(m));
+    MJ.modules.forEach((m) => { if (!MJ_ON.has(m.id)) mjInstall(m); });
     renderNav();
     renderMobNav();
     buildIndex();
@@ -1749,6 +2146,7 @@
     route();
     window.addEventListener('hashchange', route);
     onScroll();
+    mjReady = true; MJ.ready = true;
   }
   init();
 })();

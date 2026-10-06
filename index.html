@@ -29,7 +29,7 @@
   document.documentElement.dataset.theme=dark?'dark':'light';
 }catch(e){}})();
 </script>
-<link rel="stylesheet" href="css/style.css?v=27">
+<link rel="stylesheet" href="css/style.css?v=28">
 </head>
 <body>
 <a class="skip" href="#app">跳到主内容</a>
@@ -103,9 +103,14 @@
 <button class="top-btn" id="topBtn" title="回到顶部" aria-label="回到顶部">↑</button>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <noscript>本平台需要启用 JavaScript 才能浏览。</noscript>
-<script src="js/data.js?v=27"></script>
-<script src="js/research-data.js?v=27"></script>
-<script src="js/app.js?v=27"></script>
+<script src="js/data.js?v=28"></script>
+<script src="js/research-data.js?v=28"></script>
+<script src="js/app.js?v=28"></script>
+<script src="js/feat-mcsim.js?v=28"></script>
+<script src="js/feat-storyboard.js?v=28"></script>
+<script src="js/feat-studyhub.js?v=28"></script>
+<script src="js/feat-framesim.js?v=28"></script>
+<script src="js/feat-picker.js?v=28"></script>
 <script>
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === '127.0.0.1' || location.hostname === 'localhost')) {
   window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function(){}); });
