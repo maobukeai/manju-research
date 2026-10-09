@@ -5,7 +5,7 @@
    六段结构对照=DB.hot.episodeMap.segs；导出字段对齐=DB.llm.jsonExample 的 shot 级字段。
    用途：把「大模型应用」的静态分镜 JSON 模板升级为可操作编辑器——
      ① 镜号卡增删 / 上移下移 / 折叠展开，镜号自动重排；
-     ② 逐镜标注运镜 / 时长 / 台词 / 画面描述；
+     ② 逐镜标注运镜 / 景别 / 时长 / 台词 / 画面描述；
      ③ 实时汇总总镜数与总时长，映射 98 秒单集六段结构，超时变红告警；
      ④ 一键导出结构化 JSON 数组（regCopy 复制 + codebox 预览，route() 的 JSON 高亮自动生效）。
    状态：镜头数据每次变更即写 localStorage（manju_storyboard_v1），刷新无损恢复。
@@ -17,7 +17,7 @@
   const KEY = 'manju_storyboard_v1';        // 与平台 manju_* 键前缀同风格
   const STYLE_ID = 'mj-storyboard-style';   // 注入样式唯一 id，防重复注入
   const BUDGET = 98;                        // 与 DB.hot.episodeMap.total 同口径的告警阈值
-  let shots = [];                           // [{ id, cam, dur, line, desc, fold }]
+  let shots = [];                           // [{ id, cam, size, dur, line, desc, fold }]
   let uidSeq = 0;
   let clearArmed = false;
   let clearTimer = null;
@@ -45,6 +45,103 @@
   function sumText(s) { return (camName(s.cam) || '未指定') + ' · ' + fmtDur(clampDur(s.dur)); }
   function idxOf(uid) { return uid ? shots.findIndex((s) => s.id === uid) : -1; }
 
+  /* ---------- 增补：景别选项 / 护栏检查 / 段落模板 / 交接文本（细化补丁 2026-10） ---------- */
+  function mjxStoryboardSizeOptions(sel) {
+    let h = '<option value=""' + (sel ? '' : ' selected') + '>景别 · 未标注</option>';
+    mjxStoryboardSizes.forEach((z) => {
+      h += '<option value="' + z + '"' + (sel === z ? ' selected' : '') + '>' + z + '</option>';
+    });
+    return h;
+  }
+  function mjxStoryboardGuards() {
+    const out = [];
+    let whipN = 0;
+    shots.forEach((s, i) => {
+      const no = '镜' + (i + 1);
+      const d = clampDur(s.dur);
+      if (d > 6) out.push(no + ' 时长 ' + fmtDur(d) + '：超出单镜 2-6 秒区间——拆镜或压时长，超长镜易漂移');
+      const ln = String(s.line || '').trim();
+      if (ln) {
+        const k = ln.indexOf('：') >= 0 ? '：' : (ln.indexOf(':') >= 0 ? ':' : '');
+        const body = k ? ln.slice(ln.indexOf(k) + k.length) : ln;
+        if (body.trim().length > 15) out.push(no + ' 台词单句超 15 字：「先配音后驱动画面」流程下，长句先拆 2-3 段');
+        if (s.cam === 'whip' || s.cam === 'orbit') out.push(no + ' 有台词却配甩镜/环绕：台词镜头只用安全运镜（慢推、轻微视差、微手持）');
+      }
+      if (s.cam === 'whip') whipN++;
+      if (s.size && i > 0 && shots[i - 1].size === s.size) out.push('镜' + i + '→' + no + ' 景别相同（' + s.size + '）：相邻镜号避免相同景别，否则「PPT感」');
+    });
+    if (whipN > 3) out.push('甩镜共 ' + whipN + ' 次：一集别超 3 次【经验口径】，重音多了会钝');
+    return out;
+  }
+  function mjxStoryboardGuardsBlock() {
+    if (!shots.length) return '';
+    const list = mjxStoryboardGuards();
+    return '<div class="mjx-storyboard-guards">' +
+      '<div class="mjx-storyboard-guardst">护栏检查 <span class="sub">口径：单镜2-6秒 · 台词单句≤15字 · 相邻镜号避免相同景别 · 台词镜头只用安全运镜 · 甩镜一集≤3次</span></div>' +
+      (list.length
+        ? list.map((g) => '<div class="mjx-storyboard-guard">⚠ ' + ctx.esc(g) + '</div>').join('')
+        : '<div class="mjx-storyboard-guard ok">✓ 五项护栏全部通过</div>') +
+      '</div>';
+  }
+  function mjxStoryboardCheatHTML() {
+    return '<details class="mjx-storyboard-cheat"><summary>六段拍摄速查 · 每段的常用运镜与要点（运行时取自「爆款心法」结构沙盘，本页不另存口径）</summary>' +
+      DB.hot.episodeMap.segs.map((sg) =>
+        '<div class="mjx-storyboard-cheatrow"><b>' + ctx.esc(sg.n) + '</b><span class="t">' + ctx.esc(sg.t) + '</span>' +
+        '<span class="c">常用运镜：' + ctx.esc(sg.cams) + '</span><span class="k">' + ctx.esc(sg.tip) + '</span></div>').join('') +
+      '</details>';
+  }
+  function mjxStoryboardTplDur(which) {
+    const gs = which === 'all' ? mjxStoryboardSegTpl : [mjxStoryboardSegTpl[which]];
+    return fmtDur(gs.reduce((a, g) => a + g.shots.reduce((x, s) => x + clampDur(s.dur), 0), 0));
+  }
+  function mjxStoryboardInsertTpl() {
+    const sel = root.querySelector('#mjxStoryboardTplSel');
+    if (!sel || sel.value === '') { ctx.toast('先在下拉里选一段模板（或整集骨架）'); return; }
+    const groups = sel.value === 'all' ? mjxStoryboardSegTpl : [mjxStoryboardSegTpl[+sel.value]];
+    if (!groups || !groups.length) { ctx.toast('模板数据异常'); return; }
+    const added = [];
+    groups.forEach((g) => g.shots.forEach((t) => {
+      if (!DB.cameras.some((c) => c.m === t.cam)) return;
+      added.push({
+        id: newUid(), cam: t.cam,
+        size: mjxStoryboardSizes.indexOf(t.size) >= 0 ? t.size : '',
+        dur: clampDur(t.dur), line: '', desc: t.desc, fold: false,
+      });
+    }));
+    if (!added.length) { ctx.toast('模板运镜档位异常，未插入'); return; }
+    shots = shots.concat(added);
+    persist(); renderAll();
+    ctx.toast('已插入「' + (sel.value === 'all' ? '整集骨架' : groups[0].name) + '」模板 ' + added.length + ' 镜——追加在末尾，时长与描述可继续改');
+    try {
+      const list = root.querySelector('#sbList');
+      if (list && list.lastElementChild) list.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } catch (e) { /* 忽略滚动 */ }
+  }
+  function mjxStoryboardDialogueText() {
+    const rows = [];
+    shots.forEach((s, i) => {
+      const ln = String(s.line || '').trim();
+      if (!ln) return;
+      const k = ln.indexOf('：') >= 0 ? '：' : (ln.indexOf(':') >= 0 ? ':' : '');
+      const sp = k ? ln.slice(0, ln.indexOf(k)).trim() : '';
+      const tx = k ? ln.slice(ln.indexOf(k) + k.length).trim() : ln;
+      rows.push('S' + (i + 1 < 10 ? '0' : '') + (i + 1) + '｜' + (sp || '（未标说话人）') + '｜' + tx);
+    });
+    if (!rows.length) return '';
+    return ['【台词表】共 ' + rows.length + ' 句 · 供「先配音、后驱动画面」使用（长句拆2-3段、接缝补1-2帧）']
+      .concat(rows).join('\n');
+  }
+  function mjxStoryboardShotlistText() {
+    if (!shots.length) return '';
+    const rows = shots.map((s, i) => 'S' + (i + 1 < 10 ? '0' : '') + (i + 1) +
+      '｜' + (camName(s.cam) || '未指定') +
+      '｜' + fmtDur(clampDur(s.dur)) +
+      '｜' + (s.size || '—') +
+      '｜' + String(s.desc || '').replace(/\s*\n\s*/g, ' '));
+    return ['【分镜交接单】' + shots.length + ' 镜 · 合计 ' + fmtDur(totalDur()) + ' · 字段：镜号｜运镜｜时长｜景别｜画面（13字段分镜表的轻量交接版）']
+      .concat(rows).join('\n');
+  }
+
   /* ---------- 运镜匹配：示例分镜的自由文本 camera_move → DB.cameras 的 m 键 ---------- */
   const CAM_ALIAS = [
     ['zoom', ['急推', '变焦']],
@@ -63,6 +160,59 @@
     ['fpv', ['穿越', '子弹时间', 'FPV', 'fpv']],
     ['rack', ['移焦']],
     ['static', ['固定', '静止', '机位']],
+  ];
+
+  /* ---------- 增补数据区（细化补丁 2026-10）----------
+     mjxStoryboardSizes：景别四档，取自 DB.llm.promptTemplate「特写|近景|中景|远景」（data.js:913）；
+     mjxStoryboardSegTpl：段落模板——把 DB.hot.episodeMap.segs 六段结构固化成可一键插入的整集骨架：
+     每段镜数取 segs「X-Y镜」参考区间内（钩子2∈1-2 / 冲突4∈4-6 / 铺垫10∈10-14 / 反转3∈3-5 /
+     爽点6∈6-9 / 卡点3∈3-5，合计28镜），秒数取段窗口内的编排值（铺垫10镜×3s恰好铺满30s段窗，
+     全骨架76.5s＜98s预算，余量留给用户加镜/加秒）；运镜取 segs.cams 档位，描述为 segs.task 的执行化改写。
+     来源：research/02-开发流程与爆款方法论.md「节奏公式」；research/12-剧本创作与网文改编实操.md §二§三。 */
+  let mjxStoryboardLastLines = '';          // 台词表复制内容缓存（去重注册 regCopy）
+  let mjxStoryboardLastList = '';           // 交接单复制内容缓存
+  const mjxStoryboardSizes = ['特写', '近景', '中景', '远景'];
+  const mjxStoryboardSegTpl = [
+    { name: '黄金钩子', shots: [
+      { cam: 'zoom', size: '特写', dur: 1.5, desc: '钩子主画面：身份错位/利益威胁/视觉冲击三选一，直接砸脸进冲突' },
+      { cam: 'whip', size: '中景', dur: 1.5, desc: '甩镜接环境交代：谁、在哪、什么危机已经发生' },
+    ]},
+    { name: '冲突建立', shots: [
+      { cam: 'static', size: '远景', dur: 3, desc: '对峙定场：交代主角处境与被压迫关系——让观众知道「谁欠了什么」' },
+      { cam: 'follow', size: '中景', dur: 3, desc: '跟拍主角入场/回到压迫现场' },
+      { cam: 'static', size: '特写', dur: 3, desc: '固定机位反应特写：主角隐忍，蓄住第一口情绪' },
+      { cam: 'truck', size: '中景', dur: 3, desc: '横移：压迫方逼近或双方同行，关系张力可视化' },
+    ]},
+    { name: '递进铺垫', shots: [
+      { cam: 'push', size: '近景', dur: 3, desc: '压迫升级：新威胁落到主角身上，情绪再压一格' },
+      { cam: 'rack', size: '特写', dur: 3, desc: '伏笔①：道具/细节特写，埋一颗 45-60 秒能回收的种子' },
+      { cam: 'push', size: '中景', dur: 3, desc: '推镜蓄力：对峙逼近，情绪再压一格' },
+      { cam: 'rack', size: '远景', dur: 3, desc: '插入空镜：环境/物件反应，给一拍呼吸感' },
+      { cam: 'push', size: '近景', dur: 3, desc: '关系恶化：盟友动摇/敌人加码（台词单句≤15字）' },
+      { cam: 'rack', size: '特写', dur: 3, desc: '伏笔②：另一个可回收细节，反转前最后一次给镜头' },
+      { cam: 'push', size: '中景', dur: 3, desc: '逼到墙角：冲突推到爆点前最后一格' },
+      { cam: 'rack', size: '近景', dur: 3, desc: '暗示：移焦把观众注意力引向真正的底牌' },
+      { cam: 'push', size: '远景', dur: 3, desc: '大势压顶：主角被逼入绝境的全景定场' },
+      { cam: 'rack', size: '近景', dur: 3, desc: '伏笔收口：最后一次确认道具/细节（观众已能预感反转）' },
+    ]},
+    { name: '黄金反转', shots: [
+      { cam: 'zoom', size: '特写', dur: 0.5, desc: '反转重音：0.5 秒瞳孔地震式特写，砸在 45-60 秒黄金分割点' },
+      { cam: 'dollyzoom', size: '近景', dur: 3, desc: '世界观崩塌具象化：身份/利益/关系三大反转模式选一' },
+      { cam: 'whip', size: '中景', dur: 2, desc: '甩镜收全场反应：震惊传导给围观者' },
+    ]},
+    { name: '爽点释放', shots: [
+      { cam: 'truck', size: '近景', dur: 3, desc: '逆袭执行：低角度横移近景，主角开始碾压实景' },
+      { cam: 'fpv', size: '远景', dur: 3, desc: '高光奇观：FPV 穿越或子弹时间，纯爽点一镜' },
+      { cam: 'truck', size: '中景', dur: 3, desc: '逐个击破：压迫方节节败退，音效重音跟打点' },
+      { cam: 'orbit', size: '特写', dur: 3, desc: 'hero shot 环绕定格：音效重音落在运镜落点' },
+      { cam: 'truck', size: '近景', dur: 3, desc: '全场臣服：横移扫过俯首的人群' },
+      { cam: 'fpv', size: '远景', dur: 3, desc: '收尾高光：一记大场面奇观收住爽点段' },
+    ]},
+    { name: '卡点留钩', shots: [
+      { cam: 'pull', size: '中景', dur: 4, desc: '情绪余韵：台词落地后缓拉，把主角留在空画面里' },
+      { cam: 'craneUp', size: '远景', dur: 3, desc: '摇臂升起：新一轮危机/悬念入场' },
+      { cam: 'static', size: '特写', dur: 1, desc: '卡点：固定机位定格下一集钩子画面，黑场前最后一格' },
+    ]},
   ];
   function matchCamera(raw) {
     const t = String(raw || '').trim();
@@ -124,6 +274,7 @@
       return {
         id: id,
         cam: DB.cameras.some((c) => c.m === s.cam) ? s.cam : '',
+        size: mjxStoryboardSizes.indexOf(s.size) >= 0 ? s.size : '',
         dur: clampDur(s.dur),
         line: String(s.line || ''),
         desc: String(s.desc || ''),
@@ -187,6 +338,7 @@
   }
   function fieldsHTML(s) {
     return '<label class="sb-f"><span class="sb-fl">运镜</span><select data-sb-field="cam">' + camOptions(s.cam) + '</select></label>' +
+      '<label class="sb-f"><span class="sb-fl">景别</span><select data-sb-field="size">' + mjxStoryboardSizeOptions(s.size) + '</select></label>' +
       '<label class="sb-f sb-f-dur"><span class="sb-fl">时长</span><span class="sb-dur-wrap">' +
       '<input type="number" data-sb-field="dur" min="0" step="0.5" value="' + ctx.esc(String(clampDur(s.dur))) + '"><i>秒</i></span></label>' +
       '<label class="sb-f"><span class="sb-fl">台词</span><textarea data-sb-field="line" rows="2" placeholder="说话人：台词 —— 用「：」分隔说话人，导出时拆为 speaker / line">' + ctx.esc(s.line) + '</textarea></label>' +
@@ -260,6 +412,7 @@
     if (!shots.length) verdict = '<span class="sb-verdict zero">尚无镜头 —— 添加或载入示例后，这里实时汇总并映射六段结构</span>';
     else if (over) verdict = '<span class="sb-verdict over">⚠ 总时长 ' + fmtDur(plan.total) + '，超出 ' + BUDGET + ' 秒基准 ' + fmtDur(plan.total - BUDGET) + '——按「爆款心法」压回 98 秒-2 分钟区间</span>';
     else verdict = '<span class="sb-verdict ok">✓ 在 ' + BUDGET + ' 秒预算内，余 ' + fmtDur(BUDGET - plan.total) + '</span>';
+    const guards = mjxStoryboardGuardsBlock();
     return '<h5>实时统计 <span class="sub">总时长按秒映射「' + ctx.esc(String(DB.hot.episodeMap.total)) + '秒单集六段结构」· 对照「爆款心法」结构沙盘</span></h5>' +
       '<div class="sb-stats-row">' +
       '<span class="sb-stat"><b>' + shots.length + '</b>镜</span>' +
@@ -267,7 +420,7 @@
       verdict + '</div>' +
       '<div class="sb-tl">' + zones + '</div>' +
       '<div class="sb-tl-cap"><span>0s</span><span>' + (over ? BUDGET + 's 基准 → 超出 ' + fmtDur(plan.total - BUDGET) : BUDGET + 's') + '</span></div>' +
-      '<div class="sb-seg-rows">' + rows + '</div>';
+      '<div class="sb-seg-rows">' + rows + '</div>' + guards;
   }
   function refreshStats() {
     const plan = computePlan();
@@ -292,6 +445,21 @@
       }
       acc += clampDur(s.dur);
     });
+    /* 增补：台词表 / 交接单按钮的复制内容与可用态随编辑实时刷新（细化补丁 2026-10） */
+    const lb = root.querySelector('#mjxStoryboardLinesBtn');
+    if (lb) {
+      const lt = mjxStoryboardDialogueText();
+      lb.disabled = !lt;
+      if (!lt) { mjxStoryboardLastLines = ''; lb.removeAttribute('data-copy'); }
+      else if (lt !== mjxStoryboardLastLines) { mjxStoryboardLastLines = lt; lb.dataset.copy = ctx.regCopy(lt); }
+    }
+    const ob = root.querySelector('#mjxStoryboardListBtn');
+    if (ob) {
+      const ot = mjxStoryboardShotlistText();
+      ob.disabled = !ot;
+      if (!ot) { mjxStoryboardLastList = ''; ob.removeAttribute('data-copy'); }
+      else if (ot !== mjxStoryboardLastList) { mjxStoryboardLastList = ot; ob.dataset.copy = ctx.regCopy(ot); }
+    }
   }
   function renderAll() {
     renderList();
@@ -319,7 +487,7 @@
 
   /* ---------- 动作 ---------- */
   function actAdd() {
-    const s = { id: newUid(), cam: '', dur: 4, line: '', desc: '', fold: false };
+    const s = { id: newUid(), cam: '', size: '', dur: 4, line: '', desc: '', fold: false };
     shots.push(s);
     persist(); renderAll();
     const card = root.querySelector('[data-sb-uid="' + s.id + '"]');
@@ -375,6 +543,7 @@
     shots = data.shots.map((s) => ({
       id: newUid(),
       cam: matchCamera(s && s.camera_move),
+      size: '',
       dur: clampDur(s && s.duration_sec),
       line: toLine(s && s.dialogue),
       desc: String((s && s.action) || ''),
@@ -403,6 +572,7 @@
         else if (act === 'sample') actSample();
         else if (act === 'export') actExport();
         else if (act === 'clear') actClear(btn);
+        else if (act === 'tpl') mjxStoryboardInsertTpl();
         return;
       }
       const head = e.target.closest('.sb-head');
@@ -424,7 +594,7 @@
       const field = f.dataset.sbField;
       if (field === 'dur') { shots[i].dur = clampDur(f.value); persist(); refreshStats(); }
       else if (field === 'cam') { shots[i].cam = f.value; persist(); refreshStats(); }
-      else { shots[i][field] = f.value; persist(); }
+      else { shots[i][field] = f.value; persist(); refreshStats(); }
     };
     el.addEventListener('input', onEdit);
     el.addEventListener('change', onEdit); /* select 的兜底（部分浏览器 select 也触发 input） */
@@ -489,6 +659,27 @@
       '.sb-btn-danger.armed{background:rgba(244,63,94,.14);border-color:var(--hot);color:var(--hot)}',
       '.sb-empty{border:1.5px dashed var(--line2);border-radius:var(--r);padding:34px 20px;text-align:center;color:var(--tx2);font-size:13px}',
       '.sb-empty b{display:block;font-size:15px;color:var(--tx);margin-bottom:6px}',
+      '/* —— 细化补丁 2026-10：段落模板 / 护栏 / 速查 / 工具条（新增类一律 mjx-storyboard- 前缀） —— */',
+      '.mjx-storyboard-tplwrap{display:inline-flex;gap:6px;align-items:center}',
+      '.mjx-storyboard-tplsel{background:var(--panel2);border:1px solid var(--line);color:var(--tx);border-radius:12px;font-size:13px;font-family:inherit;padding:9px 10px;outline:none;max-width:220px;cursor:pointer;transition:border-color .14s}',
+      '.mjx-storyboard-tplsel:focus{border-color:var(--p1)}',
+      '.sb-toolbar .btn.ghost:disabled{opacity:.4;cursor:not-allowed;transform:none}',
+      '.mjx-storyboard-guards{margin-top:10px;display:grid;gap:5px}',
+      '.mjx-storyboard-guardst{font-size:12.5px;font-weight:800;color:var(--tx)}',
+      '.mjx-storyboard-guardst .sub{font-weight:400;font-size:11px;color:var(--tx3)}',
+      '.mjx-storyboard-guard{font-size:11.8px;color:#fb7f95;background:rgba(244,63,94,.07);border:1px solid rgba(244,63,94,.25);border-radius:8px;padding:5px 9px;line-height:1.55}',
+      '.mjx-storyboard-guard.ok{color:var(--ok);background:rgba(52,211,153,.07);border-color:rgba(52,211,153,.3)}',
+      '.mjx-storyboard-cheat{margin-top:10px;border:1px dashed var(--line2);border-radius:10px;overflow:hidden}',
+      '.mjx-storyboard-cheat summary{cursor:pointer;padding:8px 12px;font-size:12px;color:var(--tx2);user-select:none;background:var(--panel2)}',
+      '.mjx-storyboard-cheat summary:hover{color:var(--tx)}',
+      '.mjx-storyboard-cheatrow{display:flex;gap:8px;align-items:baseline;padding:6px 12px;font-size:11.6px;color:var(--tx2);border-top:1px dashed var(--line);flex-wrap:wrap}',
+      '.mjx-storyboard-cheatrow b{color:var(--tx);flex:0 0 58px}',
+      '.mjx-storyboard-cheatrow .t{color:var(--tx3);font-variant-numeric:tabular-nums;flex:0 0 48px}',
+      '.mjx-storyboard-cheatrow .c{color:#5fd4e8;flex:0 0 auto}',
+      '.mjx-storyboard-cheatrow .k{flex:1;min-width:160px;color:var(--tx3)}',
+      '@media(max-width:700px){',
+      '  .mjx-storyboard-tplsel{max-width:150px;flex:1 1 auto}',
+      '}',
       '@media(max-width:700px){',
       '  .sb-head{flex-wrap:wrap;gap:6px 8px;padding:10px 12px}',
       '  .sb-sum{flex-basis:100%;order:5}',
@@ -516,6 +707,8 @@
       { tit: '分镜板工作台 · 使用说明', txt: '镜号卡增删、上移下移、折叠展开，逐镜标注运镜、时长、台词、画面描述；实时汇总总镜数与总时长，超98秒变红告警；所有变更自动保存本地，刷新无损恢复。' },
       { tit: '分镜板工作台 · 导出 JSON', txt: '一键导出结构化镜头数组，字段对齐大模型应用的分镜JSON模板：shot_id / camera_move / duration_sec / action / dialogue(speaker,line)；台词用冒号分隔说话人，无台词导出null。' },
       { tit: '分镜板工作台 · 六段结构对照', txt: '黄金钩子0-3s、冲突建立3-15s、递进铺垫15-45s、黄金反转45-60s、爽点释放60-80s、卡点留钩80-98s；按镜头秒数画出分布条，逐段对照计划与参考时长。' },
+      { tit: '分镜板工作台 · 段落模板与整集骨架', txt: '六段结构一键插入起步镜头组：黄金钩子/冲突建立/递进铺垫/黄金反转/爽点释放/卡点留钩各配推荐运镜、景别与执行要点；整集骨架28镜76.5s，各段镜数落在98秒六段结构参考区间内，余量留给加镜/加秒补足98s。' },
+      { tit: '分镜板工作台 · 护栏检查与交接单', txt: '实时护栏五项：单镜2-6秒、台词单句≤15字、相邻镜号避免相同景别、台词镜头只用安全运镜（慢推/轻微视差/微手持）、甩镜一集≤3次；一键复制台词表（先配音后驱动画面）与分镜交接单（镜号/运镜/时长/景别/画面）。' },
     ],
     render: function (el, mj) {
       ctx = mj;
@@ -529,12 +722,24 @@
         '超时变红告警，最后一键导出可直接喂给生图 / 生视频流水线的 JSON。</div>' +
         '<div class="insp-bar sb-toolbar">' +
         '<button type="button" class="btn pri" data-sb-act="add">＋ 添加镜头</button>' +
+        '<span class="mjx-storyboard-tplwrap">' +
+        '<select id="mjxStoryboardTplSel" class="mjx-storyboard-tplsel" title="把「爆款心法」六段结构一键插入为起步镜头组">' +
+        '<option value="">📐 插入段落模板…</option>' +
+        '<option value="all">全部六段 · 整集骨架（' + mjxStoryboardTplDur('all') + '）</option>' +
+        mjxStoryboardSegTpl.map((t, i) =>
+          '<option value="' + i + '">' + ctx.esc(t.name) + ' · ' + t.shots.length + '镜' + mjxStoryboardTplDur(i) + '</option>').join('') +
+        '</select>' +
+        '<button type="button" class="btn ghost" data-sb-act="tpl" title="把选中段落模板的镜头追加到分镜板末尾">插入</button>' +
+        '</span>' +
         '<button type="button" class="btn ghost" data-sb-act="sample">📥 载入示例分镜</button>' +
         '<button type="button" class="btn ghost" data-sb-act="export">📤 导出 JSON</button>' +
+        '<button type="button" class="btn ghost copy-btn" id="mjxStoryboardLinesBtn" disabled title="按镜号顺序复制台词表——「先配音、后驱动画面」工序用">🗒 台词表</button>' +
+        '<button type="button" class="btn ghost copy-btn" id="mjxStoryboardListBtn" disabled title="复制轻量交接单：镜号｜运镜｜时长｜景别｜画面">📋 交接单</button>' +
         '<button type="button" class="btn ghost sb-btn-danger" data-sb-act="clear">🗑 清空</button>' +
         '<span class="mini-note" style="margin:0">变更即自动保存 · 刷新无损恢复</span>' +
         '</div>' +
         '<div class="chart-box sb-stats" id="sbStats"></div>' +
+        mjxStoryboardCheatHTML() +
         '<h4 class="block-t">分镜卡 <span class="sub" id="sbListSub"></span></h4>' +
         '<div id="sbList"></div>' +
         '<div id="sbExportWrap"' + (hasShots ? '' : ' hidden') + '>' +
@@ -542,7 +747,7 @@
         '<div class="codebox"><div class="cb-bar"><span id="sbExpMeta">' + (hasShots ? shots.length + ' 镜 · 合计 ' + fmtDur(totalDur()) + ' · episode 数组' : '') + '</span>' +
         '<button type="button" class="copy-btn" id="sbExpCopy" data-copy="' + (hasShots ? ctx.regCopy(buildExportText()) : '') + '">复制</button></div>' +
         '<pre id="sbExpPre">' + (hasShots ? ctx.esc(buildExportText()) : '') + '</pre></div>' +
-        '<p class="mini-note">导出为镜头数组：shot_id / camera_move / duration_sec / action / dialogue{speaker, line}，与「大模型应用」jsonExample 模板同名字段；台词按第一个「：」拆分说话人，无台词导出 null。</p>' +
+        '<p class="mini-note">导出为镜头数组：shot_id / camera_move / duration_sec / action / dialogue{speaker, line}，与「大模型应用」jsonExample 模板同名字段；台词按第一个「：」拆分说话人，无台词导出 null。景别仅用于板内排布自查与交接单，不进导出契约。</p>' +
         '</div>';
       bindEvents(el);
       renderList();

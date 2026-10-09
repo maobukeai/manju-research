@@ -357,6 +357,15 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:640px}
 .pd-tools{display:flex;flex-wrap:wrap;gap:6px}
 .pd-meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center}
 .pd-meta .pill b{color:var(--gold)}
+/* ===== 开发流程 · 学习打卡进度条（mjx-pipeline- 前缀 · 2026-10 细化） ===== */
+.mjx-pipeline-progress{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:-12px 0 18px;padding:10px 14px;background:var(--panel2);border:1px dashed var(--line);border-radius:12px;font-size:12.5px;color:var(--tx2)}
+.mjx-pipeline-plabel{color:var(--tx2)}
+.mjx-pipeline-plabel b{color:var(--gold)}
+.mjx-pipeline-segs{display:inline-flex;gap:5px;flex:1;min-width:180px}
+.mjx-pipeline-seg{width:26px;height:6px;border-radius:3px;background:var(--line);transition:background .2s}
+.mjx-pipeline-seg.on{background:linear-gradient(90deg,var(--p1),var(--p2))}
+.mjx-pipeline-seg.cur{outline:2px solid rgba(139,92,246,.35);outline-offset:2px}
+.pipe-step.mjx-pipeline-done .p-name::after{content:" ✓";color:var(--ok)}
 
 /* ---------- 工具库 ---------- */
 .tool-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
@@ -497,6 +506,13 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:640px}
 .ck-item.done .box::after{content:"✓"}
 .ck-item.done span{color:var(--tx3);text-decoration:line-through}
 
+/* ---------- 制作清单（checklist）· mjx-checklist 增强 ---------- */
+.mjx-checklist-sub{display:block;font-size:11.5px;font-weight:400;color:var(--tx3);line-height:1.5;margin-top:3px}
+.mjx-checklist-tog{cursor:pointer;user-select:none}
+.mjx-checklist-tog input{display:none}
+.mjx-checklist-tog input:checked+span{color:var(--p2);font-weight:700}
+#sec-checklist:has(#mjxChecklistTodo:checked) .ck-item.done{display:none}
+
 /* ---------- 第一部成片（firstfilm）· 7天进度自查 ---------- */
 /* 与 .ck-item 同视觉语言但类名独立：避免触发制作清单的全局点击委托与存储 */
 .ff-ck{display:flex;gap:10px;align-items:flex-start;padding:6px 4px;cursor:pointer;border-radius:8px;font-size:12.8px;
@@ -616,6 +632,12 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:640px}
 
 /* ---------- 性能：视口外运镜动画自动暂停 ---------- */
 .cam-demo.off *{animation-play-state:paused !important}
+/* ---------- mjx-cameras：运镜宝典增强（分组标题 + 荷兰角演示） ---------- */
+.mjx-cameras-ghead{grid-column:1/-1;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;padding:10px 2px 0;border-top:1px dashed var(--line)}
+.mjx-cameras-ghead b{font-size:14.5px}
+.mjx-cameras-gcnt{font-size:11px;color:var(--tx3);border:1px solid var(--line);border-radius:20px;padding:1px 8px}
+.cam-demo[data-motion="dutch"] .cam-scene{inset:-28%;animation:mjxCamerasDutch calc(4.6s*var(--spd,1)) ease-in-out infinite alternate}
+@keyframes mjxCamerasDutch{0%,12%{transform:rotate(-7deg)}58%,100%{transform:rotate(7deg)}}
 
 /* ---------- 互动计算器 ---------- */
 .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;margin:6px 0 4px}
@@ -1000,3 +1022,20 @@ h4.block-t,.sec-head h2{scroll-margin-top:78px}
 .ft-fb{margin-top:14px;padding:11px 14px;border-radius:11px;border:1px solid var(--line);background:var(--panel2);
   font-size:13px;line-height:1.7;color:var(--tx2)}
 .ft-why{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:12.8px;line-height:1.7;color:var(--tx2)}
+/* ===== 工具库增强（mjx-tools 前缀 · docs/refine/tools.md） ===== */
+.mjx-tools-gh{grid-column:1/-1;display:flex;align-items:baseline;gap:8px;margin:8px 0 -4px;font-size:13.5px;font-weight:800;color:var(--p2)}
+.mjx-tools-gh .n{font-size:11.5px;font-weight:600;color:var(--tx3)}
+.mjx-tools-cost td:nth-child(3){white-space:nowrap;font-weight:700}
+.mjx-tools-stack .st-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.mjx-tools-stack .st-top b{font-size:14px}
+.mjx-tools-stack .st-top .copy-btn{margin-left:auto}
+.mjx-tools-stack .chain{font-size:12.4px;line-height:1.75;color:var(--tx2)}
+/* ================= 题材风向库 · 预检通栏与组内工具条（细化 mjx-topics 前缀） ================= */
+.mjx-topics-checks{grid-column:1/-1;border:1px dashed var(--line);border-radius:var(--r-s);background:var(--panel2);padding:12px 16px;font-size:12.6px}
+.mjx-topics-checks b{font-size:13px}
+.mjx-topics-checks ol{margin:8px 0 0;padding-left:18px;display:grid;gap:5px;color:var(--tx2)}
+.mjx-topics-bar{grid-column:1/-1;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 0 4px}
+.mjx-topics-cnt{font-size:12.5px;color:var(--tx3)}
+.mjx-topics-sort{display:inline-flex;gap:6px}
+.mjx-topics-sort .chip{padding:4px 12px;font-size:12px}
+.mjx-topics-copy{margin-left:auto}

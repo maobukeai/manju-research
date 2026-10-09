@@ -99,6 +99,53 @@
     { sel: 2, guides: [3, 5], go: 'tools?hl=' + encodeURIComponent('星流Agent / Lovart'), goLabel: '→ 工具库「星流Agent / Lovart」' },
   ];
 
+  /* ---------- 增补数据区（细化补丁）：三条新常量，风格与既有常量一致（单引号字符串） ----------
+     mjxPickerPlaybook：k 对齐 MODELS.k —— 主力模型的「第一步」与「避坑」；
+     mjxPickerQTips：键 = 题id:选项k —— 每个作答的落地解读（结果页「作答解读」区，覆盖全部20个选项）；
+     mjxPickerAudioTips：键 = DB.tools 的 n —— 配音/剪辑/口型工具的使用要领。
+     逐条出处见 docs/refine/picker.md §四来源对照表；本区块不改动任何既有常量。 */
+  var mjxPickerPlaybook = {
+    jm: { first: '先用免费积分跑通「分镜图直出带配音」的单镜闭环；开网页版样片模式：480P草稿抽2次+升清1080P，15秒实测比直抽省约38%', pit: '积分政策频繁收紧（2026年9月每日免费积分66-100→30、高阶功能剥离免费池），抽卡前先看当日积分页再排产，别按上月额度做排期' },
+    kl4: { first: '试镜用4.0 Flash验证运镜节奏（720P/3-20秒、实测6灵感值/秒），成片再上关键帧（≤10张）+全能参考（≤15项：图≤10、视频≤5且合计≤30秒）', pit: '正式版截至2026-10-02未全量、计费未公布，4K 10-bit HDR官方仍标「即将上线」——别把4K写进对客户的排期承诺' },
+    kl3: { first: '把每日66灵感值当排期表用：720P生成约6灵感值/秒，50秒一集约300灵感值；对口型约1灵感值/秒，是主力通道里最便宜的口型档', pit: '单段仅5-10秒，长叙事靠尾帧链/续拍串联（官方续拍上限2分钟）；「串联不漂移」尚无权威压测数据，关键段落逐段校验再拼接' },
+    vidu: { first: '整段16秒声画同出：「镜头一…镜头二…」的分镜写法可直接用；参考生视频挂1-7张锚定角色一致性', pit: '避免大幅度拉镜（易失真），运动幅度用「轻微/明显/剧烈」分级词；按量计费——先小批量试出单价再定产能' },
+    hailuo: { first: '武打/情绪动作镜头批量跑用Fast版（成本-50%）；H3开源版2K直出15秒音画，本地部署零API成本', pit: '单段6-10秒偏短；官方Video Agent年费过万引争议——订阅前先按自己的单集时长算清账' },
+    veo: { first: '先用Flow每天50免费积分测试英文台词与画质口碑，再决定订阅；8秒单段靠延长功能拼长段落', pit: '国内使用与支付有门槛（海外网络/支付方式）；API $0.05-0.6/秒按秒计费——英文向内容再上量，别拿来跑国内分账素材' },
+    runway: { first: '把它当「救火队」：已有素材换风格/删加物体/换机位一句话搞定；2026-09起可在PR/AE时间线里直接调用', pit: '纯提示词控镜（无面板、无负向提示词栏），约束要正着写、静止必须写motionless；Gen-4.5计费约12 credits/秒，整段修复前先算积分' },
+    wan: { first: '本地部署跑通社区ComfyUI工作流后，把跑量镜头交给它、关键镜头留给闭源旗舰——「开源跑量+闭源关键镜头」混合降本', pit: '需要中高端显卡；公测API按分辨率分档计费（480P约0.3/720P约0.6/1080P约1.2元/秒），算成本前先定分辨率档' },
+  };
+  var mjxPickerQTips = {
+    'scene:story': '台词戏按五段式走：双人交代→A说话特写→B反应特写→物体空镜→双人收尾；一个片段只让一人开口，过肩/反应/空镜掩护其余口型',
+    'scene:action': '动作戏铁律：运镜动词必带方向+速度、一镜最多1-2种运镜；「两人扭打」拆成「他挥拳→她侧身闪过→拳头砸碎花瓶」的单步动作链',
+    'scene:volume': '跑量参照系：巨日禄2500字剧本自动拆约90个分镜、单人单日批量10集；但平台分账爆款率AI漫剧不足0.1%（2026H1）——爆款播放≠爆款收入',
+    'scene:mix': '混合做的分工：叙事段落交给主力模型立住剧感，大场面/跑量镜头降档给第二模型控成本——「主力+跑量」双模型编排正是本向导的推荐结构',
+    'budget:free': '免费三件套把每日额度当排期用：即梦每日免费积分（2026年9月已缩至30）+可灵66灵感值/天+Veo Flow每天50积分；开源Wan扛底仓',
+    'budget:light': '轻预算甜蜜点：海螺约¥10/月起+可灵黄金¥66/月（常5折）——低价订阅+每日免费额度混搭，别一上来就买旗舰会员',
+    'budget:mid': '这一档买的是「单镜上限」：即梦开样片模式（480P草稿→升清1080P，实测省约38%）；带货实测提醒：宣传价默认按重抽2-3倍预留',
+    'budget:high': '工作室级走API走量：可灵3.0 Turbo API 720P约0.8积分/秒；第三方「0.2元/秒级」甩卖渠道存在服务与账号风险，接商单前慎用',
+    'pace:slow': '慢更也按重抽2-3倍预留预算（带货实测提醒）；单镜可反复抽到满意，但分段首尾帧记得统一做一致性校准，拼起来才是片',
+    'pace:weekly': '周更2-3集靠固定产线：相邻镜头尾帧=下镜首帧（尾帧链）；可灵续拍串联逐段微调提示词防漂移',
+    'pace:daily': '日更是流水线不是肝：巨日禄单人单日10集；剪映「小映」AI粗剪（6分钟口播人工32分钟vs AI 10分钟）+人工只做卡点精修',
+    'sea:no': '先对齐平台节奏再谈模型：红果单集压98秒-2分钟一个情绪闭环、2分钟完播权重38%——分镜密度照此倒推',
+    'sea:yes': '出海跑量模式已死：2026-07-16起YouTube对模板化批量AI内容执行频道级取消获利；原创角色IP+一致性人设才能变现；TikTok Drama Center个人无法直接入驻，需挂靠机构',
+    'sea:both': '双线要分主次：主链路国产控成本；出海译制「配音质量是第一死穴——预算向配音质量倾斜而非条数」，负评三大项：不像人/不像角色/不像本地人',
+    'team:solo': '单人拼最短链路：豆包出脚本→即梦Seedance执行→剪映成片是官方工作流沉淀的新手默认链路，工具越少越快跑通闭环',
+    'team:duo': '2-3人按「写本/出图出片/剪辑」分工即可并行流水线——站内口径3人日更10集；动手前先定分镜表11字段（镜头号/景别/时长/运镜等）',
+    'team:studio': '工作室核心是「资产与分镜解耦」：角色/场景/道具放独立资产库跨镜头调用；一致性六环链路缺一环整季必崩',
+    'qual:ok': '达标就发≠糊弄：先7天跑通第一条成片闭环再升级画质；剪映「AI画质增强」基础功能免费，零成本提质',
+    'qual:hd': '精品感三件套：大幅运动与封面级镜头上旗舰+混生成素材统一超分补帧（Topaz或剪映AI画质增强）+源头控制色温（主力镜头同一模型）',
+    'qual:client': '商单交付三底线：报价单写明修改轮次上限、先收30%-50%定金、初稿打水印确认后收尾款再交源文件；成片按-14 LUFS交付',
+  };
+  var mjxPickerAudioTips = {
+    'MiniMax Speech': 'HD版给主角、turbo给群配；情绪转折用省略号分句，常规段1.1-1.2倍速、情感独白0.9-1.0；内联(laughs)(sighs)拟声直接写进文本',
+    'ElevenLabs': '[whispers][sad]行内标签可堆叠，拼写错误会被念出来；重音=全大写；单次合成保持250字符以上更稳；不支持SSML（停顿用[pause]）',
+    '即梦对口型': '民间两步法更省积分：先生成视频再拿去对口型；唱歌是口型照妖镜——先短句实测再上量',
+    '可灵对口型': '约1灵感值/秒是对口型口径（生成口径720P约6灵感值/秒，别混算）；群像戏用「多角色指定发言」明确谁在说话',
+    'Hedra': '540p出样片、定稿再升720p省积分；一年内已改价两次，投产前复核当日价格',
+    '剪映专业版': '社区日更打法：AI分镜视频全部丢给小映拼接→自动BGM/字幕/转场→人工只做卡点精修；字幕竖屏一行≤8-10字符',
+    'Premiere / DaVinci': '调色重点不是「调」而是「统一」：多模型混生成的色温差异，源头控制（主力镜头同一模型）+统一LUT收口',
+    '剪映音效库': '每个打斗/反转/爽点动作都要有音效重音——「音效是爽感的一半」；热门音效易撞车，关键重音换AI生成专属变体',
+  };
   /* ---------- 小工具 ---------- */
   function esc(s) { return ctx.esc(s); }
   function eachKey(o, fn) { for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) fn(k, o[k]); }
@@ -278,9 +325,14 @@
   }
   function zoneMain(R) {
     var M = R.main.m, vc = R.main.vc;
+    var mjxPb = mjxPickerPlaybook[M.k];
     var lis = ['场景匹配「' + esc(vc.scene) + '」'];
     if (M.motto) lis.push('选型口诀（引自「工具库」对比表）：' + esc(M.motto));
     lis.push('能力亮点：' + esc(trim(vc.adv, 76)));
+    if (mjxPb) {
+      lis.push('<b>第一步这么走：</b>' + esc(mjxPb.first));
+      lis.push('<b>避坑提醒：</b>' + esc(mjxPb.pit));
+    }
     return '<div class="card pk-zone"><div class="pk-zone-head"><span class="tag c">① 主力视频模型</span><div class="pk-price">💰 ' + esc(vc.price) + '</div></div>' +
       '<b class="pk-zone-t">' + esc(vc.m) + '</b>' +
       '<ul class="pk-why">' + lis.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>' +
@@ -315,10 +367,44 @@
       '<button class="btn ghost pk-go" data-go="' + hlLink(t.tool) + '" title="去工具库高亮「' + esc(t.tool) + '」">→</button></div>';
   }
   function zoneAudio(R) {
+    var mjxTips = [R.audio.tool, R.edit.tool, R.lips.tool].map(function (n) {
+      return mjxPickerAudioTips[n] ? '<li><b>' + esc(n) + ' ·</b> ' + esc(mjxPickerAudioTips[n]) + '</li>' : '';
+    }).join('');
     return '<div class="card pk-zone"><div class="pk-zone-head"><span class="tag h">④ 配音剪辑</span><div class="pk-price">价格档见各行</div></div>' +
       '<b class="pk-zone-t">声音与成片的最后两公里</b>' +
       '<div class="pk-rows">' + pkRow('配音', R.audio) + pkRow('剪辑', R.edit) + pkRow('口型', R.lips) + '</div>' +
-      '<div class="pk-links"><button class="btn ghost pk-go" data-go="' + hlLink('剪映音效库') + '">→ 音效：剪映音效库（免费）</button></div></div>';
+      (mjxTips ? '<ul class="mjx-picker-tips">' + mjxTips + '</ul>' : '') +
+      '<div class="pk-links"><button class="btn ghost pk-go" data-go="' + hlLink('剪映音效库') + '">→ 音效：剪映音效库（免费）</button></div>' +
+      (mjxPickerAudioTips['剪映音效库'] ? '<div class="mjx-picker-anote">💡 ' + esc(mjxPickerAudioTips['剪映音效库']) + '</div>' : '') +
+      '</div>';
+  }
+  /* ---------- 增补视图：计分明细 / 作答解读（结果页渲染函数内部增强，不涉公共设施） ---------- */
+  function mjxPickerScoreHtml(R) {
+    var mjxSc = score(pkState.ans);
+    var mjxRows = MODEL_ORDER.map(function (k) { return { k: k, t: mjxSc.tot[k], v: mjxSc.vol[k] }; });
+    mjxRows.sort(function (a, b) { return b.t - a.t; });
+    var mjxMax = Math.max(1, mjxRows[0].t);
+    var mjxTrs = mjxRows.map(function (r) {
+      var mjxMark = r.k === R.main.m.k ? ' <span class="tag c">主力</span>'
+        : (r.k === R.vol.m.k ? ' <span class="tag g">跑量</span>'
+          : (r.k === R.second.m.k ? ' <span class="tag">备胎</span>' : ''));
+      return '<div class="mjx-picker-srow"><span class="mjx-picker-sname">' + esc(vcOf(modelOf(r.k)).m) + mjxMark + '</span>' +
+        '<span class="mjx-picker-sbar"><i style="width:' + Math.round(r.t / mjxMax * 100) + '%"></i></span>' +
+        '<span class="mjx-picker-sval">主 ' + r.t + ' · 跑 ' + r.v + '</span></div>';
+    }).join('');
+    return '<details class="mjx-picker-score"><summary>📊 为什么是它？展开看 8 款模型计分明细</summary>' +
+      '<div class="mjx-picker-stable">' + mjxTrs + '</div>' +
+      '<p class="mini-note">「主」=主力模型加权总分（出海 / 场景 / 预算权重最高）；「跑」=跑量方案独立计分（与主力互补、免费/低成本优先）。回退改答后明细即时刷新。</p></details>';
+  }
+  function mjxPickerTipsHtml() {
+    var mjxLis = QS.map(function (q) {
+      var mjxTip = mjxPickerQTips[q.id + ':' + pkState.ans[q.id]];
+      return mjxTip ? '<li><b>' + esc(q.short) + ' ·</b> ' + esc(mjxTip) + '</li>' : '';
+    }).join('');
+    if (!mjxLis) return '';
+    return '<div class="card" style="margin-top:14px"><b style="display:block;font-size:15px;margin:2px 0 8px">▚ 作答解读：你的每个选择意味着什么</b>' +
+      '<ul class="mjx-picker-tips">' + mjxLis + '</ul>' +
+      '<p class="mini-note">解读口径引自 research/ 研究档案与「工具库」条目；涉及价格与政策时效的表述以对应档案标注的检索时点为准。</p></div>';
   }
   function viewResult() {
     var R = computeResult(pkState.ans);
@@ -331,8 +417,10 @@
       '<div class="card" style="padding:16px 18px;margin-bottom:14px"><span class="tag g">组合推荐已生成</span>' +
       '<b style="display:block;font-size:17px;margin:8px 0 2px">▸ 你的推荐工具链</b>' +
       '<div class="tool-filters" style="margin-top:8px">' + recap + '</div>' +
+      mjxPickerScoreHtml(R) +
       '<p class="mini-note">点任意已完成步骤可回退改答（其后作答将作废重答）。</p></div>' +
       '<div class="grid g2">' + zoneMain(R) + zoneVol(R) + zoneCanvas(R) + zoneAudio(R) + '</div>' +
+      mjxPickerTipsHtml() +
       '<div class="card" style="margin-top:14px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 16px">' +
       '<span class="tag">次选备胎</span><b>' + esc(R.second.vc.m) + '</b>' +
       '<span style="font-size:12.5px;color:var(--tx2)">与主力总分差 ' + R.second.gap + ' 分——题材切换或某档涨价时的第一替换。</span>' +
@@ -348,10 +436,12 @@
   }
   function copyText(R) {
     var L = [];
+    var mjxPb = mjxPickerPlaybook[R.main.m.k];
     L.push('【漫剧研究 · 选型向导】我的推荐工具链');
     L.push('1. 主力视频模型：' + R.main.vc.m);
     L.push('   价格档：' + R.main.vc.price);
     L.push('   理由：场景匹配「' + R.main.vc.scene + '」' + (R.main.m.motto ? '；选型口诀：' + R.main.m.motto : ''));
+    if (mjxPb) L.push('   第一步：' + mjxPb.first);
     L.push('2. 跑量方案：' + R.vol.vc.m + '（' + (R.vol.famSame ? '与主力同生态换档' : '开源跑量+闭源关键镜头的混合编排') + '）');
     L.push('   价格档：' + R.vol.vc.price);
     L.push('3. 画布工具：' + R.canvas.pick + '（' + R.canvas.tierName + '档；' + R.canvas.why + '）');
@@ -421,7 +511,22 @@
       '#sec-picker .pk-go{padding:7px 14px;font-size:12.5px;border-radius:var(--r-s)}' +
       '#sec-picker .pk-warn{margin-top:2px;margin-bottom:10px;font-size:12.5px}' +
       '#sec-picker .pk-foot{display:flex;flex-wrap:wrap;gap:10px}' +
-      '@media(max-width:960px){#sec-picker .pk-step span{display:none}#sec-picker .pk-step{padding:8px;justify-content:center}#sec-picker .pk-price{max-width:100%}}';
+      '#sec-picker .mjx-picker-score{border:1px dashed var(--line2);border-radius:var(--r-s);padding:10px 14px;margin-top:12px;background:var(--panel2)}' +
+      '#sec-picker .mjx-picker-score summary{cursor:pointer;font-size:13px;color:var(--tx2);user-select:none}' +
+      '#sec-picker .mjx-picker-score summary:hover{color:var(--tx)}' +
+      '#sec-picker .mjx-picker-stable{margin-top:10px;display:flex;flex-direction:column;gap:6px}' +
+      '#sec-picker .mjx-picker-srow{display:flex;align-items:center;gap:10px;font-size:12px}' +
+      '#sec-picker .mjx-picker-sname{width:170px;flex-shrink:0;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}' +
+      '#sec-picker .mjx-picker-sname .tag{margin-left:4px}' +
+      '#sec-picker .mjx-picker-sbar{flex:1;min-width:0;height:8px;border-radius:4px;background:var(--line);overflow:hidden}' +
+      '#sec-picker .mjx-picker-sbar i{display:block;height:100%;border-radius:4px;background:var(--grad)}' +
+      '#sec-picker .mjx-picker-sval{flex-shrink:0;color:var(--tx3);font-variant-numeric:tabular-nums}' +
+      '#sec-picker .mjx-picker-tips{margin:8px 0 2px;padding:0;list-style:none}' +
+      '#sec-picker .mjx-picker-tips li{padding:5px 0;font-size:12.3px;color:var(--tx2);line-height:1.65;border-top:1px dashed var(--line)}' +
+      '#sec-picker .mjx-picker-tips li:first-child{border-top:none}' +
+      '#sec-picker .mjx-picker-tips b{color:var(--tx)}' +
+      '#sec-picker .mjx-picker-anote{font-size:11.5px;color:var(--tx3);line-height:1.6;margin-top:6px;padding-top:6px;border-top:1px dashed var(--line)}' +
+      '@media(max-width:960px){#sec-picker .pk-step span{display:none}#sec-picker .pk-step{padding:8px;justify-content:center}#sec-picker .pk-price{max-width:100%}#sec-picker .mjx-picker-sname{width:118px}}';
     document.head.appendChild(st);
   }
 

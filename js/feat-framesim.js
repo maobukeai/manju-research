@@ -33,6 +33,20 @@
     { n: '帧差合理', d: '帧差恰好定义本镜的运动类型，且 2-5 秒内可完成：过小＝静图拖时长易被判低质，过大＝运动插值崩坏。' },
   ];
 
+  /* ---------- 增补数据区（细化补丁）：链路速查 10 条 · 字段结构对齐上方 CHECKS（n/d，另加 g 分组） ----------
+     内容逐条溯源 research/*.md（出处对照见 docs/refine/framesim.md §四）；纯增量，不改动 CHECKS / PRESET_META。 */
+  var mjxFramesimLinkTips = [
+    { g: '帧差心法', n: '帧差即运动语言', d: '帧间差异定义运动类型：位置差→位移、表情差→情绪、景别差→推拉、构图差→转场。想要推镜，就把尾帧写成首帧的放大构图——先定运动类型，再回头写两帧。' },
+    { g: '帧差心法', n: '两帧共享视觉DNA', d: '同宽高比、相近曝光、相似构图与色调、主体一致——帧差越小中间运动越干净；差距过大模型会"发明"中间内容，产出不受控的融帧。' },
+    { g: '帧差心法', n: '跨度小是废片防线', d: '首尾帧两帧关联性不要太远（构图 / 位置 / 景别跨度小）——跨度太大运镜就不完整，是废片主因。' },
+    { g: '帧差心法', n: '出入点精确咬合', d: '单镜片段控制在 2-5 秒；剪辑时让出入点精确落在上传的两帧上——帧与帧才算真正咬合，链路不松口。' },
+    { g: '运镜口令', n: '方向+速度+目的', d: '每个运镜动词必须带方向与速度（模型没有默认速度），再补一个目的："pan left to reveal the hidden door" 优于光杆 "pan left"；用关系动词绑定主体（camera follows the cyclist）防人物滑行。' },
+    { g: '运镜口令', n: '一镜最多1-2种运镜', d: '堆三个以上运镜必漂移；基座稳定前只用安全动作：慢推、轻微视差、微手持——快速环绕、甩镜、大幅转头先禁用，稳了再上。' },
+    { g: '运镜口令', n: '15秒拆3镜各5秒', d: '多镜头配速口诀：每镜=1个基础运镜+1个标志性运镜，15秒拆3镜各5秒，每镜提示词以运镜动词开头——链路节点排布照此配速。' },
+    { g: '链路流水线', n: '尾帧提取兜底', d: '视频供应商不返回尾帧时，用 FFmpeg 从成片末尾提取最后一帧，作下一镜的首帧参考——别让链路在缺尾帧处断掉。' },
+    { g: '链路流水线', n: 'Match Cut 三选一', d: '取A镜最后帧作B镜首帧时，一句话写明衔接类型：morph（变形）/ match cut（匹配剪切）/ whip pan（甩镜）三选一，并加约束词 no extra elements, camera locked 防自由发挥。' },
+    { g: '链路流水线', n: '稳定帧即锚点', d: '任一稳定帧（哪怕动作不完美）都导出作下一镜的锚点首帧，减少模型"自由发挥"；脸稳定 4 秒但 6 秒崩→保留前 4 秒或拆成两镜。' },
+  ];
   /* ---------- 预置镜头元信息：取 DB.frameBank 前 6 题，蛇形排布成示例链 ---------- */
   var PRESET_META = [
     { fid: 'f1', t: '战场黄昏', x: 40, y: 40 },
@@ -85,7 +99,7 @@
     if (!MJ) return;
     MJ.store.set(STORE_KEY, { v: 1, nodes: S.nodes, chain: S.chain, view: S.view, sel: S.sel });
   }
-  function scheduleSave() { clearTimeout(saveTimer); saveTimer = setTimeout(save, 260); }
+  function scheduleSave() { clearTimeout(saveTimer); saveTimer = setTimeout(function () { save(); renderStat(); }, 260); }   // 增补 renderStat：随防抖保存刷新统计（改首尾帧文案后「待补文案」计数跟随）
   function scheduleViewSave() { clearTimeout(viewSaveTimer); viewSaveTimer = setTimeout(save, 260); }
 
   function loadState() {
@@ -225,6 +239,27 @@
     document.head.appendChild(st);
   }
 
+  /* ================= 增补样式（细化补丁）：仅新增类，全部 mjx-framesim- 前缀，取用既有 CSS 变量 ================= */
+  function mjxFramesimInjectStyle() {
+    if (document.getElementById('mjxFramesimStyle')) return;
+    var st = document.createElement('style');
+    st.id = 'mjxFramesimStyle';
+    st.textContent = [
+      '/* js/feat-framesim.js 增补注入：链路速查卡 / 整链复制 / 运镜口令提示 */',
+      '.mjx-framesim-tips{margin-top:14px;border:1px dashed var(--line2);border-radius:11px;background:var(--panel2)}',
+      '.mjx-framesim-tips summary{cursor:pointer;font-size:12px;font-weight:800;color:var(--tx2);padding:10px 12px;user-select:none;list-style:none}',
+      '.mjx-framesim-tips summary::-webkit-details-marker{display:none}',
+      '.mjx-framesim-tips summary::before{content:"▸ ";color:var(--p1)}',
+      '.mjx-framesim-tips[open] summary::before{content:"▾ "}',
+      '.mjx-framesim-tips summary:hover{color:var(--tx)}',
+      '.mjx-framesim-tg{display:block;font-size:10.5px;font-weight:800;letter-spacing:.5px;color:var(--tx3);margin:2px 12px 2px;border-top:1px dashed var(--line);padding-top:8px}',
+      '.mjx-framesim-ti{padding:7px 12px;font-size:11.8px;color:var(--tx2);line-height:1.65}',
+      '.mjx-framesim-ti b{color:var(--tx);margin-right:4px}',
+      '.mjx-framesim-movehint{font-size:11.3px;color:var(--tx3);line-height:1.6;margin:5px 0 0}',
+      '.mjx-framesim-copyall{padding:5px 11px!important;font-size:11.5px!important;margin-left:8px;white-space:nowrap}',
+    ].join('\n');
+    document.head.appendChild(st);
+  }
   /* ================= 几何：贝塞尔链路与箭头 ================= */
   function anchor(a, b) {
     var acx = a.x + NW / 2, acy = a.y + NH / 2;
@@ -272,6 +307,40 @@
       '</g></g>';
   }
 
+  /* ================= 增补渲染（细化补丁）：链路速查卡 / 整链导出文案 ================= */
+  function mjxFramesimTipsHtml() {
+    var groups = [], gis = {};
+    mjxFramesimLinkTips.forEach(function (t) {
+      if (!gis[t.g]) { gis[t.g] = []; groups.push(t.g); }
+      gis[t.g].push('<div class="mjx-framesim-ti"><b>' + esc(t.n) + '</b>' + esc(t.d) + '</div>');
+    });
+    var body = groups.map(function (g) {
+      return '<b class="mjx-framesim-tg">' + esc(g) + '</b>' + gis[g].join('');
+    }).join('');
+    return '<details class="mjx-framesim-tips"><summary>📖 链路速查 · ' + mjxFramesimLinkTips.length +
+      ' 条实战要领（点开）</summary>' + body + '</details>';
+  }
+  function mjxFramesimChainText() {
+    if (!S.chain.length) return '';
+    var L = ['【链路模拟器 · 整条尾帧链导出（共 ' + S.chain.length + ' 镜）】'];
+    L.push('链路总览：' + S.chain.map(function (id, i) {
+      var n = byId(id);
+      return 'S' + (i + 1) + (n && n.t ? ' ' + n.t : '');
+    }).join(' → '));
+    S.chain.forEach(function (id, i) {
+      var n = byId(id);
+      if (!n) return;
+      L.push('——');
+      L.push('【S' + (i + 1) + ' · ' + (n.t || '未命名镜头') + '】');
+      L.push('首帧：' + (n.f || '（待填写）'));
+      L.push('运镜：' + (n.m || '（待填写）'));
+      L.push('尾帧：' + (n.l || '（待填写）'));
+      L.push('衔接三检查：' + n.cks.map(function (c, j) { return CHECKS[j].n + (c ? '✓' : '✗'); }).join(' '));
+    });
+    L.push('——');
+    L.push('使用提醒：上一镜尾帧 = 下一镜首帧；分段首尾帧统一做一致性校准再开拍；逐镜生成时上一镜成品即下一镜的参考图。');
+    return L.join('\n');
+  }
   /* ================= 渲染：画布 / 侧栏 / 统计 ================= */
   function renderEdges() {
     var selIdx = S.sel ? S.chain.indexOf(S.sel) : -1;
@@ -313,7 +382,21 @@
     nodesEl.innerHTML = html;
   }
   function renderStat() {
-    if (statEl) statEl.textContent = '共 ' + S.chain.length + ' 镜 · 视图与编辑自动保存本地';
+    if (!statEl) return;
+    var miss = 0, dim = 0;   // miss=首/尾帧未填齐的镜头数；dim=三检查未点亮的灯数
+    S.chain.forEach(function (id) {
+      var n = byId(id);
+      if (!n) return;
+      if (!n.f || !n.l) miss++;
+      n.cks.forEach(function (c) { if (!c) dim++; });
+    });
+    var btn = '';
+    if (S.chain.length) {
+      btn = ' <button class="btn ghost mjx-framesim-copyall" data-copy="' + MJ.regCopy(mjxFramesimChainText()) + '">📋 复制整链</button>';
+    }
+    statEl.innerHTML = '共 ' + S.chain.length + ' 镜 · ' +
+      ((miss || dim) ? '待补文案 ' + miss + ' 镜 · 检查未亮 ' + dim : '全链三检查已亮 ✓') +
+      ' · 自动保存本地' + btn;
   }
   function renderCanvas() { renderEdges(); renderNodes(); renderStat(); }
 
@@ -328,6 +411,7 @@
   }
 
   function renderSide() {
+    mjxFramesimInjectStyle();   // 增补样式按需注入（幂等，函数内有 getElementById 守卫）
     var n = byId(S.sel);
     if (!n) {
       sideEl.innerHTML =
@@ -338,7 +422,8 @@
         '<div class="fs-gi">▶️<span>点「播放链路」：视口自动跟随，按连绘顺序逐镜走一遍尾帧链。</span></div>' +
         '<div class="fs-lgd"><span><i class="lg-up"></i>上游链路：上一镜尾帧 → 本镜首帧</span>' +
         '<span><i class="lg-dn"></i>下游链路：本镜尾帧 → 下一镜首帧</span></div>' +
-        '<div class="fs-gnote">📌 规则速记（对应「无限画布」七步实操第五步）：两帧共享视觉DNA（同场景 / 同光线），帧差定义运动类型，单镜 2-5 秒。<br>💾 视图与编辑实时保存在本机浏览器（manju_framesim_v1），「恢复默认画布」可随时重置。</div></div>';
+        '<div class="fs-gnote">📌 规则速记（对应「无限画布」七步实操第五步）：两帧共享视觉DNA（同场景 / 同光线），帧差定义运动类型，单镜 2-5 秒。<br>💾 视图与编辑实时保存在本机浏览器（manju_framesim_v1），「恢复默认画布」可随时重置。</div></div>' +
+        mjxFramesimTipsHtml();
       return;
     }
     var idx = S.chain.indexOf(n.id);
@@ -357,6 +442,7 @@
       '<textarea class="fs-ta" data-fsf="f" rows="3" placeholder="例：战场黄昏全景，主角持剑立于尸山之巅…">' + esc(n.f) + '</textarea>' +
       '<label class="fs-fl2">🎬 运镜类型</label>' +
       '<input class="fs-ti" data-fsf="m" value="' + esc(n.m) + '" placeholder="例：缓慢推近 / 横移跟随 / 环绕 180°…">' +
+      '<p class="mjx-framesim-movehint">🎯 口令公式：运镜动词＋方向＋速度＋目的（模型没有默认速度）；一镜最多 1-2 种运镜，堆多必漂移。</p>' +
       '<label class="fs-fl2">🖼️ 尾帧（→ 下一镜首帧）</label>' +
       '<textarea class="fs-ta" data-fsf="l" rows="3" placeholder="例：推到主角怒视的面部特写，天际线仍是橙红…">' + esc(n.l) + '</textarea>' +
       '<div class="fs-cks"><div class="fs-cks-t">衔接三检查<span>点灯自查 · 本镜首帧 → 尾帧</span></div>' +
@@ -364,7 +450,8 @@
         return '<div class="fs-ck' + (n.cks[i] ? ' on' : '') + '" data-fsck="' + i + '"><i></i><div><b>' + c.n + '</b><span>' + c.d + '</span></div></div>';
       }).join('') + '</div>' +
       '<div class="fs-sbtns"><button class="btn ghost" data-copy="' + copyId + '">📋 复制本镜提示词</button>' +
-      '<button class="btn ghost fs-delb" data-fsdel="1">🗑 移除本镜</button></div>';
+      '<button class="btn ghost fs-delb" data-fsdel="1">🗑 移除本镜</button></div>' +
+      mjxFramesimTipsHtml();
     sideEl.scrollTop = 0;
   }
 
@@ -439,7 +526,7 @@
     var n = byId(S.sel);
     if (!n) return;
     n.cks[i] = !n.cks[i];
-    renderNodes(); renderSide(); save();
+    renderNodes(); renderStat(); renderSide(); save();   // 增补 renderStat：点灯后统计区「检查未亮」即时刷新
   }
   function addNode(x, y) {
     var n = {

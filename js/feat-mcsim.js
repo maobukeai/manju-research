@@ -91,6 +91,92 @@
     return s[lo] + (s[hi] - s[lo]) * (idx - lo);
   }
 
+  /* ---------- 增补数据区（细化补丁）：读数指南 12 条 + 沙盘剧本 4 套 ----------
+     出处逐条对照 docs/refine/mcsim.md §四；剧本参数映射含【推断】，已在 src 字段内标注。
+     guide 条目 {g,n,d}（g=分组小标题）；scenario 条目 {n,tag,src,p}，p 的键与 SLIDERS 的 k 一致。 */
+  const mjxMcsimGuide = [
+    { g: '读数三步', n: 'P10是存活线', d: 'P10=10%分位：10%的抽样比它更惨。期望利润被爆款长尾拉高，垫进去的现金按 P10 亏空准备，别按期望值准备。' },
+    { g: '读数三步', n: '概率档位行动线', d: '≥60%绿灯：可按计划推进；30%-60%黄灯：先压成本区间或换更稳变现线再复跑；＜30%红灯：别急着开机——按"组合期望"而非"单品爆款"做预算（2026H1 AI漫剧爆款率不足0.1%）。' },
+    { g: '读数三步', n: '毛概率≠净概率', d: '模拟利润是毛口径（未扣投流与平台分成）：投流通常吃掉销售费用的80-90%、净利再打1-3折；红果结算周期1→3个月、首期回款约35%——真实回本概率只会更低。' },
+    { g: '成本锚点', n: '视频生成单集成本带', d: '50秒/集口径：可灵Flash 720P约300灵感值/集；Seedance 2.5官方75-105元/集 vs 第三方Agent渠道11.5-15元/集（上界约20元）；Wan3.0约15元/集（480P，720P约30元）——单集成本滑杆落在哪一档，先看用哪条产线。' },
+    { g: '成本锚点', n: '重抽2-3倍另计', d: '宣传价"每秒几毛钱"默认要乘2-3倍重抽系数；两家头部模型均无权威废片率公开数据——张口就报废片百分比的横评要留个心眼。' },
+    { g: '成本锚点', n: '样片模式省38%', d: '即梦网页版"样片模式"：480P草稿抽卡→原生升清1080P，升清成本约直出的1/8，实测整链省约38%（3分钟以上不支持）——压成本下限的合规手段。' },
+    { g: '成本锚点', n: '人力才是大头', d: '三本账人力=人数×日薪×工期：默认参数 3人×300元×14天=1.26万，常高于算力——用Agent流水线（小云雀/novelvids）压缩工期是最直接的降本杠杆。' },
+    { g: '播放量先验', n: '流量池决定右偏', d: '八级流量池经验口径：初始池300-500播放→二级约3000→四级10万-15万→五级40万-80万→六级以上百万级，90%创作者卡在500播放门槛（第三方经验值，官方从未公开分级数字）——少数剧进大池、多数沉底，播放量天然右偏长尾。' },
+    { g: '播放量先验', n: '完播率是门票', d: '完播率30%以下基本没流量；15秒目标90%+、60秒目标50%+——中位播放量填的是同类完播水平下的量，不是心愿值。' },
+    { g: '播放量先验', n: '大盘基准对照', d: '爆款率双口径：2025全年漫剧破亿率0.16%（60946部/96部）、2026H1全网AI短剧0.47%（22.19万部/1055部、其中AI漫剧不足0.1%）；30集成本3-8万元、回本需300万-1600万播放（30集口径，与沙盘12集核算单元勿直接对比）——跑出的低概率不是bug，是大盘真相。' },
+    { g: '概率之后的决策', n: '分账作彩票不作主食', d: '商单/承制是确定性收入（30-50%定金、交付即回款），播放收益是波动收入——用商单现金流养"彩票仓"，只投可归零的钱进自制剧。' },
+    { g: '概率之后的决策', n: '连载按季重跑', d: '《废太子饲养手册之救赎》第四季停更：6人团队单季AI视频成本约1万元、收益远未回本；对照《万妖图录传》初创3人半年十二季（媒体测算利润600万-2000万，非官方）——系列化摊薄单季成本，但每一季都要重新过一遍沙盘。' },
+  ];
+  const mjxMcsimScenarios = [
+    { n: '新手·最低成本试水', tag: '预期读数：概率≈0（"大部分项目不回本"）', src: 'research/23 §一：AI漫剧最低成本三五千元/部（澎湃2026-09/10）→÷12集≈250-420元/集【推断取整250-450】；平均播放几十万-两三百万取中位150万【推断】；万播5元=「互动计算器」尾部档', p: { cMin: 250, cMax: 450, vMed: 150, vVol: 120, unit: 5 } },
+    { n: '废太子·连载算力账', tag: '预期读数：概率≈0（"算不平就停更"）', src: 'research/16 §三：6人团队每部剧AI视频成本约1万元→÷12集≈833元/集【推断取650-1000，仅含AI视频成本、未含人力配音，视为下界映射】；收益远未回本、第四季停更（2026-08）', p: { cMin: 650, cMax: 1000, vMed: 100, vVol: 120, unit: 5 } },
+    { n: '快手新政·中档成本', tag: '预期读数：概率约2%（中位单价也要近千万播放）', src: 'research/08 v1.1：AI将漫剧制作成本压缩至每分钟1000-2500元→50秒/集≈833-2083元/集【推断取整850-2100】；播放量与单价沿用「互动计算器」默认收益档（300万/15元）', p: { cMin: 850, cMax: 2100, vMed: 300, vVol: 120, unit: 15 } },
+    { n: '头部对照·破亿量级', tag: '预期读数：概率约99%（同样的成本带，账只在头部量级成立）', src: '与上一剧本同成本带，仅把播放量挪至头部门槛量级（2026H1破亿率仅0.47%，3000万为接近破亿量级【推断】）、单价挪至头部档30元（「互动计算器」头部=S级+平台激励口径）——演示概率对播放量假设的极端敏感', p: { cMin: 850, cMax: 2100, vMed: 3000, vVol: 120, unit: 30 } },
+  ];
+
+  /* ---------- 增补辅助（细化补丁）：指南样式 / 指南渲染 / 剧本挂载 ---------- */
+  function mjxMcsimInjectStyle() {
+    if (document.getElementById('mjxMcsimStyle')) return;
+    const st = document.createElement('style');
+    st.id = 'mjxMcsimStyle';
+    st.textContent =
+      '#sec-mcsim details.mjx-mcsim-guide{margin-top:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);padding:10px 14px}' +
+      '#sec-mcsim details.mjx-mcsim-guide summary{cursor:pointer;font-size:12.5px;color:var(--tx);user-select:none}' +
+      '#sec-mcsim .mjx-mcsim-gact{font-size:12px;line-height:1.65;margin-top:8px;padding:8px 10px;border-radius:8px;background:var(--panel);border:1px solid var(--line2)}' +
+      '#sec-mcsim .mjx-mcsim-gact b{font-variant-numeric:tabular-nums}' +
+      '#sec-mcsim .mjx-mcsim-gt{font-size:11px;color:var(--gold);letter-spacing:.06em;margin:10px 0 4px}' +
+      '#sec-mcsim .mjx-mcsim-gi{display:flex;gap:8px;padding:3px 0;font-size:12px;line-height:1.6}' +
+      '#sec-mcsim .mjx-mcsim-gi b{flex:0 0 96px;color:var(--tx)}' +
+      '#sec-mcsim .mjx-mcsim-gi span{color:var(--tx2)}' +
+      '#sec-mcsim .mjx-mcsim-copy{margin-top:10px}' +
+      '@media(max-width:700px){#sec-mcsim .mjx-mcsim-gi b{flex-basis:84px}}';
+    document.head.appendChild(st);
+  }
+  function mjxMcsimGuideText() {
+    return ['【模拟沙盘 · 读数指南】'].concat(mjxMcsimGuide.map((e) => '· [' + e.g + '] ' + e.n + '：' + e.d)).join('\n');
+  }
+  function mjxMcsimGuideHtml(r) {
+    const act = r.prob >= 0.6
+      ? '<b style="color:var(--ok)">' + pctf(r.prob) + '</b> 绿灯：可按计划推进——现金垫按 P10 亏空准备，P90 作扩张上限参照。'
+      : r.prob >= 0.3
+        ? '<b style="color:var(--gold)">' + pctf(r.prob) + '</b> 黄灯：先压成本区间（cMin/cMax）或换更稳的变现线，再复跑模拟。'
+        : '<b style="color:var(--hot)">' + pctf(r.prob) + '</b> 红灯：别急着开机——按"组合期望"做预算，用商单现金流养沙盘（见下方"概率之后的决策"）。';
+    let html = '<details class="mjx-mcsim-guide"><summary>📖 读数指南：' + pctf(r.prob) + ' 的概率意味着什么？</summary>' +
+      '<div class="mjx-mcsim-gact">' + act + '</div>';
+    let g = '';
+    mjxMcsimGuide.forEach((e) => {
+      if (e.g !== g) { g = e.g; html += '<div class="mjx-mcsim-gt">—— ' + g + ' ——</div>'; }
+      html += '<div class="mjx-mcsim-gi"><b>' + e.n + '</b><span>' + e.d + '</span></div>';
+    });
+    html += '<button class="copy-btn mjx-mcsim-copy" data-copy="' + MJX.regCopy(mjxMcsimGuideText()) + '">📋 复制全部读数规则</button></details>';
+    return html;
+  }
+  function mjxMcsimMountScenarios() {
+    mjxMcsimInjectStyle();
+    const anchor = elRef.querySelector('#mcSummary');
+    if (!anchor || elRef.querySelector('[data-mcscen]')) return; // 幂等保护
+    const row = document.createElement('div');
+    row.className = 'tool-filters';
+    row.style.cssText = 'margin:10px 0 4px;align-items:center';
+    row.innerHTML = '<span class="mini-note" style="margin:0">沙盘剧本（research 案例参数映射）：</span>' +
+      mjxMcsimScenarios.map((s, i) =>
+        '<span class="chip" data-mcscen="' + i + '" title="' + MJX.esc(s.src) + '">🎲 ' + MJX.esc(s.n) + '</span>').join('');
+    anchor.parentNode.insertBefore(row, anchor);
+    row.querySelectorAll('[data-mcscen]').forEach((ch) => {
+      ch.addEventListener('click', () => {
+        const s = mjxMcsimScenarios[parseInt(ch.getAttribute('data-mcscen'), 10)];
+        if (!s) return;
+        Object.keys(s.p).forEach((k) => { S[k] = s.p[k]; });
+        syncSliders();
+        syncTierChips();
+        renderSummary();
+        runSim();
+        MJX.toast('已载入剧本「' + s.n + '」· ' + s.tag);
+      });
+    });
+  }
+
   /* ---------- 样式注入（全部作用域限定 #sec-mcsim，颜色取既有 CSS 变量） ---------- */
   function injectStyle() {
     if (document.getElementById('mj-mcsim-style')) return;
@@ -279,16 +365,19 @@
       '<div class="calc-res-row"><span>50% 回本需全片播放' + (ratio ? '（当前中位的 ' + ratio + ' 倍）' : '') + '</span><b>' + (v50 ? wan(v50) : '—') + '</b></div>' +
       '<div class="calc-res-row"><span>播放量抽样区间（右偏三角）</span><b>' + wan(r.vLo) + ' ~ ' + wan(r.vHi) + '</b></div>' +
       '</div></div></div>' +
-      '<div class="mcs-stale' + (resDirty ? ' show' : '') + '" id="mcStale">⚠️ 上图对应调整前的参数——点「跑 ' + N_RUNS + ' 次模拟」重跑后更新。</div>';
+      '<div class="mcs-stale' + (resDirty ? ' show' : '') + '" id="mcStale">⚠️ 上图对应调整前的参数——点「跑 ' + N_RUNS + ' 次模拟」重跑后更新。</div>' +
+      mjxMcsimGuideHtml(r);
   }
   function buildReport(r) {
     const v50 = r.curve && isFinite(r.curve.v50) ? r.curve.v50 : null;
+    const verdict = r.prob >= 0.6 ? '绿灯·可按计划推进（现金垫按P10准备）' : r.prob >= 0.3 ? '黄灯·先压成本区间或换更稳变现线再复跑' : '红灯·别急着开机：按组合期望做预算、商单养沙盘';
     const lines = [
       '【模拟沙盘 · 蒙特卡洛报告】（抽样 ' + r.n + ' 次 · 毛口径）',
       '参数：单集成本 ' + money(r.params.cMin) + '~' + money(r.params.cMax) + ' × ' + EPS_N + '集 · 全片播放中位 ' + wan(r.params.vMed) + '（波动 ' + r.params.vVol + '%）· 万播单价 ¥' + r.params.unit,
       '回本概率 ' + pctf(r.prob) + ' · 期望利润 ' + money(r.mean),
       '利润分位：P10 ' + money(r.p10) + ' / P50 ' + money(r.p50) + ' / P90 ' + money(r.p90),
       v50 ? '50% 回本需全片播放约 ' + wan(v50) + (r.params.vMed > 0 ? '（当前中位的 ' + (v50 / r.params.vMed).toFixed(1) + ' 倍）' : '') : null,
+      '读数：' + verdict + '（档位线 60%/30%，行动细则见「读数指南」）',
       '口径：毛收入未扣投流（投流通常吃掉销售费用的80-90%，净利再打1-3折）· 爆款分布极端（2026H1 破亿率仅0.47%）· 种子参数与档位同「互动计算器」DB.calc 口径',
     ];
     return lines.filter(Boolean).join('\n');
@@ -642,6 +731,7 @@
     });
 
     bindCanvas();
+    mjxMcsimMountScenarios(); // 增补（细化补丁）：挂载「沙盘剧本」chips 行
 
     /* 同步初始视图状态 */
     syncSliders();
@@ -684,6 +774,7 @@
       { tit: '蒙特卡洛风险模拟', txt: '单集成本区间×全片播放量×万播单价分布随机抽样2000次：回本概率、利润直方图、P10/P50/P90分位与期望利润——有多大把握不亏' },
       { tit: '保本S曲线', txt: '回本概率随全片播放量的累计曲线：横轴播放量、纵轴回本概率，标出中位播放量位置与50%回本交点，口径与「互动计算器」回本播放量一致' },
       { tit: '场景预设：尾部IAA / 中位 / 头部出海IAP', txt: '万播单价5/15/30元三档一键换参并自动重跑模拟，档位与描述取自「互动计算器」收益档（DB.calc.revTiers）' },
+      { tit: '沙盘剧本：研究案例参数映射', txt: '新手最低成本试水/废太子连载算力账/快手新政中档成本/头部对照破亿量级——四组研究档案真实账本一键载入并重跑模拟，出处与推断映射逐条标注' },
     ],
     render: render,
     mount: mount,
