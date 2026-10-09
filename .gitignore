@@ -10,3 +10,9 @@ nul
 Thumbs.db
 __pycache__/
 *.pyc
+
+# 一次性复核/临时脚本与产物（不入库）
+scripts/.tmp_*
+scripts/.tmp_*/
+.tmp_*
+*.tmp

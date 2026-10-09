@@ -230,7 +230,7 @@
     $('#sidebar').classList.remove('open'); $('#backdrop').classList.remove('show');
     window.scrollTo({ top: 0 });
     if (id === 'dashboard') runCounters(sec);
-    if (id === 'checklist') refreshCkProgress();
+    if (id === 'checklist') { refreshCkProgress(); const cg = urlParams.get('g'); if (cg !== null) { const cel = document.getElementById('ckg-' + cg); if (cel && cel.closest('.ck-group')) cel.closest('.ck-group').scrollIntoView({ behavior: 'smooth', block: 'center' }); } }
     if (id === 'pipeline' && !$('#pipeDetail').innerHTML) renderPipeDetail(1);
     if (id === 'tools' && !$('#toolGrid').innerHTML) renderTools(toolCat);
     if (id === 'glossary' && !$('#glGrid').innerHTML) renderGlossary();
@@ -239,7 +239,7 @@
     if (id === 'cameras') initCamQuiz();
     if (id === 'genres' && !$('#gdGrid').innerHTML) renderGenres();
     if (id === 'prompts' && !$('#pbBank').innerHTML) renderPromptsBank();
-    if (id === 'hot' && !$('#epDetail').innerHTML) renderEp(0);
+    if (id === 'hot' && !$('#epDetail').innerHTML) renderEpBar();
     if (id === 'docs' && !$('#docToc').innerHTML) { renderDocToc(''); renderDoc(0); }
     if (id === 'calc') calcCompute();
     if (id === 'earnpath' && !$('#dtBox').innerHTML) dtRender();
@@ -492,6 +492,10 @@
     cameras() {
       return '<div class="callout blue"><b>运镜铁律（Runway官方指南 2025-2026）：</b>' + DB.camRules.join('；') + '。每格演示左下角可 <b>暂停 / 0.5× / 1× / 2×</b> 变速观察。</div>' +
         '<div class="callout"><b>版本动态（v1.5）：</b>可灵4.0已正式上线（2026-09末）——3-30秒生成、720P/1080P/4K直出（1080P与4K支持10-bit HDR）、全能参考多主体控制，续写功能可把片段串联至2分钟且角色场景基本不漂移；正式版初期排队拥堵，"4.0大场面+3.0 Omni跑量"是当前最优组合。八款模型横向对比见「工具库」顶部速查表。</div>' +
+        '<div class="callout red" style="margin-bottom:16px"><b>台词镜头运镜约束（research/19 · 口型表演进阶）：</b>' + DB.camTalkRules.join('；') + '。</div>' +
+        '<h4 class="block-t">运镜×情绪映射表 <span class="sub">' + DB.camEmoMap.length + '个戏剧时刻 → 观众信号 + 运镜组合</span></h4>' +
+        '<div class="tbl-wrap" style="margin-bottom:16px"><table class="tbl"><thead><tr><th>戏剧时刻</th><th>观众信号（照抄进提示词）</th><th>运镜组合</th><th>节拍提示</th></tr></thead><tbody>' +
+        DB.camEmoMap.map((r) => '<tr><td><b>' + r.emo + '</b></td><td style="color:var(--tx2)">' + r.sig + '</td><td>' + r.cams + '</td><td style="color:var(--tx2)">' + r.tip + '</td></tr>').join('') + '</tbody></table></div>' +
         '<div class="tool-filters"><span class="chip' + (camFav ? ' on' : '') + '" data-camfav="1">★ 只看收藏</span><span class="mini-note" style="margin:0">点卡片右上角 ☆ 收藏常用运镜，拍摄时一键调出</span></div>' +
         '<div class="cam-grid" id="camGrid"></div>' +
         '<p class="mini-note">※ 动画为CSS示意效果，用于直观理解每种运镜的画面关系；各家模型对运镜指令的响应差异见「大模型应用」与研究报告。</p>' +
@@ -508,8 +512,8 @@
         };
         return '<div class="card"><div class="pf-t">' + f.t + ' <span class="tag c">' + f.tag + '</span></div><div class="pf-f">' + f.f + '</div>' + f.ex.map(ex).join('') + '</div>';
       };
-      const styleTbl = '<div class="tbl-wrap"><table class="tbl sw-tbl"><thead><tr><th>画风</th><th>中文关键词</th><th>英文关键词</th></tr></thead><tbody>' +
-        DB.styleKeywords.map((s) => '<tr><td>' + s.n + '</td><td>' + s.cn + '</td><td style="font-style:italic;color:var(--tx2)">' + esc(s.en) + '</td></tr>').join('') + '</tbody></table></div>';
+      const styleTbl = '<div class="tbl-wrap"><table class="tbl sw-tbl"><thead><tr><th>画风</th><th>中文关键词</th><th>英文关键词</th><th>题材匹配建议</th></tr></thead><tbody>' +
+        DB.styleKeywords.map((s) => '<tr><td>' + s.n + '</td><td>' + s.cn + '</td><td style="font-style:italic;color:var(--tx2)">' + esc(s.en) + '</td><td style="font-size:12px;color:var(--tx2)">' + (s.fit ? esc(s.fit) : '—') + '</td></tr>').join('') + '</tbody></table></div>';
       const neg = DB.negativePrompt;
       const idNe = regCopy(neg.en), idNc = regCopy(neg.cn);
       const negCard = '<div class="card" style="margin-top:10px"><div class="pf-t">负面提示词（Negative Prompt）</div>' +
@@ -538,10 +542,12 @@
       return '<div class="grid g4">' + val + '</div>' +
         '<h4 class="block-t">工具对比</h4>' + tbl +
         '<div class="callout"><b>即梦智能画布操作路径：</b>' + C.jimengOps + '</div>' +
+        '<h4 class="block-t">剪映Hub / 可灵灵动画布 · 等效操作对照 <span class="sub">与三档选型对应 · 2026-10 实测口径</span></h4>' + (C.opsAlt || []).map((o) => '<div class="callout blue"><b>' + o.n + '：</b>' + o.path + '<br><b style="color:var(--gold)">⚡ 关键差异：</b>' + o.key + '</div>').join('') +
         '<h4 class="block-t">六款画布手把手实操要点 <span class="sub">2026-10 深度实测口径</span></h4><div class="grid g3">' + guides + '</div>' +
         '<h4 class="block-t">七步实操工作流 <span class="sub">角色三视图锚定 → 分镜连绘 → 导出</span></h4>' + steps +
         '<h4 class="block-t">进阶技巧</h4><div class="grid g2">' + tips + '</div>' +
-        '<h4 class="block-t">🎞️ 首尾帧转场挑战 <span class="sub">8题 · 考察视觉DNA / 帧差定义运动 / 2-5秒原则</span></h4>' +
+        '<h4 class="block-t">👥 多角色一致性专节 <span class="sub">同框 / 对话 / 换装 · 技法源自 research/19</span></h4><div class="grid g2">' + (C.multiChar || []).map((m) => '<div class="card"><b style="display:block;margin-bottom:5px">' + m.t + '</b><p style="font-size:12.7px;color:var(--tx2);margin:0">' + m.d + '</p></div>').join('') + '</div>' +
+        '<h4 class="block-t">🎞️ 首尾帧转场挑战 <span class="sub">题库' + DB.frameBank.length + '题 · 每轮随机8题 · 考察视觉DNA / 帧差定义运动 / 2-5秒原则</span></h4>' +
         '<div id="ftBox"><div class="card" style="text-align:center;padding:30px 20px">' +
         '<b style="font-size:16px;display:block;margin-bottom:6px">给首帧和运镜，选出正确的尾帧</b>' +
         '<p style="font-size:12.8px;color:var(--tx2);max-width:520px;margin:0 auto">尾帧链是无限画布连绘的核心（见上方第七步）：上一镜尾帧=下一镜首帧。规则口诀——两帧共享视觉DNA、帧差定义运动类型、单镜2-5秒。</p>' +
@@ -561,30 +567,40 @@
       const code2 = '<div class="codebox"><div class="cb-bar"><span>LLM 生成分镜脚本 · 完整Prompt模板（可复制）</span><button class="copy-btn" data-copy="' + regCopy(L.promptTemplate) + '">复制</button></div><pre>' + esc(L.promptTemplate) + '</pre></div>';
       const code3 = '<div class="codebox"><div class="cb-bar"><span>完整一集分镜JSON示例（10镜 · 92秒 · 战神归来题材 · 可直接复制）</span><button class="copy-btn" data-copy="' + regCopy(L.fullEpisode) + '">复制</button></div><pre>' + esc(L.fullEpisode) + '</pre></div>' +
         '<div class="callout"><b>示例结构解读：</b>' + L.fullEpisodeNote + '</div>';
+      const code4 = L.serialMemory ? '<div class="codebox"><div class="cb-bar"><span>连载化 · 跨集设定与记忆管理JSON（每集开工先喂LLM：前情提要+伏笔对账，再生成分镜）</span><button class="copy-btn" data-copy="' + regCopy(L.serialMemory) + '">复制</button></div><pre>' + esc(L.serialMemory) + '</pre></div>' +
+        '<div class="callout blue"><b>与分镜板工作台双向兼容：</b>' + L.compatNote + '</div>' : '';
       const routes = L.automation.map((r) => '<div class="card route-card"><span class="tag c">' + r.tag + '</span><br><b style="display:block;margin-top:6px">' + r.t + '</b><p>' + r.d + '</p></div>').join('');
       return '<h4 class="block-t" style="margin-top:0">各环节用途映射</h4>' + map +
         '<h4 class="block-t">模型选型</h4>' + models + '<ul style="margin-top:8px">' + pick + '</ul>' +
-        '<h4 class="block-t">三个可直接复制的模板</h4>' + code1 + code2 + code3 +
-        '<h4 class="block-t">自动化流水线 · 4条路线</h4><div class="grid g2">' + routes + '</div>' +
+        '<h4 class="block-t">四个可直接复制的模板</h4>' + code1 + code2 + code3 + code4 +
+        '<h4 class="block-t">自动化流水线 · ' + L.automation.length + '条路线</h4><div class="grid g2">' + routes + '</div>' +
         '<div class="callout blue"><b>选型口诀：</b>' + L.automationPick + '</div>';
     },
 
     hot() {
-      const rules = DB.hot.rules.map((r, i) => '<div class="card rule-card"><span class="r-num">' + String(i + 1).padStart(2, '0') + '</span><b>' + r.t + '</b><p>' + r.d + '</p></div>').join('');
+      const GR = DB.hot.ruleGroups || [];
+      const giOf = (i) => GR.findIndex((g) => g.ids.includes(i + 1));
+      const gchips = '<div class="tool-filters" id="hotGrpChips" style="margin-bottom:12px"><span class="chip on" data-hgi="all">全部' + DB.hot.rules.length + '条</span>' +
+        GR.map((g, gi) => '<span class="chip" data-hgi="' + gi + '">' + g.ico + ' ' + g.n + ' · ' + g.ids.length + '</span>').join('') + '</div>';
+      const rules = gchips + '<div class="grid g4" style="grid-template-columns:repeat(2,1fr)" id="hotRules">' +
+        DB.hot.rules.map((r, i) => '<div class="card rule-card" data-hgi="' + giOf(i) + '"><span class="r-num">' + String(i + 1).padStart(2, '0') + '</span><b>' + r.t + '</b><p>' + r.d + '</p></div>').join('') + '</div>';
       const rates = '<div class="chart-box"><h5>关键量化指标速查</h5>' + DB.hot.rates.map((r) =>
         '<div class="bar-row"><span class="b-lab" style="width:auto;flex:1;text-align:left;color:var(--tx2)">' + r.k + '</span><span class="b-val" style="text-align:right;color:var(--gold);font-weight:700">' + r.v + '</span></div>').join('') + '</div>';
       return '<div class="callout gold" style="margin-bottom:16px"><b>爆款总公式（2026-08）：</b>' + DB.hot.formula + '</div>' +
-        '<div class="grid g4" style="grid-template-columns:repeat(2,1fr)">' + rules + '</div>' +
+        rules +
         '<div class="callout" style="margin-top:16px"><b>头部系列化规律（2026-09）：</b>' + DB.hot.series + '</div>' +
-        '<div class="chart-box" style="margin:16px 0"><h5>🎬 单集结构沙盘（' + DB.hot.episodeMap.total + '秒基准 · 点击色块看任务）</h5>' +
-        '<div class="ep-bar">' + DB.hot.episodeMap.segs.map((s, i) =>
-          '<div class="ep-seg' + (i === 0 ? ' on' : '') + '" data-ep="' + i + '" style="flex:' + (s.w * 1.6) + ' 1 0"><b>' + s.n + '</b><span>' + s.t + '</span></div>').join('') + '</div>' +
+        '<div class="chart-box" style="margin:16px 0"><h5>🎬 结构沙盘 · 点击色块看任务</h5>' +
+        '<div class="tool-filters" style="margin-bottom:8px"><span class="chip on" data-epmode="0">⏱ 单集98秒</span>' +
+        (DB.hot.episodeMap.serial ? '<span class="chip" data-epmode="1">📺 ' + DB.hot.episodeMap.serial.label + '</span>' : '') + '</div>' +
+        '<div class="ep-bar" id="epBar"></div>' +
         '<div class="ep-detail" id="epDetail"></div>' +
-        '<p class="mini-note">' + DB.hot.episodeMap.note + '</p></div>' +
+        '<p class="mini-note" id="epNote"></p></div>' +
         '<div class="callout" style="margin:16px 0"><b>封面公式（拆解100个爆款）：</b>' + DB.hot.coverFormula + '</div>' +
         '<div class="chart-box" style="margin-bottom:16px"><h5>✍️ 标题打分器（规则版 · 输入标题即时诊断）</h5>' +
         '<div class="ts-row"><input id="titleInput" placeholder="粘贴你的标题，如：战神赘婿被扫地出门，次日全军来迎" maxlength="40"><button class="btn pri" data-tscore style="flex-shrink:0">打分</button></div>' +
-        '<div id="titleResult"><p class="mini-note">六维规则打分：身份反差 / 悬念留白 / 情绪词 / 冲突动作 / 数字锚点 / 长度12-18字——命中越多分越高，满分100；打完分记得用AB测试定胜负。</p></div></div>' +
+        (DB.hot.titleScorer.playbook ? '<div class="ts-chips" style="margin:10px 0 0">' + DB.hot.titleScorer.playbook.map((p) =>
+          '<span class="tag" style="cursor:pointer" data-tpl="' + esc(p.ex) + '" title="' + esc(p.how) + '">📋 ' + p.n + '：' + esc(p.ex) + '</span>').join('') + '</div>' : '') +
+        '<div id="titleResult"><p class="mini-note">六维规则打分：身份反差 / 悬念留白 / 情绪词 / 冲突动作 / 数字锚点 / 长度12-18字——命中越多分越高，满分100；点上方模板一键填入试打；打完分用下方AB测试流程定胜负。</p></div></div>' +
         '<div class="grid g2" style="margin-top:16px"><div class="chart-box"><h5>变现方式占比（2026-01，古东管家）</h5>' + donut([{ n: 'IAA 免费+广告', v: 71, c: '#8b5cf6' }, { n: 'IAP 单集付费', v: 26, c: '#22d3ee' }, { n: 'IAAP 混合', v: 3, c: '#f5b942' }]) + '</div>' + rates + '</div>' +
         '<div class="callout red"><b>一句总结：</b>爆款率0.18%的行业里，结构化方法（3秒钩子+黄金分割反转+结尾卡点）不是加分项，是入场券。</div>';
     },
@@ -594,10 +610,31 @@
     },
 
     learning() {
-      const track = (tr) => '<div class="card learn-card"><div class="ln-head"><span style="font-size:22px">' + tr.ico + '</span><div><b>' + tr.t + '</b><p class="ln-goal">' + tr.goal + '</p></div></div>' +
-        tr.items.map((it) => '<div class="ln-item"><b>' + it.d + '</b><p>' + it.d2 + '</p></div>').join('') + '</div>';
+      const qzMax = Math.min(8, DB.quizBank.length), rtMax = Math.min(5, DB.rhythmBank.length), ftMax = Math.min(8, DB.frameBank.length);
+      const gatePct = (a, b) => b > 0 ? Math.round(a / b * 100) : 0;
+      const gateCount = (key, groups, pre) => { const st = store.get(key, {}) || {}; let done = 0, total = 0; (groups || []).forEach((g, gi) => (g.items || []).forEach((_, ii) => { total++; if (st[pre + gi + '-' + ii]) done++; })); return gatePct(done, total); };
+      /* 完成判定关卡：与「学习仪表盘」读同一批本机进度源——阈值：7天自查≥80%（仪表盘「接近完成」线）、三练习≥75%（仪表盘及格线）、接单计划≥50%（经验线，档案无出处） */
+      const LN_GATES = [
+        { lab: '第一部成片 · 7天自查', cur: gateCount('manju_ff_progress_v1', DB.firstfilm.checklist, ''), need: 80, go: 'firstfilm', goLab: '去推进 →' },
+        { lab: '产线三练习均值', cur: Math.round((gatePct(Math.min(store.get('manju_quiz_best', 0), qzMax), qzMax) + gatePct(Math.min(store.get('manju_rt_best', 0), rtMax), rtMax) + gatePct(Math.min(store.get('manju_ft_best', 0), ftMax), ftMax)) / 3), need: 75, go: 'studyhub', goLab: '去仪表盘 →' },
+        { lab: '接单14天行动计划', cur: gateCount('manju_od_progress_v1', DB.orders.plan.checklist, ''), need: 50, go: 'orders', goLab: '去推进 →' },
+      ];
+      const track = (tr, i) => {
+        const links = (tr.links || []).map((x) => '<button class="btn ghost" data-go="' + x.go + '" title="' + esc(x.use) + '" style="padding:4px 12px;font-size:12.5px">' + esc(x.n) + ' →</button>').join('');
+        const linkRow = links ? '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px dashed var(--line)">' + links + '</div>' : '';
+        const g = i < LN_GATES.length ? LN_GATES[i] : null;
+        const ok = g && g.cur >= g.need;
+        const gate = g ? '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;padding:8px 12px;border:1px dashed var(--line);border-radius:var(--r-s);background:var(--panel2)">' +
+          '<span class="tag' + (ok ? ' g' : ' c') + '">' + (ok ? '✓ 达成' : '完成判定') + '</span>' +
+          '<span style="font-size:12.3px;color:var(--tx2)">' + g.lab + ' ' + g.cur + '%（判定线 ' + g.need + '%）</span>' +
+          '<button class="btn ghost" data-go="' + g.go + '" style="margin-left:auto;padding:3px 10px;font-size:12px">' + g.goLab + '</button></div>' : '';
+        return '<div class="card learn-card"><div class="ln-head"><span style="font-size:22px">' + tr.ico + '</span><div><b>' + tr.t + '</b><p class="ln-goal">' + tr.goal + '</p></div></div>' +
+          tr.items.map((it) => '<div class="ln-item"><b>' + it.d + '</b><p>' + it.d2 + '</p></div>').join('') +
+          linkRow + gate + '</div>';
+      };
       return '<div class="grid g3">' + DB.learning.map(track).join('') + '</div>' +
-        '<div class="callout"><b>路径逻辑：</b>第一周用「开发流程」9阶段跑通闭环（完成＞完美）；第一个月把偶然的成功变成模板与资产（提示词库/无限画布/运镜适配表）；第三个月才算经济账——备案合规、矩阵分发、投流ROI、出海溢价，最后用系列化沉淀长期价值。</div>';
+        '<div class="callout"><b>路径逻辑：</b>第一周用「开发流程」9阶段跑通闭环（完成＞完美）；第一个月把偶然的成功变成模板与资产（提示词库/无限画布/运镜适配表）；第三个月才算经济账——备案合规、矩阵分发、投流ROI、出海溢价，最后用系列化沉淀长期价值。</div>' +
+        '<div class="callout blue" style="margin-top:12px"><b>关卡与分岔：</b>每阶段卡底部的「完成判定」与「学习仪表盘」读同一批本机进度源，达标即亮绿灯——先解锁再进下一阶段；第31-90天按分账/商单/出海三条分岔小步并行试点，用真实数据决定主攻方向，口径详见「收益决策树」。</div>';
     },
 
     firstfilm() {
@@ -1379,16 +1416,29 @@
     toast('7天进度已重置');
   }
 
-  /* ---------- 单集结构沙盘 ---------- */
+  /* ---------- 结构沙盘（单集98秒 / 连载卡点双形态） ---------- */
+  let epMode = 0;
+  function epCur() { const M = DB.hot.episodeMap; return (epMode && M.serial) ? M.serial : M; }
+  function renderEpBar() {
+    const bar = $('#epBar'), note = $('#epNote');
+    if (!bar) return;
+    const cur = epCur();
+    bar.innerHTML = cur.segs.map((s, i) =>
+      '<div class="ep-seg' + (i === 0 ? ' on' : '') + '" data-ep="' + i + '" style="flex:' + (s.w * 1.6) + ' 1 0"><b>' + s.n + '</b><span>' + s.t + '</span></div>').join('');
+    if (note) note.textContent = cur.note;
+    renderEp(0);
+  }
   function renderEp(i) {
     const box = $('#epDetail');
     if (!box) return;
-    const segs = DB.hot.episodeMap.segs;
+    const cur = epCur();
+    const segs = cur.segs;
     const s = segs[i] || segs[0];
     document.querySelectorAll('.ep-seg').forEach((el) => el.classList.toggle('on', +el.dataset.ep === i));
     const row = (k, v) => '<div class="ep-row"><span class="ep-k">' + k + '</span><span>' + v + '</span></div>';
+    const L = cur.labels || ['任务', '镜头', '常用运镜', '要点'];
     box.innerHTML = '<div class="ep-title">' + s.n + ' <span class="tag">' + s.t + '</span></div>' +
-      row('任务', s.task) + row('镜头', s.shots) + row('常用运镜', s.cams) + row('要点', '<span style="color:var(--gold)">' + s.tip + '</span>');
+      row(L[0], s.task) + row(L[1], s.shots) + row(L[2], s.cams) + row(L[3], '<span style="color:var(--gold)">' + s.tip + '</span>');
   }
 
   /* ---------- 研究档案阅读器 ---------- */
@@ -1485,13 +1535,30 @@
     else miss.push({ k: S.lens.k + '（当前' + len + '字）', w: S.lens.w });
     score = Math.min(100, score);
     const grade = score >= 80 ? ['🏆 爆款潜质', 'var(--ok)'] : score >= 60 ? ['🎯 及格，可再强化', 'var(--gold)'] : ['✍️ 建议重写', 'var(--hot)'];
+    const cl = (S.cliche ? S.cliche.words.split(',') : []).filter((w) => w && t.includes(w));
     box.innerHTML = '<div class="ts-score"><b style="color:' + grade[1] + '">' + score + '</b><span>' + grade[0] + '</span></div>' +
       '<div class="ts-chips">' + hits.map((h) => '<span class="tag c">✓ ' + h + '</span>').join('') +
-      miss.map((m) => '<span class="tag h">✗ ' + m.k + '</span>').join('') + '</div>' +
+      miss.map((m) => '<span class="tag h">✗ ' + m.k + '</span>').join('') +
+      cl.map((c) => '<span class="tag h">⚠ ' + c + '</span>').join('') + '</div>' +
+      (cl.length ? '<div class="ts-sug" style="color:var(--hot)">⚠️ 反套路警示：' + cl.join('、') + ' 已被过度使用（research/15：反套路真实感细节更易出圈），建议换成具体情境或反预期设定。</div>' : '') +
       (miss.length ? '<div class="ts-sug"><b>改进建议：</b>补上 ' + miss.map((m) => m.k + '（+' + m.w + '分）').join('、') + '。套路参考：悬念留白 / 身份反差 / 数字锚点，标题党要"夸而不谎"。</div>'
-        : '<div class="ts-sug" style="color:var(--ok)">六维规则全命中——接下来做AB测试，用点击率数据定胜负。</div>');
+        : '<div class="ts-sug" style="color:var(--ok)">六维规则全命中——接下来做AB测试，用点击率数据定胜负。</div>') +
+      (S.ab ? '<div class="ts-sug"><b>AB测试流程：</b>' + S.ab.join('；') + '。</div>' : '');
   }
 
+  function pipeTplBlock(p) {
+    const t = (DB.pipelineTpl || []).find((x) => x.no === p.no);
+    if (!t) return '';
+    return '<div class="pd-box" style="margin-top:12px"><h5>📄 产出物模板 · 复制即用</h5>' +
+      '<div class="codebox"><div class="cb-bar"><span>' + t.t + '</span><button class="copy-btn" data-copy="' + regCopy(t.text) + '">复制</button></div><pre>' + esc(t.text) + '</pre></div></div>';
+  }
+  function pipeCkGate(no) {
+    const g = DB.checklist[no - 1];
+    if (!g) return '';
+    return '<div class="pd-box warn" style="margin-top:12px"><h5>✅ 交付物检查点 · 对照「制作清单」' + g.g + '组（' + g.items.length + '项）</h5>' +
+      '<ul>' + g.items.map((it) => '<li>' + it + '</li>').join('') + '</ul>' +
+      '<button class="btn ghost" data-go="checklist?g=' + (no - 1) + '" style="margin-top:8px;padding:6px 14px;font-size:12.5px">跳到「制作清单」勾选本阶段 →</button></div>';
+  }
   /* ---------- 流程详情 ---------- */
   function renderPipeDetail(no) {
     const p = DB.pipeline.find((x) => x.no === no) || DB.pipeline[0];
@@ -1506,6 +1573,7 @@
       '<div><div class="pd-box" style="margin-bottom:12px"><h5>推荐工具</h5><div class="pd-tools">' + tools + '</div></div>' +
       '<div class="pd-box warn" style="margin-bottom:12px"><h5>避坑指南</h5><ul>' + pits + '</ul></div>' +
       '<div class="pd-box"><h5>产出物 & 耗时</h5><ul><li>' + p.output + '</li><li>典型耗时：' + p.time + '</li></ul></div></div></div>' +
+      pipeTplBlock(p) + pipeCkGate(p.no) +
       '<div class="pd-meta"><span class="pill">阶段 <b>' + p.no + ' / 9</b></span>' +
       (p.no > 1 ? '<button class="btn ghost" data-stage="' + (p.no - 1) + '">← 上一阶段</button>' : '') +
       (p.no < 9 ? '<button class="btn ghost" data-stage="' + (p.no + 1) + '">下一阶段 →</button>' : '<button class="btn pri" data-go="tools">进入工具库 →</button>') +
@@ -1938,6 +2006,12 @@
     const eps = e.target.closest('[data-ep]');
     if (eps) { renderEp(+eps.dataset.ep); return; }
     if (e.target.closest('[data-tscore]')) { scoreTitle(); return; }
+    const em = e.target.closest('.chip[data-epmode]');
+    if (em) { epMode = +em.dataset.epmode; document.querySelectorAll('.chip[data-epmode]').forEach((c) => c.classList.toggle('on', c === em)); renderEpBar(); return; }
+    const hg = e.target.closest('.chip[data-hgi]');
+    if (hg) { const v = hg.dataset.hgi; document.querySelectorAll('#hotGrpChips .chip').forEach((c) => c.classList.toggle('on', c === hg)); document.querySelectorAll('#hotRules .rule-card').forEach((c) => { c.style.display = (v === 'all' || c.dataset.hgi === v) ? '' : 'none'; }); return; }
+    const tp = e.target.closest('[data-tpl]');
+    if (tp) { const inp = $('#titleInput'); if (inp) { inp.value = tp.dataset.tpl; scoreTitle(); } return; }
     const dc = e.target.closest('[data-doc]');
     if (dc) { renderDoc(+dc.dataset.doc); const v = $('.docs-view'); if (v) v.scrollTop = 0; return; }
     if (e.target.closest('[data-quiz-start]')) { quizStart(); return; }
