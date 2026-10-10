@@ -66,6 +66,12 @@
   /* ---------- 内联SVG图标（UI chrome 用） ---------- */
   const svgWrap = (p) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>';
   const ICONS = {
+    course: svgWrap('<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>'),
+    consistency: svgWrap('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6.2 18.5a7 7 0 0 1 11.6 0"/>'),
+    promptgen: svgWrap('<path d="m15 4 1.5 3.5L20 9l-3.5 1.5L15 14l-1.5-3.5L10 9l3.5-1.5L15 4zM6 14l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2z"/>'),
+    workflows: svgWrap('<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>'),
+    quizhub: svgWrap('<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>'),
+    studyhub: svgWrap('<circle cx="12" cy="12" r="9"/><path d="M12 3v9l6 3"/>'),
     dashboard: svgWrap('<path d="M3.5 10.6 12 3.6l8.5 7"/><path d="M5.6 9.6V20h12.8V9.6"/><path d="M10 20v-5.4h4V20"/>'),
     pipeline: svgWrap('<rect x="3.4" y="8.2" width="17.2" height="11.6" rx="2"/><path d="M3.4 8.2 5 4.8l16.4 1.5-.8 1.9"/><path d="M8.2 4.9 6.9 8M12.6 5.4l-1.3 2.8M17 6l-1.3 2.7"/>'),
     tools: svgWrap('<path d="M5.5 4v5.5M5.5 14.5V20M12 4v9M12 18v2M18.5 4v2M18.5 11v9"/><circle cx="5.5" cy="12" r="2.2"/><circle cx="12" cy="15.5" r="2.2"/><circle cx="18.5" cy="8.5" r="2.2"/>'),
@@ -94,6 +100,51 @@
     kbd: svgWrap('<rect x="2.8" y="6" width="18.4" height="12" rx="2.2"/><path d="M6.2 9.8h.1M9.4 9.8h.1M12.6 9.8h.1M15.8 9.8h.1M6.2 14.2h.1M9 14.2h6.8M17.8 9.8h.1M17.8 14.2h.1"/>'),
   };
 
+  /* ---------- 5大学习专区架构 (Learning Hubs) ---------- */
+  const HUBS = [
+    {
+      id: 'hub1',
+      name: '入门与必修',
+      desc: '从小白认知到第一部完整成片',
+      badge: '必学',
+      icon: '🎓',
+      items: ['course', 'dashboard', 'pipeline', 'firstfilm', 'hot', 'learning']
+    },
+    {
+      id: 'hub2',
+      name: '技艺与实验室',
+      desc: '角色一致性、提示词、分镜与运镜',
+      badge: '核心',
+      icon: '🎭',
+      items: ['consistency', 'promptgen', 'cameras', 'prompts', 'canvas', 'storyboard', 'framesim', 'llm']
+    },
+    {
+      id: 'hub3',
+      name: '工具与流水线',
+      desc: '57款工具生态、工业SOP与题材风向',
+      badge: '工具',
+      icon: '🏭',
+      items: ['tools', 'workflows', 'picker', 'genres', 'glossary']
+    },
+    {
+      id: 'hub4',
+      name: '商业与变现',
+      desc: '分账政策、接单报价、回本计算与沙盘',
+      badge: '变现',
+      icon: '💰',
+      items: ['monetize', 'orders', 'earnpath', 'calc', 'mcsim', 'cases']
+    },
+    {
+      id: 'hub5',
+      name: '测验与成长',
+      desc: '综合实战测评、制作清单与研究档案',
+      badge: '进阶',
+      icon: '🎯',
+      items: ['quizhub', 'studyhub', 'checklist', 'rhythm', 'docs', 'log']
+    }
+  ];
+  const ALL_KNOWN_MODULES = new Set(HUBS.flatMap((h) => h.items));
+
   /* ---------- 导航 ---------- */
   const NAV = [
     { id: 'dashboard', ico: 'dashboard', n: '总览' },
@@ -119,6 +170,11 @@
     { id: 'log', ico: 'log', n: '研究日志' },
   ];
   const SECTION_SUB = {
+    course: ['体系化通关营', '8阶段从小白认知到商业签约全流程，包含实操SOP、避坑指南、打卡记录与实操深链。'],
+    consistency: ['角色一致性实验室', '攻克换镜头变脸痛点：三视图6视角生成器、5大一致性方案横评与翻车自诊抢救。'],
+    promptgen: ['漫剧提示词工坊', '可视化拼装画风、景别、光影与神态，一键输出多引擎标准Prompt与负面提示词。'],
+    workflows: ['工业化SOP工作流库', '零门槛极速流、高性价比跑量流、工业高精流、出海全英文流——4大成熟工业级流水线。'],
+    quizhub: ['综合测验中心', '20道实战大题考核，覆盖剧本、运镜、角色一致性、视频控制、声音剪辑与商业合规。'],
     dashboard: ['漫剧行业全景速览', '一图看懂 2026 年的 AI 漫剧：市场、产能、收益与工具生态。'],
     pipeline: ['九阶段开发全流程', '立项选题 → 剧本 → 分镜 → 设定 → 图像 → 视频 → 声音 → 剪辑 → 发布，点任何一个阶段查看实操细节。'],
     tools: ['漫剧工具矩阵', '顶部为' + DB.videoCompare.length + '款视频模型选型对比表；下方覆盖剧本、图像、视频、口型、声音、剪辑、平台流水线' + (DB.toolCats.length - 1) + '大环节，版本信息截至 ' + DB.meta.updated + '。点 ☆ 可收藏常用工具。'],
@@ -148,23 +204,134 @@
   const RECENT_KEY = 'manju_recent_v1';
 
   function renderNav() {
-    $('#nav').innerHTML = NAV.map((x) =>
-      '<div class="nav-item" data-go="' + x.id + '"><span class="ico">' + (ICONS[x.ico] || x.ico) + '</span>' + x.n +
-      (x.cnt ? '<span class="cnt">' + x.cnt + '</span>' : '') + '</div>').join('');
+    const navEl = $('#nav');
+    if (!navEl) return;
+    const navMap = new Map();
+    NAV.forEach((x) => navMap.set(x.id, x));
+
+    let html = '';
+    HUBS.forEach((hub) => {
+      const hubNavItems = hub.items.map((id) => navMap.get(id)).filter(Boolean);
+      if (!hubNavItems.length) return;
+
+      const isHubActive = hubNavItems.some((x) => x.id === current);
+      html += '<div class="nav-hub' + (isHubActive ? ' hub-active' : '') + '" data-hub="' + hub.id + '">';
+      html += '  <div class="nav-hub-header">';
+      html += '    <span class="nh-icon">' + hub.icon + '</span>';
+      html += '    <span class="nh-title">' + hub.name + '</span>';
+      html += '    <span class="nh-badge">' + hub.badge + '</span>';
+      html += '  </div>';
+      html += '  <div class="nav-hub-list">';
+      hubNavItems.forEach((x) => {
+        const on = x.id === current ? ' active' : '';
+        html += '    <div class="nav-item' + on + '" data-go="' + x.id + '"' + (x.id === current ? ' aria-current="page"' : '') + '>';
+        html += '      <span class="ico">' + (ICONS[x.ico] || x.ico) + '</span>';
+        html += '      <span class="nav-txt">' + x.n + '</span>';
+        if (x.cnt) html += '<span class="cnt">' + x.cnt + '</span>';
+        html += '    </div>';
+      });
+      html += '  </div>';
+      html += '</div>';
+    });
+
+    const allHubItemIds = new Set(HUBS.flatMap((h) => h.items));
+    const extraItems = NAV.filter((x) => !allHubItemIds.has(x.id));
+    if (extraItems.length) {
+      html += '<div class="nav-hub">';
+      html += '  <div class="nav-hub-header"><span class="nh-icon">✨</span><span class="nh-title">扩展模块</span></div>';
+      html += '  <div class="nav-hub-list">';
+      extraItems.forEach((x) => {
+        const on = x.id === current ? ' active' : '';
+        html += '    <div class="nav-item' + on + '" data-go="' + x.id + '">';
+        html += '      <span class="ico">' + (ICONS[x.ico] || x.ico) + '</span>';
+        html += '      <span class="nav-txt">' + x.n + '</span>';
+        if (x.cnt) html += '<span class="cnt">' + x.cnt + '</span>';
+        html += '    </div>';
+      });
+      html += '  </div>';
+      html += '</div>';
+    }
+
+    navEl.innerHTML = html;
   }
 
-  /* ---------- 移动端底部快捷导航 ---------- */
+  /* ---------- 移动端全部分类抽屉 (Bottom Sheet Drawer) ---------- */
+  function renderMobDrawer() {
+    const body = $('#mobDrawerBody');
+    if (!body) return;
+    const navMap = new Map();
+    NAV.forEach((x) => navMap.set(x.id, x));
+
+    let html = '';
+    HUBS.forEach((hub) => {
+      const hubNavItems = hub.items.map((id) => navMap.get(id)).filter(Boolean);
+      if (!hubNavItems.length) return;
+
+      html += '<div class="md-hub-section">';
+      html += '  <div class="md-hub-head">';
+      html += '    <span class="md-hub-icon">' + hub.icon + '</span>';
+      html += '    <span class="md-hub-name">' + hub.name + '</span>';
+      html += '    <span class="md-hub-badge">' + hub.badge + '</span>';
+      html += '  </div>';
+      html += '  <div class="md-hub-grid">';
+      hubNavItems.forEach((x) => {
+        const on = x.id === current ? ' active' : '';
+        html += '    <button class="md-item-btn' + on + '" data-go="' + x.id + '">';
+        html += '      <span class="md-item-ico">' + (ICONS[x.ico] || x.ico) + '</span>';
+        html += '      <span class="md-item-name">' + x.n + '</span>';
+        if (x.cnt) html += '<span class="md-item-cnt">' + x.cnt + '</span>';
+        html += '    </button>';
+      });
+      html += '  </div>';
+      html += '</div>';
+    });
+    body.innerHTML = html;
+  }
+
+  function openMobDrawer() {
+    const drw = $('#mobDrawer');
+    const bdrop = $('#mobDrawerBackdrop');
+    if (drw) { drw.hidden = false; setTimeout(() => drw.classList.add('open'), 10); }
+    if (bdrop) { bdrop.hidden = false; setTimeout(() => bdrop.classList.add('show'), 10); }
+    renderMobDrawer();
+    document.documentElement.style.overflow = 'hidden';
+  }
+
+  function closeMobDrawer() {
+    const drw = $('#mobDrawer');
+    const bdrop = $('#mobDrawerBackdrop');
+    if (drw) { drw.classList.remove('open'); setTimeout(() => { drw.hidden = true; }, 280); }
+    if (bdrop) { bdrop.classList.remove('show'); setTimeout(() => { bdrop.hidden = true; }, 280); }
+    document.documentElement.style.overflow = '';
+  }
+
+  function toggleMobDrawer() {
+    const drw = $('#mobDrawer');
+    if (drw && drw.classList.contains('open')) closeMobDrawer();
+    else openMobDrawer();
+  }
+
+  /* ---------- 移动端底部快捷导航 (5大金刚键 + 抽屉) ---------- */
   function renderMobNav() {
     const nav = $('#mobNav');
     if (!nav) return;
-    const ids = ['dashboard', 'tools', 'cameras', 'prompts', 'calc'];
-    nav.innerHTML = ids.map((id) => {
-      const n = NAV.find((x) => x.id === id);
-      if (!n) return '';
-      return '<button class="mn-item" data-go="' + id + '">' + (ICONS[n.ico] || n.ico) + '<span>' + n.n + '</span></button>';
-    }).join('') + '<button class="mn-item" id="mnPalette" title="命令面板（Ctrl+K）">⌘<span>面板</span></button>';
-    const pal = document.getElementById('mnPalette');
-    if (pal) pal.addEventListener('click', palOpen);
+    const items = [
+      { id: 'dashboard', n: '首页', ico: ICONS.dashboard || '🏠' },
+      { id: 'course', n: '课程', ico: ICONS.course || '🎓' },
+      { id: 'consistency', n: '工坊', ico: ICONS.consistency || '🎭' },
+      { id: 'quizhub', n: '测验', ico: ICONS.quizhub || '🎯' },
+      { id: 'studyhub', n: '我的', ico: ICONS.studyhub || '📊' },
+    ];
+    let html = items.map((it) => {
+      const on = it.id === current ? ' on' : '';
+      return '<button class="mn-item' + on + '" data-go="' + it.id + '">' + it.ico + '<span>' + it.n + '</span></button>';
+    }).join('');
+
+    html += '<button class="mn-item" id="mobDrawerBtn" title="全部分类">☰<span>导航</span></button>';
+    nav.innerHTML = html;
+
+    const drwBtn = document.getElementById('mobDrawerBtn');
+    if (drwBtn) drwBtn.addEventListener('click', toggleMobDrawer);
   }
 
   /* ---------- 主题系统（auto → light → dark 三态循环） ---------- */
@@ -198,7 +365,7 @@
     const qIdx = (location.hash || '').indexOf('?');
     const urlParams = new URLSearchParams(qIdx >= 0 ? location.hash.slice(qIdx + 1) : '');
     let id = (qIdx >= 0 ? location.hash.slice(0, qIdx) : (location.hash || '')).replace(/^#\/?/, '');
-    if (!NAV.some((x) => x.id === id)) {
+    if (!NAV.some((x) => x.id === id) && !ALL_KNOWN_MODULES.has(id)) {
       const last = store.get(RECENT_KEY, [])[0];
       id = NAV.some((x) => x.id === last) ? last : 'dashboard';
       if (location.hash !== '#/' + id) history.replaceState(null, '', '#/' + id);
@@ -208,13 +375,20 @@
     let sec = document.getElementById('sec-' + id);
     if (!sec) { sec = document.createElement('section'); sec.className = 'sec'; sec.id = 'sec-' + id; $('#app').appendChild(sec); }
     if (!sec.dataset.rendered) {
-      try { const out = RENDERERS[id](); if (out !== null) sec.innerHTML = out; }
-      catch (err) {
+      if (typeof RENDERERS[id] !== 'function') {
+        sec.innerHTML = '<div style="padding:48px 24px;text-align:center;color:var(--tx3)"><span class="dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--p1);animation:pulse 1s infinite"></span> 正在加载模块「' + esc(id) + '」...</div>';
+        return;
+      }
+      try {
+        const out = RENDERERS[id]();
+        if (out !== null) sec.innerHTML = out;
+        sec.dataset.rendered = '1';
+      } catch (err) {
         console.error('render section: ' + id, err);
         sec.innerHTML = '<div class="callout red" style="margin-top:24px"><b>😮 该模块渲染出错：</b>' +
           esc(String((err && err.message) || err)) + '<br><span style="font-size:12px">数据更新过程中可能出现临时问题，刷新页面通常可恢复。</span></div>';
+        sec.dataset.rendered = '1';
       }
-      sec.dataset.rendered = '1';
     }
     sec.classList.add('show');
     $$('.nav-item').forEach((n) => {
@@ -222,7 +396,12 @@
       n.classList.toggle('active', on);
       if (on) n.setAttribute('aria-current', 'page'); else n.removeAttribute('aria-current');
     });
+    $$('.nav-hub').forEach((h) => {
+      const hasActiveChild = !!h.querySelector('.nav-item.active');
+      h.classList.toggle('hub-active', hasActiveChild);
+    });
     $$('.mn-item[data-go]').forEach((b) => b.classList.toggle('on', b.dataset.go === id));
+    closeMobDrawer();
     const sub = SECTION_SUB[id];
     if (sub && !sec.querySelector('.sec-head')) sec.insertAdjacentHTML('afterbegin',
       '<div class="sec-head"><div class="bar"></div><h2>' + sub[0] + '</h2><p>' + sub[1] + '</p></div>');
@@ -2146,6 +2325,41 @@
     DB.canvas.tips.forEach((t) => push('无限画布', '画布技巧', t, '#/canvas'));
     DB.canvas.tools.forEach((t) => push('无限画布', t.n, t.cap + ' ' + t.note, '#/canvas'));
     push('大模型', '分镜JSON与自动化', DB.llm.automation.map((a) => a.t + a.d).join(' '), '#/llm');
+    // 新增核心模块原生深度搜索索引
+    if (DB.course) {
+      DB.course.forEach((st) => {
+        push('通关课程', '阶段 ' + st.stage + ' · ' + st.title, st.desc, '#/course');
+        (st.lessons || []).forEach((ls) => {
+          push('通关课程', ls.title, ls.summary + ' ' + (ls.sop || []).join(' ') + ' ' + (ls.pitfalls || []).join(' '), '#/course');
+        });
+      });
+    }
+    if (DB.consistency && DB.consistency.methods) {
+      DB.consistency.methods.forEach((m) => {
+        push('角色一致性', m.name, m.badge + ' ' + m.pros + ' ' + m.cons + ' ' + m.bestFor, '#/consistency');
+      });
+      (DB.consistency.troubleshoots || []).forEach((t) => {
+        push('角色一致性', '翻车自诊：' + t.symptom, t.cause + ' ' + t.quickFix + ' ' + t.promptAdjustment, '#/consistency');
+      });
+    }
+    if (DB.promptStudio && DB.promptStudio.styles) {
+      DB.promptStudio.styles.forEach((s) => {
+        push('提示词工坊', '画风预设：' + s.name, s.desc + ' ' + (s.tags || []).join(' '), '#/promptgen');
+      });
+      (DB.promptStudio.recipes || []).forEach((r) => {
+        push('提示词工坊', '爆款配方：' + r.name, r.subject + ' ' + r.action + ' ' + r.bg, '#/promptgen');
+      });
+    }
+    if (DB.workflows) {
+      DB.workflows.forEach((w) => {
+        push('工业化工作流', w.name, w.tagline + ' ' + (w.steps || []).map((s) => s.phase + ' ' + s.action).join(' '), '#/workflows');
+      });
+    }
+    if (DB.quizComprehensive) {
+      DB.quizComprehensive.forEach((q, idx) => {
+        push('综合测验', '大考第 ' + (idx + 1) + ' 题 · ' + q.category, q.q + ' ' + q.analysis, '#/quizhub');
+      });
+    }
     // 自注册模块（window.MJ.addModule）的搜索条目：SEARCH_IDX 每次全量重建后必须重放，否则索引丢失
     MJ.modules.forEach((m) => {
       if (Array.isArray(m.search)) m.search.forEach((it) => push(m.name, it.tit, it.txt, '#/' + m.id));
@@ -2173,6 +2387,11 @@
   /* ---------- 命令面板（Ctrl+K） ---------- */
   const cpOverlayEl = () => $('#cpOverlay');
   const palActs = [
+    { ico: 'course', n: '🎓 打开「体系化通关营」', sub: '课程 · 8阶段递进', act: () => { location.hash = '#/course'; } },
+    { ico: 'consistency', n: '🎭 打开「角色一致性实验室」', sub: '工坊 · 三视图/5大方案', act: () => { location.hash = '#/consistency'; } },
+    { ico: 'promptgen', n: '🪄 打开「漫剧提示词工坊」', sub: '工坊 · 积木拼装', act: () => { location.hash = '#/promptgen'; } },
+    { ico: 'workflows', n: '🏭 打开「工业化SOP工作流」', sub: '流水线 · 4大SOP', act: () => { location.hash = '#/workflows'; } },
+    { ico: 'quizhub', n: '🎯 打开「综合测验中心」', sub: '测验 · 20题全能大考', act: () => { location.hash = '#/quizhub'; } },
     { ico: 'theme', n: '切换明暗主题', sub: '外观 · 自动→浅→深', act: () => cycleTheme() },
     { ico: 'dice', n: '随机抽一条提示词灵感', sub: '提示词库', act: () => { location.hash = '#/prompts'; setTimeout(randomInsp, 220); } },
     { ico: 'star', n: '查看收藏的工具', sub: '工具库', act: () => { location.hash = '#/tools'; setTimeout(() => { if ($('#toolGrid')) renderTools('__fav'); }, 220); } },
@@ -2287,8 +2506,12 @@
       }
       return;
     }
-    const cp = e.target.closest('[data-copy]');
-    if (cp) { doCopy(+cp.dataset.copy, cp); return; }
+    const cp = e.target.closest('[data-copy], [data-copy-id]');
+    if (cp) {
+      const copyVal = cp.dataset.copy != null ? cp.dataset.copy : cp.dataset.copyId;
+      doCopy(+copyVal, cp);
+      return;
+    }
     const fv = e.target.closest('[data-fav]');
     if (fv) { toggleFav(fv.dataset.fav, fv); return; }
     const ti = e.target.closest('[data-toc]');
@@ -2426,6 +2649,8 @@
     if (e.key === 'Escape') {
       const ov = cpOverlayEl();
       if (ov && !ov.hidden) { palClose(); return; }
+      const drw = $('#mobDrawer');
+      if (drw && drw.classList.contains('open')) { closeMobDrawer(); return; }
       if (typing) { document.activeElement.blur(); $('#searchDrop').classList.remove('show'); }
       return;
     }
@@ -2447,10 +2672,47 @@
   $('#paletteHint').addEventListener('click', palOpen);
   $('#cpInput').addEventListener('input', (e) => palSearch(e.target.value));
   $('#menuBtn').addEventListener('click', () => {
-    const open = $('#sidebar').classList.toggle('open');
-    $('#backdrop').classList.toggle('show', open);
+    if (window.innerWidth <= 960) {
+      toggleMobDrawer();
+    } else {
+      const open = $('#sidebar').classList.toggle('open');
+      $('#backdrop').classList.toggle('show', open);
+    }
   });
   $('#backdrop').addEventListener('click', () => { $('#sidebar').classList.remove('open'); $('#backdrop').classList.remove('show'); });
+  const mobBdrop = document.getElementById('mobDrawerBackdrop');
+  if (mobBdrop) mobBdrop.addEventListener('click', closeMobDrawer);
+  const mobCloseBtn = document.getElementById('mobDrawerClose');
+  if (mobCloseBtn) mobCloseBtn.addEventListener('click', closeMobDrawer);
+
+  /* 移动端全部分类抽屉：下拉手势滑动关闭 */
+  (function () {
+    const drw = document.getElementById('mobDrawer');
+    if (!drw) return;
+    let startY = 0, currentY = 0, isDragging = false;
+    drw.addEventListener('touchstart', (e) => {
+      const body = document.getElementById('mobDrawerBody');
+      if (body && body.scrollTop > 0) return;
+      startY = e.touches[0].clientY;
+      currentY = startY;
+      isDragging = true;
+    }, { passive: true });
+    drw.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      currentY = e.touches[0].clientY;
+      const diff = currentY - startY;
+      if (diff > 0) {
+        drw.style.transform = 'translateY(' + diff + 'px)';
+      }
+    }, { passive: true });
+    drw.addEventListener('touchend', () => {
+      if (!isDragging) return;
+      isDragging = false;
+      const diff = currentY - startY;
+      drw.style.transform = '';
+      if (diff > 80) closeMobDrawer();
+    }, { passive: true });
+  })();
   $('#topBtn').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
   $('#tocBtn').addEventListener('click', () => $('#tocPanel').classList.toggle('show'));
   window.addEventListener('scroll', onScroll, { passive: true });
@@ -2495,12 +2757,16 @@
     if (Array.isArray(mod.sub)) SECTION_SUB[mod.id] = mod.sub;
     if (Array.isArray(mod.search)) mod.search.forEach((it) =>
       SEARCH_IDX.push({ sec: mod.name, tit: it.tit, txt: String(it.txt).replace(/<[^>]+>/g, ''), go: '#/' + mod.id }));
-    if (!document.getElementById('sec-' + mod.id)) {
-      const s = document.createElement('section'); s.className = 'sec'; s.id = 'sec-' + mod.id; $('#app').appendChild(s);
+    let sec = document.getElementById('sec-' + mod.id);
+    if (!sec) {
+      sec = document.createElement('section'); sec.className = 'sec'; sec.id = 'sec-' + mod.id; $('#app').appendChild(sec);
     }
+    delete sec.dataset.rendered;
     renderNav();
+    renderMobNav();
+    renderMobDrawer();
     MJ_ON.add(mod.id);
-    if (mjReady && current === mod.id) route();
+    if (current === mod.id) route();
   }
   function addModule(mod) {
     if (!mod || typeof mod !== 'object' || typeof mod.id !== 'string' || !mod.id ||
@@ -2509,9 +2775,8 @@
       console.warn('[MJ] addModule 拒绝：至少需要 id / icon / name（非空字符串）与 render(el, ctx)（函数）');
       return false;
     }
-    if (NAV.some((x) => x.id === mod.id) || Object.prototype.hasOwnProperty.call(RENDERERS, mod.id) ||
-      MJ.modules.some((m) => m.id === mod.id)) {
-      console.warn('[MJ] addModule 拒绝：id「' + mod.id + '」已存在于 NAV / RENDERERS');
+    if (Object.prototype.hasOwnProperty.call(RENDERERS, mod.id) || MJ.modules.some((m) => m.id === mod.id)) {
+      console.warn('[MJ] addModule 拒绝：id「' + mod.id + '」已存在于 RENDERERS 或 MJ.modules');
       return false;
     }
     MJ.modules.push(mod);
@@ -2519,7 +2784,7 @@
     try { mjInstall(mod); } catch (err) { console.warn('[MJ] 安装模块「' + mod.id + '」失败：', err); return false; }
     return true;
   }
-  window.MJ = {
+  const MJ = window.MJ = {
     ready: false,
     DB: window.DB,
     esc: esc,

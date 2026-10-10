@@ -29,7 +29,7 @@
   document.documentElement.dataset.theme=dark?'dark':'light';
 }catch(e){}})();
 </script>
-<link rel="stylesheet" href="css/style.css?v=29">
+<link rel="stylesheet" href="css/style.css?v=32">
 </head>
 <body>
 <a class="skip" href="#app">跳到主内容</a>
@@ -102,15 +102,32 @@
 </div>
 <button class="top-btn" id="topBtn" title="回到顶部" aria-label="回到顶部">↑</button>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- 移动端全部分类抽屉 (Bottom Sheet Drawer) -->
+<div class="mob-drawer-backdrop" id="mobDrawerBackdrop" hidden></div>
+<div class="mob-drawer" id="mobDrawer" aria-modal="true" role="dialog" hidden>
+  <div class="md-handle-bar"><div class="md-handle"></div></div>
+  <div class="md-head">
+    <div class="md-title"><b>全站学习导航</b><span>5 大专区 · 31 个精选模块</span></div>
+    <button class="md-close" id="mobDrawerClose" aria-label="关闭导航抽屉">✕</button>
+  </div>
+  <div class="md-body" id="mobDrawerBody"></div>
+</div>
+
 <noscript>本平台需要启用 JavaScript 才能浏览。</noscript>
-<script src="js/data.js?v=29"></script>
-<script src="js/research-data.js?v=29"></script>
-<script src="js/app.js?v=29"></script>
-<script src="js/feat-mcsim.js?v=29"></script>
-<script src="js/feat-storyboard.js?v=29"></script>
-<script src="js/feat-studyhub.js?v=29"></script>
-<script src="js/feat-framesim.js?v=29"></script>
-<script src="js/feat-picker.js?v=29"></script>
+<script src="js/data.js?v=32"></script>
+<script src="js/research-data.js?v=32"></script>
+<script src="js/app.js?v=32"></script>
+<script src="js/feat-course.js?v=32"></script>
+<script src="js/feat-consistency.js?v=32"></script>
+<script src="js/feat-promptgen.js?v=32"></script>
+<script src="js/feat-workflows.js?v=32"></script>
+<script src="js/feat-quizhub.js?v=32"></script>
+<script src="js/feat-mcsim.js?v=32"></script>
+<script src="js/feat-storyboard.js?v=32"></script>
+<script src="js/feat-studyhub.js?v=32"></script>
+<script src="js/feat-framesim.js?v=32"></script>
+<script src="js/feat-picker.js?v=32"></script>
 <script>
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === '127.0.0.1' || location.hostname === 'localhost')) {
   window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function(){}); });

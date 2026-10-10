@@ -27,6 +27,8 @@
     RECENT: 'manju_recent_v1',
     SNAP: 'manju_studyhub_snap_v1', /* 本模块专属：手动校对时间戳 */
     HIDE: 'manju_studyhub_hide_v1', /* 本模块专属：已隐藏建议 ruleId 表 */
+    COURSE: 'manju_course_progress_v1', /* 通关课程打卡记录 */
+    QUIZHUB: 'manju_quiz_comprehensive_best', /* 综合大考最佳分 */
   };
   /* 练习满分基准：轮次题量与 app.js 各练习器 slice 口径一致（8/5/8），
      对照题库长度取小者——题库扩充到不足一轮时自动降档 */
@@ -49,6 +51,8 @@
     calc: '互动计算器', cases: '案例拆解', rhythm: '节奏练习',
     checklist: '制作清单', glossary: '行业术语表', docs: '研究档案',
     log: '研究日志', studyhub: '学习仪表盘',
+    course: '通关课程', consistency: '一致性实验室', promptgen: '提示词工坊',
+    workflows: '工业化工作流', quizhub: '测验中心',
   };
 
   var CTX = null;     /* render 时捕获的 window.MJ */
@@ -114,13 +118,30 @@
     const favs = favStats();
     const recent = (st.get(K.RECENT, []) || [])
       .filter((x) => typeof x === 'string').slice(0, 6);
+    /* 通关课程打卡进度：25 课时 */
+    const courseSt = st.get(K.COURSE, {}) || {};
+    let courseDone = 0, courseTotal = 0;
+    (DB.course || []).forEach((stg) => {
+      (stg.lessons || []).forEach((ls) => {
+        courseTotal++;
+        if (courseSt[ls.id]) courseDone++;
+      });
+    });
+    const course = { done: courseDone, total: courseTotal, pct: pctOf(courseDone, courseTotal) };
+
+    /* 综合大考与制作人认证 */
+    const qhBest = num0(st.get(K.QUIZHUB, 0));
+    const qhCertified = qhBest >= 80;
+    const qh = { best: qhBest, max: 100, pct: qhBest, certified: qhCertified };
+
     const overall = Math.round((ck.pct + exAvg) / 2);
     const emptyAll = ck.done === 0 && quiz.best === 0 && rt.best === 0 && ft.best === 0 &&
-      od.done === 0 && ff.done === 0 && favs.all === 0;
-    return { ck, od, ff, quiz, rt, ft, exAvg, overall, favs, recent, emptyAll };
+      od.done === 0 && ff.done === 0 && favs.all === 0 && courseDone === 0 && qhBest === 0;
+    return { ck, od, ff, quiz, rt, ft, exAvg, overall, favs, recent, emptyAll, course, qh };
   }
   function sigOf(S) {
     return [S.ck.done, S.quiz.best, S.rt.best, S.ft.best, S.od.done, S.ff.done,
+      S.course.done, S.qh.best,
       S.favs.tools.n, S.favs.cams.n, S.favs.prompts.n, S.recent.join('|')].join('~');
   }
 
@@ -188,6 +209,16 @@
       return { t: '先囤装备：收藏夹还是空的',
         d: '逛「工具库」把趁手的工具点亮 ☆，运镜与提示词同理——收藏后拍摄/写分镜时一键调出，不用每次全库翻。',
         go: 'tools', goLab: '去「工具库」收藏 →' }; } },
+    { id: 'course-not-started', pr: 82, make(S) {
+      if (S.course.done > 0) return null;
+      return { t: '通关课程待开启：从 S1 阶段开始',
+        d: '8 阶段 25 节通关营课程打卡进度为 0。建议按照工业流程从 S1 前置认知开始，掌握网文拆书、角色一致性到商业变现。',
+        go: 'course', goLab: '去「通关课程」→' }; } },
+    { id: 'quizhub-not-passed', pr: 72, make(S) {
+      if (S.qh.certified) return null;
+      return { t: S.qh.best === 0 ? '综合实战大考：考取制作人认证' : '大考当前 ' + S.qh.best + ' 分：冲刺 80 分认证',
+        d: '全流程综合实战大考包含 20 道大题，考核合格（80分以上）即可获得「AI 漫剧合格制作人」称号与认证勋章。',
+        go: 'quizhub', goLab: '去参加大考 →' }; } },
     { id: 'all-green', pr: 20, make(S) {
       if (S.overall < 90) return null;
       return { t: '全线飘绿：进入对表与系列化',
@@ -295,9 +326,17 @@
       { k: 'quiz', ico: '🎯', n: '运镜速配挑战', go: 'cameras?quiz=1', goLab: '去练习 →' },
       { k: 'rt', ico: '🥁', n: '分镜节奏练习', go: 'rhythm', goLab: '去练习 →' },
       { k: 'ft', ico: '🎞️', n: '首尾帧挑战', go: 'canvas', goLab: '去练习 →' },
+      { k: 'qh', ico: '🏆', n: '全流程综合大考', go: 'quizhub', goLab: '去大考 →' },
     ];
-    return '<h4 class="block-t">练习战绩 <span class="sub">三个练习器的本地最佳分 · 星级：100%=★5 / 85%=★4 / 70%=★3 / 50%=★2</span></h4>' +
-      '<div class="grid g3">' + defs.map((d) => exCard(d, S)).join('') + '</div>';
+    let badgeHtml = '';
+    if (S.qh.certified) {
+      badgeHtml = '<div class="callout green" style="margin-top:14px"><b>🏆 AI 漫剧合格制作人认证：已解锁！</b>综合大考得分 ' + S.qh.best + ' 分，实力达到工业交付标准。</div>';
+    } else if (S.qh.best > 0) {
+      badgeHtml = '<div class="callout blue" style="margin-top:14px"><b>📝 综合大考历史成绩：' + S.qh.best + ' 分</b>（达到 80 分可解锁制作人专属勋章）。<button class="btn ghost sh-sm" data-go="quizhub" style="margin-left:8px">去冲刺 80 分 →</button></div>';
+    }
+    return '<h4 class="block-t">练习与考核战绩 <span class="sub">三大专项练习与 20 题全能大考战绩 · 满分或 80+ 解锁勋章</span></h4>' +
+      '<div class="grid g4">' + defs.map((d) => exCard(d, S)).join('') + '</div>' +
+      badgeHtml;
   }
   function favRow(name, d, go) {
     return '<div class="bar-row sh-fav-row" data-go="' + go + '" title="点击打开「' + name + '」">' +
@@ -322,8 +361,9 @@
       '<div class="sh-btns"><button class="btn ghost sh-sm" data-go="' + go + '">去推进 →</button></div></div>';
   }
   function projHtml(S) {
-    return '<h4 class="block-t">项目进度 <span class="sub">三套进度自查独立保存 · 复用制作清单进度条样式</span></h4>' +
-      '<div class="grid g3">' +
+    return '<h4 class="block-t">项目与通关进度 <span class="sub">通关课程与三套项目清单独立保存 · 点击可直达推进</span></h4>' +
+      '<div class="grid g4">' +
+      projCard('通关课程', '8 阶段递进实战课程', S.course, 'course') +
       projCard('制作清单', '正式项目逐项自查', S.ck, 'checklist') +
       projCard('第一部成片', '7 天出片闭环', S.ff, 'firstfilm') +
       projCard('接单实操', '14 天接单行动计划', S.od, 'orders') +
@@ -341,6 +381,8 @@
     return [
       '【我的学习状态 · 漫剧研究学习平台】',
       '综合进度 ' + S.overall + '%（制作清单 ' + S.ck.pct + '% ｜ 三练习均值 ' + S.exAvg + '%）',
+      '· 通关课程 ' + S.course.done + '/' + S.course.total + ' 课时已打卡 (' + S.course.pct + '%)',
+      '· 综合大考 ' + S.qh.best + ' 分' + (S.qh.certified ? ' (已获制作人认证 🏆)' : ''),
       '· 制作清单 ' + S.ck.done + '/' + S.ck.total + ' 项',
       '· 第一部成片 ' + S.ff.done + '/' + S.ff.total + ' 项',
       '· 接单实操 ' + S.od.done + '/' + S.od.total + ' 项',

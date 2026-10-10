@@ -2848,5 +2848,1990 @@ log: [
 
 };
 /* 浏览器侧显式挂载：顶层 const 声明不进入 window，挂载后 window.MJ.DB（=window.DB）与 feat 外挂模块才能取到数据层 */
+
+/* ============================================================
+   新增高价值模块核心数据集（v3.2 体系化升级）：
+   DB.course, DB.consistency, DB.promptStudio, DB.workflows, DB.quizComprehensive
+   ============================================================ */
+DB.course = [
+  {
+    "stage": 1,
+    "id": "stage-1",
+    "title": "前置必修 · 漫剧行业认知与商业全貌",
+    "desc": "了解 AI 漫剧的核心本质、市场红利真相、软硬件配置与单兵/团队启动姿势，建立理性商业预期。",
+    "icon": "🧭",
+    "lessons": [
+      {
+        "id": "c1-1",
+        "title": "【行业真相】AI 漫剧定义与 2026 市场红利全景",
+        "duration": "15 分钟",
+        "level": "小白必修",
+        "summary": "剖析 AI 漫剧与传统真人短剧、动态漫的本质区别。2026 年微短剧+漫剧总产值超 1000 亿，AI 漫剧观看人群超 6 亿。认清 0.47% 破亿率与 1.3% 回本率的客观规律，拒绝被割韭菜。",
+        "sop": [
+          "对比真人短剧（高拍摄成本、强演员依赖）与 AI 漫剧（低边际成本、天马行空玄幻科幻视觉上限）的商业护城河。",
+          "梳理红果免费漫剧（月活超3900万）、快手星芒、抖音漫剧频道的入驻与分账逻辑。",
+          "建立单集 98 秒、全剧 60-80 集的标准漫剧体量认知，明确工业化稳定更新的底层逻辑。"
+        ],
+        "pitfalls": [
+          "切忌轻信“一人一部手机、一键生成月入十万”的营销话术，AI 漫剧是重工业手艺活。",
+          "不要用做院线动画的慢节奏做短剧漫剧，短剧核心是“黄金3秒抓人与高密度爽点情绪价值”。"
+        ],
+        "deepLinks": [
+          {
+            "n": "查看行业全景速览",
+            "go": "dashboard"
+          },
+          {
+            "n": "用互动计算器算三本账",
+            "go": "calc"
+          }
+        ],
+        "homework": "完成「选型向导」6 步问答，明确自己的硬件预算、主力题材与首选发布平台。"
+      },
+      {
+        "id": "c1-2",
+        "title": "【成本核算】单集 15-80 元算力与回本概率模型",
+        "duration": "18 分钟",
+        "level": "商业必备",
+        "summary": "详解 2026 年单集漫剧的算力成本演变（从早期 17 元演进至 80-100 元精品线）。解析万播收益从 30-100 元通缩至 5-30 元背后的精细化运营算法。",
+        "sop": [
+          "核算单集固定成本：大模型剧本 token 费 + 生图算力点数 + 视频生成点数 + TTS 配音字数。",
+          "区分“跑量流（15-30元/集）”与“精品高精流（80-150元/集）”的投入产出比（ROI）平衡点。",
+          "运用盈亏平衡公式：单片回本所需保底播放量 = 总投入成本 ÷ (有效万播单价 / 10000)。"
+        ],
+        "pitfalls": [
+          "忽略视频模型抽卡废片率（通常为 30%-50%），预算没有预留重试算力余量。",
+          "盲目堆砌 4K 旗舰模型，导致单集成本突破 200 元而收益无法覆盖。"
+        ],
+        "deepLinks": [
+          {
+            "n": "蒙特卡洛 2000 次风险沙盘",
+            "go": "mcsim"
+          },
+          {
+            "n": "收益决策树对表",
+            "go": "earnpath"
+          }
+        ],
+        "homework": "打开「互动计算器」，输入预计制作集数（如60集），算出自己项目的保底回本播放量。"
+      },
+      {
+        "id": "c1-3",
+        "title": "【团队与硬件】单兵作战 vs 3人工作室配置方案",
+        "duration": "20 分钟",
+        "level": "实战准备",
+        "summary": "从个人业余兼职、自由创作者到 3 人商业工作室的组织架构与软硬件选型。本地 RTX 显卡与纯云端 SaaS 方案的优劣取舍。",
+        "sop": [
+          "单兵全栈路线：配备 1 台 RTX 4070 12G+ 主机或纯云端（即梦Web + 可灵Web + 剪映），一人通吃剧本、分镜、生成与剪辑。",
+          "3人工业化分工：编剧分镜师（剧本拆书+分镜脚本）+ AI美术师（角色一致性+生图+视频排队）+ 后期特效师（音效剪辑+口型+调色）。",
+          "搭建飞书/Notion 资产看板与 NAS/百度网盘云端素材共享库，统一文件命名规范。"
+        ],
+        "pitfalls": [
+          "显卡显存低于 8G 尝试本地跑 SD 导致经常 CUDA Out of Memory 显存溢出。",
+          "团队缺乏统筹标准，导致每个镜头人物画风、色调脱节，后期拼合极其违和。"
+        ],
+        "deepLinks": [
+          {
+            "n": "57款工具生态库",
+            "go": "tools"
+          },
+          {
+            "n": "接单实操包",
+            "go": "orders"
+          }
+        ],
+        "homework": "按照教程整理好自己的本地制作文件夹结构，包括：01_剧本、02_角色资产、03_分镜图、04_视频片段、05_音频工程、06_最终导出。"
+      },
+      {
+        "id": "c1-4",
+        "title": "【九阶段全景】从网文选题到平台分账的闭环跑通",
+        "duration": "22 分钟",
+        "level": "流程骨架",
+        "summary": "全景串讲九阶段开发流水线：立项选题 → 剧本转化 → 视觉分镜 → 角色设定 → 批量生图 → 动态生频 → 声音工程 → 剪辑特效 → 审核发布。",
+        "sop": [
+          "阶段 1-3 预生产（占总耗时 35%）：选题把关、剧本浓缩、分镜节奏设计。",
+          "阶段 4-6 生产期（占总耗时 40%）：角色资产固化、Prompt 生图、视频关键帧控制。",
+          "阶段 7-9 后期交付（占总耗时 25%）：TTS 配音、音效 BGM 卡点、字幕排版与三门票备案。"
+        ],
+        "pitfalls": [
+          "没有做剧本和分镜就直接冲去生视频，导致镜头间毫无故事关联，废片率 100%。",
+          "忽视平台合规审查，辛辛苦苦成片后因无 AI 标识或版权授权被直接下架。"
+        ],
+        "deepLinks": [
+          {
+            "n": "九阶段流程交互分解",
+            "go": "pipeline"
+          },
+          {
+            "n": "「第一部成片」7天闭环",
+            "go": "firstfilm"
+          }
+        ],
+        "homework": "通读「九阶段开发全流程」，并在「制作清单」中查看对应自查点。"
+      }
+    ]
+  },
+  {
+    "stage": 2,
+    "id": "stage-2",
+    "title": "网文小说改编与剧本工坊",
+    "desc": "掌握千万字长篇网文精准提炼为单集 98 秒短剧剧本的核心方法，玩转黄金 3 秒、反转卡点与大模型提示词工程。",
+    "icon": "📜",
+    "lessons": [
+      {
+        "id": "c2-1",
+        "title": "【网文拆书 SOP】千万字长篇如何精准提炼单集 98 秒",
+        "duration": "25 分钟",
+        "level": "编剧核心",
+        "summary": "网文原著每章通常 2000-3000 字，如何删繁就简提炼为单集仅 10-12 个镜头、98 秒内完成情绪峰值与断章留钩。",
+        "sop": [
+          "第一步（定位主冲突）：提取章节核心情绪爽点（打脸/夺宝/退婚/身份曝光/生死危机），剔除一切支线冗余。",
+          "第二步（砍掉70%描写）：删去所有心理独白与环境铺垫，将原著形容词转化为角色可执行的动作与台词。",
+          "第三步（时间轴切片）：按照 98 秒结构切分为 6 大阶段（0-3s黄金钩子、3-15s冲突建立、15-45s递进铺垫、45-60s黄金反转、60-80s爽点释放、80-98s卡点留钩）。"
+        ],
+        "pitfalls": [
+          "舍不得删原著细节，导致前 30 秒还在介绍背景，观众在第 2 秒就已经划走。",
+          "对话过于密集，忽视了漫剧需要留白给视觉特效和画面冲击力。"
+        ],
+        "deepLinks": [
+          {
+            "n": "爆款心法与 98 秒拆解",
+            "go": "hot"
+          },
+          {
+            "n": "分镜节奏练习器",
+            "go": "rhythm"
+          }
+        ],
+        "homework": "找一段 2000 字网文高潮段落，按照 98 秒 6 阶段结构压缩为 10 句话的精炼剧本。"
+      },
+      {
+        "id": "c2-2",
+        "title": "【黄金3秒与反转】开局抓人钩子与反转卡点密度法则",
+        "duration": "20 分钟",
+        "level": "爆款法则",
+        "summary": "短视频平台的生死线在第 1-3 秒。学会“视觉奇观开场”、“身份悬念开场”、“极致屈辱开场”三大钩子模型，以及单集 2 次以上反转的卡点技巧。",
+        "sop": [
+          "视觉奇观钩子：开局第 1 帧就是万剑归宗、巨龙俯冲或刀剑抵在咽喉的特写镜头。",
+          "极致屈辱钩子：开局主角被踩在脚下/被当众退婚/受尽冷眼，瞬间激发观众同理心与期待逆袭情绪。",
+          "反转卡点设计：在第 45-60 秒设计假死/反杀/大人物下跪认主，在第 85-98 秒抛出更大危机戛然而止。"
+        ],
+        "pitfalls": [
+          "前 3 秒黑屏或淡入淡出，浪费黄金曝光时间（必须开局即高潮）。",
+          "反转过于生硬缺乏铺垫，观众产生荒谬出戏感。"
+        ],
+        "deepLinks": [
+          {
+            "n": "题材风向库",
+            "go": "genres"
+          },
+          {
+            "n": "经典案例拆解",
+            "go": "cases"
+          }
+        ],
+        "homework": "为同一场“主角退婚”剧情，设计 3 种完全不同的前 3 秒开局分镜。"
+      },
+      {
+        "id": "c2-3",
+        "title": "【LLM 编剧提示词】喂入大模型批量生成结构化分镜 JSON",
+        "duration": "22 分钟",
+        "level": "生产力倍增",
+        "summary": "利用 DeepSeek-R1、Claude 3.5 Sonnet 或 ChatGPT 构建自动化分镜编剧智能体，一次性输出符合漫剧工业标准的规范 JSON。",
+        "sop": [
+          "设定系统 Prompt 角色：专业短剧编剧导师与分镜总监，掌握 98 秒短剧节奏模型。",
+          "约束输出格式：严格输出包含 shot_id, camera_move, duration_sec, visual_prompt, dialogue, sound_effect 的 JSON 数组。",
+          "批量跑通工作流：输入单章小说大纲 → 输出 10 镜分镜表 → 自动校验总时长是否在 90-100 秒之间。"
+        ],
+        "pitfalls": [
+          "Prompt 约束过弱，大模型输出大量旁白长句而缺少视觉画面描述词。",
+          "没有限制单镜头时长，生成出 15 秒单镜头导致视频模型生成抽搐。"
+        ],
+        "deepLinks": [
+          {
+            "n": "大模型在漫剧中的用法",
+            "go": "llm"
+          },
+          {
+            "n": "分镜板工作台",
+            "go": "storyboard"
+          }
+        ],
+        "homework": "复制平台提供的大模型分镜 JSON 模板，在 DeepSeek 或 ChatGPT 中成功跑通一集完整分镜。"
+      }
+    ]
+  },
+  {
+    "stage": 3,
+    "id": "stage-3",
+    "title": "角色设定与视觉资产锚定",
+    "desc": "攻克 AI 漫剧“换镜头就换脸、衣服发型突变”的头号行业顽疾，建立标准化多视角角色三视图与 Seed 资产卡。",
+    "icon": "🎭",
+    "lessons": [
+      {
+        "id": "c3-1",
+        "title": "【三视图生成法】构建多视角标准化角色立绘",
+        "duration": "28 分钟",
+        "level": "视觉基石",
+        "summary": "掌握正面立绘、45度微侧面、正侧面肖像、背面背影、极致特写 5 视角标准 Prompt 构建，提取角色不可变视觉 DNA。",
+        "sop": [
+          "定义角色视觉 DNA：发型发色（如银白长发微卷）、眼部瞳色（猩红血瞳）、独特特征（左眼角金色泪痣）、专属服饰（墨黑龙纹锦袍）。",
+          "构建三视图生成提示词：加入 character sheet, multiple views, front view, side view, back view, white clean background 等关键词。",
+          "导出与切图归档：将生成的清晰三视图切成单张高分辨率透明背景 PNG，作为后续垫图与 reference 的基准母图。"
+        ],
+        "pitfalls": [
+          "提示词过于简略（仅写“帅哥/美女”），AI 每次生图随机发挥导致人物完全不同。",
+          "在生成三视图时带有复杂背景，导致后续垫图时背景杂物污染画面。"
+        ],
+        "deepLinks": [
+          {
+            "n": "角色一致性实验室",
+            "go": "consistency"
+          },
+          {
+            "n": "提示词工坊",
+            "go": "promptgen"
+          }
+        ],
+        "homework": "使用「角色一致性实验室」的三视图生成器，为你剧本的主角生成一组中英文标准 Prompt。"
+      },
+      {
+        "id": "c3-2",
+        "title": "【5大一致性方案】即梦智能体/--cref/LoRA/InstantID/垫图对比",
+        "duration": "30 分钟",
+        "level": "技术核心",
+        "summary": "全景评测当前行业 5 大角色一致性方案的优劣、成本、算力门槛与适用场景，助你选出最适合自己的武器。",
+        "sop": [
+          "方案 1：即梦/剪映智能体角色库（新手零门槛，官方智能体一键关联角色）。",
+          "方案 2：Midjourney --cref [URL] + --cw [0-100]（--cw 100锁定衣服脸，--cw 0仅锁定脸部）。",
+          "方案 3：LiblibAI / ComfyUI 训练专属 LoRA（50张图低成本定制，工作室必备）。",
+          "方案 4：InstantID / FaceID 免训练换脸流（写实人物单图特征迁移）。",
+          "方案 5：无限画布尾帧连环垫图法（镜头间视觉过渡最自然）。"
+        ],
+        "pitfalls": [
+          "盲目崇拜 LoRA 训练，新手在尚未跑通流程前耗费几天时间配环境训坏模型。",
+          "使用 Midjourney --cref 时参考图分辨率太低或光影过曝，导致脸部死黑。"
+        ],
+        "deepLinks": [
+          {
+            "n": "无限画布工作流",
+            "go": "canvas"
+          },
+          {
+            "n": "选型向导",
+            "go": "picker"
+          }
+        ],
+        "homework": "分别尝试一次 Midjourney --cref 与即梦智能体角色库，对比两者的生成一致性。"
+      },
+      {
+        "id": "c3-3",
+        "title": "【角色翻车抢救】换脸、多指、衣服穿帮的 Inpainting 实操",
+        "duration": "22 分钟",
+        "level": "实战排障",
+        "summary": "AI 生图必然存在 20%-30% 的瑕疵率。掌握局部重绘（Inpainting）、涂抹消除、无损放大与垫图修复的核心救场手段。",
+        "sop": [
+          "手部畸变/多指修复：导入即梦或 SD WebUI 局部重绘，涂抹手部区域，正向词写 5 fingers, realistic hands, perfect anatomy，重绘幅度设为 0.45-0.6。",
+          "脸部五官变形：用原角色的高清特写母图进行局部换脸贴图，并降低羽化边缘透明度进行微调。",
+          "服装颜色/饰品穿帮：局部涂抹穿帮区域，在重绘提示词中强化服装固定词。"
+        ],
+        "pitfalls": [
+          "重绘幅度（Denoising Strength）开得太高（>0.8），导致涂抹区域周围完全断裂融不进背景。",
+          "遇到微小瑕疵就整张废弃重新抽卡，浪费大量算力点数。"
+        ],
+        "deepLinks": [
+          {
+            "n": "角色翻车自诊器",
+            "go": "consistency"
+          },
+          {
+            "n": "制作自查清单",
+            "go": "checklist"
+          }
+        ],
+        "homework": "在一张有手部或脸部小瑕疵的生成图上，使用局部重绘工具完成一次成功修复。"
+      }
+    ]
+  },
+  {
+    "stage": 4,
+    "id": "stage-4",
+    "title": "专业分镜设计与画布实操",
+    "desc": "掌握工业级 11 字段分镜脚本规范，熟练运用即梦智能画布、剪映 Hub 节点走线，设计极具呼吸感的景别节奏与尾帧链。",
+    "icon": "🎬",
+    "lessons": [
+      {
+        "id": "c4-1",
+        "title": "【分镜表 11 字段】工业级漫剧分镜脚本规范",
+        "duration": "20 分钟",
+        "level": "工业标准",
+        "summary": "学习正规漫剧制作组通用的 11 字段分镜表：镜号、景别、运镜、时长、画面描述、角色动作、台词内容、配音情感、音效、BGM、转场方式。",
+        "sop": [
+          "逐字段对齐：明确每个镜头的视觉目的（是交代环境、展示动作还是释放情绪峰值）。",
+          "严格控制单镜头时长：一般镜头 2-4 秒，慢动作高潮镜头不超过 5 秒，快节奏打斗切镜 1-2 秒。",
+          "声画对位：确保台词语速和动作帧长度精确匹配，避免音画不同步。"
+        ],
+        "pitfalls": [
+          "分镜画面描述过于抽象（如“主角很生气”），没有写出具体的视觉动作（如“双眼猩红、右拳猛砸碎石地面”）。",
+          "连续 5 个镜头使用同一景别（如全都是半身中景），导致视觉极其疲劳单调。"
+        ],
+        "deepLinks": [
+          {
+            "n": "分镜板工作台",
+            "go": "storyboard"
+          },
+          {
+            "n": "大模型编剧模板",
+            "go": "llm"
+          }
+        ],
+        "homework": "在「分镜板工作台」中编辑一套 10 镜分镜，检查时长是否刚好在 98 秒左右。"
+      },
+      {
+        "id": "c4-2",
+        "title": "【无限画布连绘】即梦/剪映 Hub 节点走线与场景连贯技巧",
+        "duration": "26 分钟",
+        "level": "实操进阶",
+        "summary": "无限画布是漫剧生产力革命。学会利用节点连接、母图衍生、图生图连绘与扩图，实现场景空间连贯不穿帮。",
+        "sop": [
+          "场景母图确立：先画一张大景深全景母图（如破败古刹大殿），固定光影光源方向与场景主色调。",
+          "局部框选扩图：在母图不同区域进行区域局部框选生图，生成该场景下的不同机位画面。",
+          "角色放入场景：将抠图后的角色透明资产置入场景对应位置，通过融合光影图生图实现人物与场景完美融合。"
+        ],
+        "pitfalls": [
+          "每个镜头都让 AI 重新生成一次背景，导致主角上一秒在木质大殿，下一秒变成石质宫殿。",
+          "没有注意光源方向（如场景主光在左侧，人物阴影却在左侧）。"
+        ],
+        "deepLinks": [
+          {
+            "n": "无限画布工作流指南",
+            "go": "canvas"
+          },
+          {
+            "n": "画布链路模拟器",
+            "go": "framesim"
+          }
+        ],
+        "homework": "打开即梦画布或剪映 Hub，建立一个包含 1 个环境全景和 3 个不同视角局部的画布连绘工程。"
+      },
+      {
+        "id": "c4-3",
+        "title": "【景别与尾帧链】极特写/中景/全景呼吸感与衔接技巧",
+        "duration": "24 分钟",
+        "level": "视听语言",
+        "summary": "掌握好莱坞视听语言中的景别搭配法则（全景建立空间 → 中景推进动作 → 特写释放情感），以及以镜头 A 尾帧作为镜头 B 首帧的无缝衔接技巧。",
+        "sop": [
+          "景别交替节拍：远景（环境）→ 中景（双方对峙）→ 特写（眼神杀气）→ 大特写（嘴角冷笑）→ 中远景（拔剑斩击）。",
+          "尾帧链设计：当镜头 1 结束于主角挥剑劈下的瞬间，将该瞬间作为镜头 2 的起始帧继续延展剑气爆炸。",
+          "三检查原则：同一镜头组内必须核对同空间锚点、同光线色温、位移运动方向一致。"
+        ],
+        "pitfalls": [
+          "越轴错误：两个对话人物的机位跳过了 180 度轴线，导致观众看起来两人面朝同一个方向讲话。",
+          "尾帧与下一镜首帧动作方向相反（如前一镜向右跑，后一镜突然从右向左跑）。"
+        ],
+        "deepLinks": [
+          {
+            "n": "运镜宝典演示",
+            "go": "cameras"
+          },
+          {
+            "n": "链路模拟器",
+            "go": "framesim"
+          }
+        ],
+        "homework": "在「链路模拟器」中跑通一组 6 镜头的首尾帧衔接挑战，体验视觉连贯性判定。"
+      }
+    ]
+  },
+  {
+    "stage": 5,
+    "id": "stage-5",
+    "title": "AI 视频生成与运镜控制",
+    "desc": "深度解析可灵 4.0、即梦 Seedance、Runway Gen-3 等视频模型的运镜控制语法、首尾帧过渡技巧与防抽搐崩坏指南。",
+    "icon": "🎥",
+    "lessons": [
+      {
+        "id": "c5-1",
+        "title": "【运镜指令语法】可灵/即梦/Runway 控制核心（方向+速度+目的）",
+        "duration": "25 分钟",
+        "level": "运镜精通",
+        "summary": "运镜不仅仅是晃动镜头，而是带有叙事目的的视觉引导。掌握 22 种核心运镜的提示词书写口诀与模型运动强度参数调节。",
+        "sop": [
+          "运镜语法万能公式：[运镜动作（如推进/俯冲/环绕）] + [速度节奏（如缓慢平稳/极速爆冲）] + [视觉焦点与叙事目的（如聚焦眼角泪痕/展现大军压境）]。",
+          "运动强度控制：动态运动幅度参数（Motion Amplitude）通常建议设在 3-5 之间，过高（>7）极易导致肢体抽搐变形。",
+          "镜头与动作拆步：严禁写“两人激烈扭打倒地”，拆为“镜头极速推向右侧男子挥出重拳”单步动作。"
+        ],
+        "pitfalls": [
+          "提示词堆砌过多冲突的运镜词（如既写 zoom in 又写 pan left 还写 drone shot），导致模型失控乱晃。",
+          "没有给出明确运动主体，导致背景在动而人物变成滑动纸片人。"
+        ],
+        "deepLinks": [
+          {
+            "n": "22 种运镜宝典",
+            "go": "cameras"
+          },
+          {
+            "n": "运镜速配测验",
+            "go": "cameras?quiz=1"
+          }
+        ],
+        "homework": "使用「运镜宝典」挑选 3 种运镜（如推向特写、升镜仰拍、荷兰角微晃），复制其提示词进行生成验证。"
+      },
+      {
+        "id": "c5-2",
+        "title": "【首尾帧过渡技巧】精确控制动作位移起点与落点，杜绝抽搐",
+        "duration": "28 分钟",
+        "level": "控帧秘籍",
+        "summary": "图生视频最大的痛点是不可控。掌握首尾帧双图控制（Start Frame + End Frame），精确锁定动作的起承转合。",
+        "sop": [
+          "准备首帧与尾帧：首帧为角色拔刀前蓄力，尾帧为角色刀刃斩出雷电环绕。",
+          "控制帧差合理性：首帧与尾帧之间的时间间隔对应物理动作应在 2-4 秒内可自然完成，不可夸大跨越。",
+          "提示词引导过渡轨迹：在提示词中明确描述动作过程（如“从蓄力姿态快速向前突刺，伴随蓝色雷光爆发”）。"
+        ],
+        "pitfalls": [
+          "首尾帧差异过大（如首帧坐在书房，尾帧在宇宙飞船打架），模型中间无法脑补过渡导致画面融化成糊块。",
+          "忽视衣服道具细节，首帧有帽子尾帧没帽子，视频中途帽子凭空消失。"
+        ],
+        "deepLinks": [
+          {
+            "n": "视频模型对比表",
+            "go": "tools"
+          },
+          {
+            "n": "链路模拟器",
+            "go": "framesim"
+          }
+        ],
+        "homework": "在即梦或可灵中上传两张连续动作图作为首尾帧，生成一段 3 秒平滑过渡的战斗动作视频。"
+      },
+      {
+        "id": "c5-3",
+        "title": "【大场面与动作戏】法术特效对轰、多人打斗与慢动作调度",
+        "duration": "26 分钟",
+        "level": "特效高阶",
+        "summary": "玄幻修仙与高燃动作是漫剧最大卖点。如何利用粒子光效、慢动作（Slow Motion）、烟雾爆破与分层遮罩实现震撼大场面。",
+        "sop": [
+          "特效层与人物层分离：先生成干净的人物动作视频，在剪映后期中叠加绿幕刀光剑气、火球雷电特效贴纸。",
+          "慢动作卡点法则：在法术释放或刀刃击中目标的瞬间（第 2.5 秒），采用 0.3x 慢动作定格，强化打击力量感。",
+          "多人场面分切处理：切忌在一个 AI 镜头里塞入 10 个人打斗，拆解为双方主将特写对视 + 士兵冲锋空镜交替剪辑。"
+        ],
+        "pitfalls": [
+          "直接在 AI 提示词里要求生成复杂的全息魔法阵或多人混战，AI 模型极易发生肢体杂糅与粘连。",
+          "特效滥用遮挡人物核心表情，喧宾夺主。"
+        ],
+        "deepLinks": [
+          {
+            "n": "提示词工坊 · 动作配方",
+            "go": "promptgen"
+          },
+          {
+            "n": "工业化工作流",
+            "go": "workflows"
+          }
+        ],
+        "homework": "设计一组 3 镜头的“法术对轰”分镜，规划好哪一镜用 AI 直出，哪一镜用后期叠加特效。"
+      }
+    ]
+  },
+  {
+    "stage": 6,
+    "id": "stage-6",
+    "title": "声音工程 · 情绪配音、音效与口型同步",
+    "desc": "声音是漫剧的灵魂。掌握高质量 TTS 角色配音定制、LivePortrait 口型同步技术与好莱坞级电影音效 BGM 卡点法则。",
+    "icon": "🎙️",
+    "lessons": [
+      {
+        "id": "c6-1",
+        "title": "【TTS 角色配音】多角色音色克隆、情绪语调微调与台词剪辑",
+        "duration": "22 分钟",
+        "level": "声音基础",
+        "summary": "挑选适合男频战神（低沉磁性、充满霸气）、女频大女主（冷冽傲娇）、反派（阴险戏谑）的 TTS 角色音色，处理停顿换气与情感爆发。",
+        "sop": [
+          "音色库归类：主角音色锁定固定预设（如剪映男播音、MiniMax 苍穹/青涩青年、海螺语音），全剧保持一致。",
+          "添加标点符号与停顿：通过破折号“——”、逗号和省略号“…”微调 TTS 的停顿与重音节奏。",
+          "分句导出与音量标准化：导出单句 WAV/MP3，在音频轨道上将响度统一到 -14 LUFS，避免忽大忽小。"
+        ],
+        "pitfalls": [
+          "使用默认平淡朗读腔，毫无短剧吵架、打脸时的激烈情绪波动。",
+          "多角色声音过于相似，观众闭上眼睛分不清是谁在讲话。"
+        ],
+        "deepLinks": [
+          {
+            "n": "工具库 · 语音模型",
+            "go": "tools"
+          },
+          {
+            "n": "接单实操包",
+            "go": "orders"
+          }
+        ],
+        "homework": "挑选一段激烈的反派挑衅与主角反击台词，分别配置两种截然不同的音色并导出试听。"
+      },
+      {
+        "id": "c6-2",
+        "title": "【口型同步对齐】LivePortrait / SadTalker 音画精准匹配",
+        "duration": "25 分钟",
+        "level": "黑科技核心",
+        "summary": "告别“嘴巴不动像 PPT”的尴尬。使用开源或云端 LivePortrait 等面部驱动技术，让角色的口型、眼神、眨眼与台词完全对齐。",
+        "sop": [
+          "准备正脸无遮挡清晰头像图：头发不遮挡嘴唇与下巴轮廓。",
+          "对齐音频切片：将单句台词音频导入驱动工具，设置面部驱动权重与眼神追踪参数。",
+          "表情增强：加入微微笑、皱眉等控制参数，使角色说话时不呆滞死板。"
+        ],
+        "pitfalls": [
+          "输入侧脸角度过大（>60度）的图片，导致口型驱动时下巴拉扯撕裂。",
+          "整集漫剧每个镜头都做口型同步（过度耗费算力），正确做法是只在关键对白特写镜做口型驱动。"
+        ],
+        "deepLinks": [
+          {
+            "n": "工具库 · 口型驱动",
+            "go": "tools"
+          },
+          {
+            "n": "开发九阶段 · 声音环节",
+            "go": "pipeline"
+          }
+        ],
+        "homework": "使用一张角色正面头像和一段 3 秒台词音频，跑通一次 LivePortrait 口型同步生成。"
+      },
+      {
+        "id": "c6-3",
+        "title": "【BGM 与音效卡点】爆点重音、环境铺垫与情绪过山车",
+        "duration": "24 分钟",
+        "level": "视听包装",
+        "summary": "短剧音效三大件：Whoosh 呼啸转场音效、Boom 震撼低音下沉、Hit 金属撞击打击音。掌握音效与视觉卡点的毫秒级对齐技巧。",
+        "sop": [
+          "三层音频轨道搭建：轨道 1（角色台词对白） + 轨道 2（环境白噪音与动作音效） + 轨道 3（情绪背景音乐 BGM）。",
+          "转折点重音敲击：在主角一拳挥出、大反转亮出身份、耳光声响起的瞬间，精准卡入重音音效。",
+          "BGM 闪避（Ducking）：台词出现时 BGM 自动压低 6-10 dB，台词结束时 BGM 立即拉起烘托情绪。"
+        ],
+        "pitfalls": [
+          "BGM 声音过大盖过主角对白台词，导致听不清剧情。",
+          "全剧从头到尾只有一首欢快的 BGM，打架和悲伤时完全出戏。"
+        ],
+        "deepLinks": [
+          {
+            "n": "分镜节奏练习",
+            "go": "rhythm"
+          },
+          {
+            "n": "爆款心法",
+            "go": "hot"
+          }
+        ],
+        "homework": "在剪映工程中，为一段 10 秒打斗片段完成台词、打击音效与 BGM 的分层装配。"
+      }
+    ]
+  },
+  {
+    "stage": 7,
+    "id": "stage-7",
+    "title": "工业剪辑 · 剪映流水线、特效与平台合规",
+    "desc": "建立剪映多轨道工业化装配工程，制作高转化动态花字与震屏打击感，严守网信办 AI 标识与三门票合规防下架。",
+    "icon": "✂️",
+    "lessons": [
+      {
+        "id": "c7-1",
+        "title": "【剪映工业流水线】多轨道分层规范、批量导入与自动卡点",
+        "duration": "25 分钟",
+        "level": "剪辑流水线",
+        "summary": "将单集剪辑时间从 3 小时压缩至 45 分钟的工程模板法。建立规范的项目预设、颜色分层与快捷键批量处理流程。",
+        "sop": [
+          "固定模板工程：创建包含画质调色 LUT、预置片头片尾、固化字幕样式、预置音效库的“空白母模板”。",
+          "视频切片吸附：将生成的视频片段按镜号顺序批量拖入主视频轨，对照台词音频快速裁剪无用停顿帧。",
+          "视觉动态变速：善用“曲线变速”，动作起始快、击中慢、收尾快，增强打击张力。"
+        ],
+        "pitfalls": [
+          "剪辑工程杂乱无章，视频和音频混在同一轨道，导致后期微调牵一发而动全身。",
+          "导出时分辨率设为横屏 16:9，无法适配短剧平台的竖屏 9:16 观看习惯。"
+        ],
+        "deepLinks": [
+          {
+            "n": "工业化 SOP 工作流",
+            "go": "workflows"
+          },
+          {
+            "n": "第一部成片闭环",
+            "go": "firstfilm"
+          }
+        ],
+        "homework": "在剪映中保存一个你专属的“漫剧 98 秒标准剪辑模板工程”。"
+      },
+      {
+        "id": "c7-2",
+        "title": "【视效与动态花字】刀光剑影、震屏重击感与高赞字幕排版",
+        "duration": "22 分钟",
+        "level": "视觉包装",
+        "summary": "漫剧吸引年轻观众的关键包装：动态字幕（关键词变黄变大变红）、相机震动震屏、漫画速度线与出刀光晕叠加。",
+        "sop": [
+          "情绪字幕排版：在关键打脸台词（如“死！”、“跪下！”）设置大字号冲击波弹跳动画与金黄渐变描边。",
+          "相机震屏打击：在受到重击瞬间加入 3-5 帧的轻微“摄像机震动”滤镜，模拟物理震荡感。",
+          "叠加漫画素材贴纸：在动作高潮帧添加黑白速度线（Speed Lines）遮罩，增强画面的视觉张力。"
+        ],
+        "pitfalls": [
+          "花字特效过多导致画面眼花缭乱，遮挡角色面部神态。",
+          "字幕字体使用了有版权风险的商业字体，导致被字体公司索赔下架。"
+        ],
+        "deepLinks": [
+          {
+            "n": "案例拆解",
+            "go": "cases"
+          },
+          {
+            "n": "爆款心法",
+            "go": "hot"
+          }
+        ],
+        "homework": "为一段高潮台词制作带有震屏和关键词放大效果的动态字幕。"
+      },
+      {
+        "id": "c7-3",
+        "title": "【平台合规与三门票】网信办 AI 标识、版权授权与防下架备案",
+        "duration": "20 分钟",
+        "level": "合规红线",
+        "summary": "2026 年监管新政必须掌握的“三门票”原则：正规小说版权授权、显式 AI 生成内容标识、平台内容审查与短剧备案编号。",
+        "sop": [
+          "右上角/片尾打标：成片全程在右上角或片尾常驻标注“本片由人工智能辅助生成”合规字样。",
+          "版权授权链路确立：与网文平台（如番茄、七猫、晋江）签署明确的衍生漫剧改编授权书，拒绝网络盗版扒文。",
+          "规避违规内容红线：严格自查涉黄涉暴、封建迷信、过度宣扬血腥复仇与炫富价值观，保障上线安全。"
+        ],
+        "pitfalls": [
+          "侥幸心理不加 AI 标识，被平台算法巡查识别后判定违规并永久封号。",
+          "使用未经授权的网文直接改造成爆款，作品收益被原著方依法全额冻结并承担追责。"
+        ],
+        "deepLinks": [
+          {
+            "n": "变现与合规红线",
+            "go": "monetize"
+          },
+          {
+            "n": "制作清单 · 合规项",
+            "go": "checklist"
+          }
+        ],
+        "homework": "在你的成片模板中，规范添加符合网信办规定的半透明 AI 内容声明水印。"
+      }
+    ]
+  },
+  {
+    "stage": 8,
+    "id": "stage-8",
+    "title": "商业变现 · 平台分账、商单接单与防骗",
+    "desc": "从创作爱好走向商业盈利。玩转红果/快手流量分账政策，掌握商单 500-1500 元/分钟的报价公式、交付标准与防骗合同。",
+    "icon": "💰",
+    "lessons": [
+      {
+        "id": "c8-1",
+        "title": "【平台分账变现】红果/快手/抖音分账细则与爆款收益兑现路径",
+        "duration": "24 分钟",
+        "level": "变现核心",
+        "summary": "剖析当前各大平台真实的收益分成机制：红果有效播放判定标准、快手星芒计划阶梯式保底、抖音付费短剧分成与切片分销。",
+        "sop": [
+          "红果分账模型：依托万播收益结算（当前 5-30 元区间），重点在于拉长前 5 集完播率与长尾剧集播放深度。",
+          "签约作者扶持：达到月更保底集数（通常单月 20-30 集）申请平台 S/A 级签约，获取固定保底 + 浮动收益。",
+          "系列化 IP 运作：单部爆款不休止，迅速推出第二季、第三季（如《万妖图录传》11 季连载），复用已有模型资产最大化收益。"
+        ],
+        "pitfalls": [
+          "做一季就换题材，前期积累的粉丝和角色模型资产全部沉没废弃。",
+          "只看总播放量不看“有效播放率”（完播率不足 30% 不计入收益分账）。"
+        ],
+        "deepLinks": [
+          {
+            "n": "变现与合规政策库",
+            "go": "monetize"
+          },
+          {
+            "n": "收益决策树",
+            "go": "earnpath"
+          }
+        ],
+        "homework": "梳理各大平台最新招募要求，挑选一家作为你首部作品的主发阵地。"
+      },
+      {
+        "id": "c8-2",
+        "title": "【商单报价与谈判】单分钟 500-1500 元报价拆解与四因子定价",
+        "duration": "25 分钟",
+        "level": "接单技能",
+        "summary": "面向游戏买量广告、网文宣传预告片、品牌短剧的商单接洽。运用“工期紧迫度 × 画质精度 × 镜头难度 × 交付格式”四因子科学报价。",
+        "sop": [
+          "报价分级体系：入门级（500-800元/分钟）、精品级（800-1200元/分钟）、S级院线画质（1500-2500元/分钟）。",
+          "打造破冰样片集：准备 3 段不同题材风格的高清样片（玄幻高燃、都市反转、暗黑科幻），附带分镜脚本示例。",
+          "谈判话术技巧：向甲方明确告知制作周期、修改规则与定金政策，建立专业商业创作者形象。"
+        ],
+        "pitfalls": [
+          "没有作品集就四处去微信群/小红书私信接单，成交率接近为零。",
+          "被甲方压价到 200 元/分钟还接单，算力费都不够甚至亏本倒贴。"
+        ],
+        "deepLinks": [
+          {
+            "n": "接单实操包 · 报价单",
+            "go": "orders"
+          },
+          {
+            "n": "成本回本计算器",
+            "go": "calc"
+          }
+        ],
+        "homework": "根据接单实操包的模板，制作一份属于你个人/工作室的标准化报价单 PDF。"
+      },
+      {
+        "id": "c8-3",
+        "title": "【交付标准与合同防坑】定金收取比例、修改轮次限制与版权保护",
+        "duration": "22 分钟",
+        "level": "商业安全",
+        "summary": "商业接单实战防坑指南：坚持“3-4-3”定金法则，在合同中白纸黑字限定修改轮次（不超过 2 轮），尾款结清前坚决不给无水印原片。",
+        "sop": [
+          "定金流程：签约即收 30%-50% 定金开工，分镜定稿收 30% 进度款，成片带全屏水印验收通过、尾款结清后交付 4K 无水印母片。",
+          "修改轮次限制：合同明确仅支持“2 轮小改”（单轮修改量不超过总镜数 15%），推翻剧本重做必须加收 50% 额外费用。",
+          "著作权条款：明确作品交付后的署名权与商业宣发授权范围，保留个人作品集展示权。"
+        ],
+        "pitfalls": [
+          "不收定金就直接做完全部片子，被甲方“白嫖”创意后拉黑跑路。",
+          "未付尾款就将高清无水印工程源文件发给对方，导致被拖欠款项数月。"
+        ],
+        "deepLinks": [
+          {
+            "n": "接单实操包 · 标准合同",
+            "go": "orders"
+          },
+          {
+            "n": "行业术语速查",
+            "go": "glossary"
+          }
+        ],
+        "homework": "通读「接单实操包」中的免责声明与委托制作合同范本，重点标出付款节点条款。"
+      }
+    ]
+  }
+];
+DB.consistency = {
+  "methods": [
+    {
+      "id": "method-jm-agent",
+      "name": "即梦 / 剪映智能体角色库",
+      "badge": "小白零门槛 · 快速上手",
+      "score": "★★★★☆",
+      "techType": "平台云端原生智能体",
+      "tools": "即梦 AI / 剪映 Hub",
+      "pros": "完全不需要本地高端显卡，云端直接输入角色外观设定，一键生成智能体；在分镜中输入 @角色名 即可自动调用同一张脸。",
+      "cons": "高度依赖即梦平台生态，换到其他软件无法复用；极端仰角或微表情时仍有轻微面容波动。",
+      "bestFor": "个人兼职新人、前 1-3 部作品快速打通流水线、日更轻量短剧。",
+      "sop": [
+        "打开即梦 Web 端，进入「角色智能体」创建面板。",
+        "上传正面清晰肖像母图，输入基础外观特征词（发型、瞳色、服装、配饰）。",
+        "点击生成 4 张不同角度的测试立绘，挑选最满意的一张锁定为角色代表图。",
+        "在无限画布或分镜生图中，输入提示词并在主角前加上 @角色名，系统自动注入一致性锚点。"
+      ],
+      "tips": "创建母图时背景保持纯色白底，不要带杂乱道具，这样智能体提取的面部特征最纯净。"
+    },
+    {
+      "id": "method-mj-cref",
+      "name": "Midjourney --cref + --cw 权重微调流",
+      "badge": "插画级画质 · 商业首选",
+      "score": "★★★★★",
+      "techType": "多模态特征参考向量",
+      "tools": "Midjourney v6.1 / Discord / Niji 6",
+      "pros": "图像审美上限极高，艺术画风极其细腻；通过 --cw 参数可以灵活控制“只换脸不换衣服”还是“脸和衣服一起锁定”。",
+      "cons": "需要开通海外 Midjourney 订阅会员；对极端动作姿势参考图可能会出现衣服材质轻微漂移。",
+      "bestFor": "S级精品漫剧、商业高客单商单、需要极高艺术审美的唯美仙侠/暗黑韩漫。",
+      "sop": [
+        "生成并选出一张光影清晰、五官端正的角色正面全景图，右键复制图片在线 URL 地址。",
+        "在生图提示词末尾添加参数：--cref [图片URL]。",
+        "根据镜头需求设置权重：--cw 100（默认，锁定脸部五官 + 衣服发型）；--cw 0（仅锁定脸部五官，服装随提示词自由更换）。",
+        "可同时叠加多张参考图：--cref [URL1] [URL2]，取两张图的综合特征。"
+      ],
+      "tips": "提示词中依然要保留角色的核心视觉 DNA 描述（如 silver hair, golden scar），不要只靠 --cref，两者结合稳定度提升 80%。"
+    },
+    {
+      "id": "method-lora",
+      "name": "LiblibAI / ComfyUI LoRA 专属模型训练",
+      "badge": "工业化底座 · 终极稳定",
+      "score": "★★★★★",
+      "techType": "轻量化大模型微调 (LoRA)",
+      "tools": "ComfyUI / SD WebUI / LiblibAI 云端训练",
+      "pros": "稳定性天花板！无论是仰视、俯视、侧脸、哭泣、大笑甚至打斗摔倒，都能 100% 保持同一张脸；可自由迁移到任何模型。",
+      "cons": "需要准备 20-50 张多角度高清打标图片；本地训练需要 12G+ 显存，有一定学习门槛。",
+      "bestFor": "大型漫剧工作室、签约长篇连载系列剧、具有长期商业价值的原生 IP。",
+      "sop": [
+        "准备数据集：收集角色 30-50 张高质量图片，涵盖正面、侧面、半身、全身、不同表情与光影。",
+        "规范打标（Tagging）：设置专属触发词（如 my_hero_linfeng），标注好通用标签。",
+        "参数配置：推荐 Rank 32/Alpha 64，学习率 1e-4，训练 1500-2500 步左右。",
+        "测试验模：在 ComfyUI 中以 0.7-0.8 权重加载该 LoRA，输入不同姿势与场景测试是否完美复现。"
+      ],
+      "tips": "新手建议优先使用 LiblibAI 或各大云端算力平台的“免配环境一键训练”，只需上传打包 zip 即可在 20 分钟内完成训练。"
+    },
+    {
+      "id": "method-instantid",
+      "name": "InstantID / FaceID 免训练换脸流",
+      "badge": "写实真人风 · 单图秒级换脸",
+      "score": "★★★★☆",
+      "techType": "Zero-shot ID 保真 ControlNet",
+      "tools": "ComfyUI InstantID / Fooocus FaceID",
+      "pros": "无需任何模型训练，只需要 1 张人脸照片，0 秒生成保持完全一致五官的任意场景与姿态画面。",
+      "cons": "更偏向写实真人质感，对于二次元厚涂/赛博水墨等抽象画风的面部贴合略带生硬感。",
+      "bestFor": "都市悬疑、写实都市霸总商战、真人短剧 AI 漫改。",
+      "sop": [
+        "在 ComfyUI 中载入 InstantID 官方工作流节点。",
+        "加载角色单张清晰大头照作为 ID 参考输入源。",
+        "搭配 Pose ControlNet（如 OpenPose）控制角色的身体姿势与手势动作。",
+        "输入场景与运镜提示词，一键直出姿态精准且脸部一致的镜头。"
+      ],
+      "tips": "调节 InstantID 权重在 0.75-0.85 之间最佳，过低脸不像，过高会导致整张脸像贴纸一样光影融不进背景。"
+    },
+    {
+      "id": "method-tailframe",
+      "name": "无限画布尾帧连环垫图法",
+      "badge": "镜头平滑过渡 · 视觉连贯",
+      "score": "★★★★☆",
+      "techType": "图生图（Image-to-Image）节点走线",
+      "tools": "即梦智能画布 / 剪映 Hub / CapCut Canvas",
+      "pros": "在连续叙事镜头之间切换时，视觉平滑度最强；能自然继承前一镜的光线色温、服装褶皱与空间锚点。",
+      "cons": "连续垫图超过 5 代之后，可能会产生特征衰减与画质劣化。",
+      "bestFor": "动作连环斩击、同一场景内两人近距离对话、运镜视角连续推拉。",
+      "sop": [
+        "以镜头 1 的最后一帧（或主体图）作为输入垫图。",
+        "设定图生图相似度（重绘幅度）在 0.35-0.55 之间。",
+        "修改提示词中的动作与视角描述（例如从正面改为“45度微侧身挥拳”）。",
+        "生成新镜头并以此作为下一个镜头的连贯基准。"
+      ],
+      "tips": "垫图到第 3-4 代时，重新引入第 1 代高分辨率母图进行 30% 混合加权，防止角色特征逐渐变形。"
+    }
+  ],
+  "views": [
+    {
+      "id": "view-front",
+      "name": "正面全景立绘 (Front View)",
+      "en": "Front View Full Body Portrait",
+      "desc": "用于确立角色全身比例、服装结构与配饰细节的标准母图。",
+      "mjTpl": "full body portrait, front view, standing straight, clean white background, detailed anime aesthetic, 8k, --ar 9:16 --v 6.1 --style raw",
+      "cnTpl": "全身立绘，正面视角，笔直站姿，纯白干净背景，极具细节的高清动漫风格，8k画质，9:16竖屏。"
+    },
+    {
+      "id": "view-threequarter",
+      "name": "45度微侧面 (Three-Quarter View)",
+      "en": "Three-Quarter Angle Shot",
+      "desc": "短剧中最常用的对话与叙事景别，展现五官立体度与发型层次感。",
+      "mjTpl": "three-quarter view, 45 degree angle, dynamic half body, cinematic lighting, dramatic gaze, detailed facial features, --ar 9:16 --v 6.1",
+      "cnTpl": "45度微侧面半身镜头，电影感侧逆光，立体五官轮廓，凌厉眼神凝视，极致细节刻画，9:16竖屏。"
+    },
+    {
+      "id": "view-profile",
+      "name": "正侧面剪影/肖像 (Side Profile View)",
+      "en": "Side Profile View",
+      "desc": "适合表现角色冷酷、沉思、回忆或受到震撼时的侧颜特写。",
+      "mjTpl": "side profile view, 90 degree side angle, close-up face, sharp jawline, cinematic rim lighting, atmospheric, --ar 9:16 --v 6.1",
+      "cnTpl": "正侧面特写，90度纯侧视角，清晰下颌线，侧脸冷峻轮廓，电影级边缘轮廓光，充满故事感，9:16竖屏。"
+    },
+    {
+      "id": "view-back",
+      "name": "背后背影镜头 (Back View)",
+      "en": "Back View Heroic Silhouette",
+      "desc": "用于展现主角孤独背影、披风飘动、面对千军万马的决绝背水一战。",
+      "mjTpl": "back view, from behind, looking forward towards the horizon, cape fluttering in wind, heroic silhouette, wide angle, --ar 9:16 --v 6.1",
+      "cnTpl": "背后视角，背对镜头，衣袍披风在狂风中猎猎作响，遥望远方地平线，英雄孤绝背影，大景深，9:16竖屏。"
+    },
+    {
+      "id": "view-closeup",
+      "name": "极致特写微表情 (Close-up Portrait)",
+      "en": "Extreme Close-up Face",
+      "desc": "用于高潮情绪峰值：瞳孔地震、嘴角冷笑、杀气外露或绝望落泪。",
+      "mjTpl": "extreme close-up on eyes and face, intense emotional expression, detailed iris, tear falling or smirking, 8k resolution, cinematic, --ar 9:16 --v 6.1",
+      "cnTpl": "眼部与面部极特写，强烈的情绪微表情，精致瞳孔倒影，嘴角带着一丝冷笑，电影级微距质感，9:16竖屏。"
+    },
+    {
+      "id": "view-action",
+      "name": "动作战斗抓拍 (Action Dynamic Shot)",
+      "en": "Dynamic Battle Stance",
+      "desc": "用于展示出招斩击、施法护盾、凌空突刺的高燃瞬间。",
+      "mjTpl": "dynamic action pose, mid-air sword slash, lightning particles, dynamic camera tilt, high tension battle scene, masterpiece, --ar 9:16 --v 6.1",
+      "cnTpl": "动态战斗抓拍姿态，凌空拔刀斩击，周身环绕雷电粒子特效，倾斜机位张力拉满，高燃决战镜头，9:16竖屏。"
+    }
+  ],
+  "attributes": {
+    "genders": [
+      "男主 (Male Protagonist)",
+      "女主 (Female Protagonist)",
+      "反派枭雄 (Antagonist Villain)",
+      "神秘老者/师尊 (Master/Elder)",
+      "萌宠/战兽 (Beast/Pet)"
+    ],
+    "styles": [
+      "国风修仙玄幻 (Cultivation Xianxia)",
+      "暗黑复仇韩漫 (Dark Revenge Webtoon)",
+      "热血少年日漫 (Shonen Action Anime)",
+      "赛博朋克科幻 (Cyberpunk Sci-Fi)",
+      "写实电影大片 (Cinematic Realism)",
+      "美漫厚涂硬派 (Dark Comic Noir)"
+    ],
+    "hairstyles": [
+      "银白凌乱长发 (Messy Silver Long Hair)",
+      "墨黑高马尾 (Black High Ponytail)",
+      "金发微卷碎发 (Blonde Wavy Short Hair)",
+      "狂野赤红短发 (Spiky Crimson Hair)",
+      "及腰如瀑青丝 (Silky Waist-length Black Hair)"
+    ],
+    "hairColors": [
+      "银白色 (Silver/White)",
+      "墨黑色 (Jet Black)",
+      "赤红色 (Crimson Red)",
+      "耀金色 (Golden Blonde)",
+      "冰蓝色 (Ice Blue)"
+    ],
+    "eyeColors": [
+      "猩红血瞳 (Crimson Eyes)",
+      "深邃墨瞳 (Dark Obsidian Eyes)",
+      "冰蓝龙瞳 (Icy Blue Eyes)",
+      "璀璨金瞳 (Luminous Gold Eyes)",
+      "幽紫异瞳 (Amethyst Heterochromia)"
+    ],
+    "features": [
+      "左眼角金色泪痣 (Golden tear mole under left eye)",
+      "横跨鼻梁战损伤疤 (Battle scar across nose)",
+      "额间古老法印咒文 (Ancient glowing seal on forehead)",
+      "机械义肢手臂 (Cybernetic prosthetic arm)",
+      "冷酷下颌线无胡须 (Clean sharp jawline)"
+    ],
+    "outfits": [
+      "玄黑金丝龙纹长袍 (Black robe with golden dragon embroidery)",
+      "破损暗黑作战风衣 (Tattered dark tactical trench coat)",
+      "银光闪耀重甲铠甲 (Silver gleaming heavy armor)",
+      "素白古风修仙道袍 (Pure white Taoist flowing silk robe)",
+      "现代修身西装裹大衣 (Fitted black modern suit with overcoat)"
+    ],
+    "props": [
+      "悬浮身后的古朴长剑 (Ancient glowing sword floating behind)",
+      "缠绕双臂的青色雷电 (Azure lightning wrapped around arms)",
+      "手中把玩的通透血玉 (Translucent blood jade in hand)",
+      "泛着蓝光的战术目镜 (Glowing tactical visor)",
+      "残破的红色披风 (Ragged red cape fluttering)"
+    ]
+  },
+  "troubleshoots": [
+    {
+      "id": "tb-face-shift",
+      "symptom": "换角度五官崩坏变形，侧面或仰拍判若两人",
+      "cause": "提示词中缺少具体面部几何锚点，模型在切换大角度时自由重组了五官特征。",
+      "quickFix": "使用 Midjourney 时将 --cw 降至 20-40，或者在即梦中将重绘幅度降至 0.4；在 ComfyUI 中加入 OpenPose Face 骨骼约束。",
+      "promptAdjustment": "强制补充：same character, exact identical face structure, sharp nose bridge, consistent jawline, maintaining visual DNA.",
+      "paramSettings": "Denoising: 0.42 | CFG: 7.0 | Reference Weight: 0.85"
+    },
+    {
+      "id": "tb-extra-limbs",
+      "symptom": "手部多指、手指粘连、出现第三条手臂",
+      "cause": "提示词描述了复杂互动动作（如“双手拔剑击碎巨石”），多模态模型无法解析空间遮挡关系。",
+      "quickFix": "绝对不要弃片重新抽卡！直接在局部重绘（Inpainting）中涂抹手部，提示词单写“realistic 5-fingers hand, holding sword handle”。",
+      "promptAdjustment": "负面提示词中必须包含：extra fingers, mutated hands, poorly drawn hands, missing fingers, malformed limbs, fused limbs.",
+      "paramSettings": "Inpaint Mask Blur: 4px | Inpaint Denoising: 0.55"
+    },
+    {
+      "id": "tb-clothes-drift",
+      "symptom": "上一镜穿着黑袍，下一镜突然变成白衣或西装",
+      "cause": "提示词只写了动作而遗漏了服装描述，或者场景中光影词（如“white snow”）被模型误当成了服装颜色。",
+      "quickFix": "在母版提示词中将服装词设为永久公共前缀；使用 --cw 100 强制锁定全身体态与服装。",
+      "promptAdjustment": "在每一镜开头显式写入：wearing exactly the same black silk dragon robe with golden trims, identical costume.",
+      "paramSettings": "Midjourney: --cw 100 | SD/即梦: 角色垫图开启 Style Transfer"
+    },
+    {
+      "id": "tb-bg-clutter",
+      "symptom": "背景画风突变，室内突变室外，古风里穿插现代电线杆",
+      "cause": "未建立场景母图，每个镜头使用随机生成的环境描述词，且提示词中混入了现代摄影参数词。",
+      "quickFix": "先在画布上生成环境全景底图，后续所有角色镜头均使用该底图进行局部扩图或局部重绘融合。",
+      "promptAdjustment": "加入环境锁定词：same ancient courtyard, identical weather, consistent lighting and architectural style. 排除：modern elements, telephone poles.",
+      "paramSettings": "Canvas 区域重绘模式 | 场景底图固定"
+    },
+    {
+      "id": "tb-age-jump",
+      "symptom": "角色一会儿像 18 岁少年，特写镜头突然变成 40 岁中年大叔",
+      "cause": "特写镜头中过度堆砌“wrinkles, highly detailed skin, hyperrealistic pores”等细节词，导致模型加重面部皱纹。",
+      "quickFix": "在特写提示词中精准限定年龄范围，并删除与衰老相关的皮肤纹理词。",
+      "promptAdjustment": "加入年龄修饰：20-year-old young youth, youthful clear smooth skin, youthful sharp handsome face. 排除：wrinkles, aged, mature lines.",
+      "paramSettings": "Face Restore 设为 0.3"
+    },
+    {
+      "id": "tb-double-bleed",
+      "symptom": "双人同框对话，两个人的发型、五官和衣服融合在一起（串脸）",
+      "cause": "单个提示词内同时描述两人特征，模型在全局注意力机制中无法区分谁是谁。",
+      "quickFix": "千万不要直接单句生双人！分别生成两人的透明抠图资产，在分镜画布上手动合成拼版，再通过微幅图生图（0.25）统一光影。",
+      "promptAdjustment": "若必须单句生成：使用 Regional Prompter 分区域提示词，左侧定义角色 A，右侧定义角色 B。",
+      "paramSettings": "分层拼贴合成法（成片率 100%）"
+    }
+  ]
+};
+DB.promptStudio = {
+  "styles": [
+    {
+      "id": "ps-xianxia",
+      "name": "国风修仙玄幻",
+      "en": "Chinese Xianxia Cultivation",
+      "badge": "国内男频第一热度",
+      "desc": "飘逸出尘、仙气缭绕或修罗嗜血，古风道袍与雷电剑气交织，极具东方审美。",
+      "tags": [
+        "国风美学",
+        "剑气纵横",
+        "仙侠大片",
+        "修真破境"
+      ],
+      "mjParams": "--ar 9:16 --v 6.1 --style raw --c 5",
+      "negatives": "modern clothing, western features, sci-fi elements, western fantasy armor, cartoonish"
+    },
+    {
+      "id": "ps-darkwebtoon",
+      "name": "暗黑复仇韩漫",
+      "en": "Dark Revenge Webtoon",
+      "badge": "复仇/财阀打脸必备",
+      "desc": "浓厚阴影、高对比度冷暖色光、锋利的线条与凌厉狠辣的面部特写，极具压迫感。",
+      "tags": [
+        "暗黑风",
+        "财阀逆袭",
+        "高反差",
+        "凌厉眼神"
+      ],
+      "mjParams": "--ar 9:16 --niji 6 --style expressive",
+      "negatives": "cutesy, bright colorful, chibi, soft lighting, cheerful"
+    },
+    {
+      "id": "ps-shonen",
+      "name": "热血少年日漫",
+      "en": "Shonen Action Anime",
+      "badge": "高燃打斗与爆发",
+      "desc": "极具冲击力的透视畸变、速度线、能量波爆裂与坚毅不屈的燃烧意志。",
+      "tags": [
+        "热血高燃",
+        "速度线",
+        "透视张力",
+        "终极爆发"
+      ],
+      "mjParams": "--ar 9:16 --niji 6",
+      "negatives": "realistic photorealistic, 3D render, western comic style, dull colors"
+    },
+    {
+      "id": "ps-cyberpunk",
+      "name": "赛博朋克科幻",
+      "en": "Cyberpunk Sci-Fi",
+      "badge": "未来末日与觉醒",
+      "desc": "霓虹雨夜、全息投影、机械义肢、冷峻机能风装束与高反差冷色调。",
+      "tags": [
+        "赛博霓虹",
+        "机械义体",
+        "未来雨夜",
+        "科幻厚涂"
+      ],
+      "mjParams": "--ar 9:16 --v 6.1 --stylize 250",
+      "negatives": "historical, medieval, rustic, wooden architecture, nature landscape"
+    },
+    {
+      "id": "ps-noir",
+      "name": "美漫厚涂硬派",
+      "en": "Dark Comic Noir",
+      "badge": "出海与硬汉题材",
+      "desc": "粗犷有力的笔触、重度暗部阴影、电影分镜感与成熟深邃的故事质感。",
+      "tags": [
+        "厚涂质感",
+        "硬派写实",
+        "出海通吃",
+        "胶片颗粒"
+      ],
+      "mjParams": "--ar 9:16 --v 6.1",
+      "negatives": "anime moe, kawaii, low contrast, pastel colors"
+    },
+    {
+      "id": "ps-ghibli",
+      "name": "清新唯美日系",
+      "en": "Atmospheric Ghibli Aesthetic",
+      "badge": "女频萌宠/治愈",
+      "desc": "柔和日光、明亮通透水彩质感、蓝天白云与温馨细腻的治愈系视觉。",
+      "tags": [
+        "唯美清新",
+        "水彩质感",
+        "治愈温暖",
+        "明亮自然"
+      ],
+      "mjParams": "--ar 9:16 --niji 6",
+      "negatives": "dark, bloody, horror, violent, grim, muted colors"
+    },
+    {
+      "id": "ps-ink",
+      "name": "黑白水墨国潮",
+      "en": "Ink Wash Martial Arts",
+      "badge": "传统武侠巅峰",
+      "desc": "泼墨飞白、虚实相生、气韵生动，极简黑白灰中点缀一抹猩红剑芒。",
+      "tags": [
+        "新中式水墨",
+        "泼墨挥洒",
+        "武侠意境",
+        "极简国潮"
+      ],
+      "mjParams": "--ar 9:16 --v 6.1 --style raw",
+      "negatives": "western cartoon, saturated bright colors, plastic texture"
+    },
+    {
+      "id": "ps-cinematic",
+      "name": "写实电影大片",
+      "en": "Cinematic 8K Realism",
+      "badge": "大制作实拍质感",
+      "desc": "变形宽银幕电影镜头、浅景深虚化、细腻皮肤质感与院线级色彩校正。",
+      "tags": [
+        "电影质感",
+        "浅景深",
+        "胶片调色",
+        "微距质感"
+      ],
+      "mjParams": "--ar 9:16 --v 6.1 --style raw",
+      "negatives": "anime drawing, 2D illustration, flat lighting, oversaturated"
+    }
+  ],
+  "shots": [
+    {
+      "id": "shot-ecu",
+      "name": "极特写 (Extreme Close-up)",
+      "en": "extreme close-up on eyes",
+      "purpose": "捕捉瞳孔震颤、泪水或嘴角极细微冷笑，情绪张力最大化",
+      "keywords": "extreme macro close-up, intense eye focus, emotional micro-expression, dramatic tension"
+    },
+    {
+      "id": "shot-cu",
+      "name": "面部特写 (Close-up)",
+      "en": "close-up shot of face",
+      "purpose": "清晰展现角色面部轮廓、伤痕、表情变化与台词对白",
+      "keywords": "close-up portrait, detailed face, intense gaze, cinematic portrait lighting"
+    },
+    {
+      "id": "shot-ms",
+      "name": "中景半身 (Medium Shot)",
+      "en": "medium shot, waist up",
+      "purpose": "标准叙事机位，同时交代角色肢体动作与上半身服装特征",
+      "keywords": "medium shot, half body, waist-up, holding weapon, natural body gesture"
+    },
+    {
+      "id": "shot-fs",
+      "name": "全身全景 (Full Shot)",
+      "en": "full body wide shot",
+      "purpose": "交代角色站姿、全套装备装甲与所处环境的空间纵深关系",
+      "keywords": "full body wide view, standing in environment, epic posture, detailed full outfit"
+    },
+    {
+      "id": "shot-low",
+      "name": "低仰角英雄视点 (Low Angle)",
+      "en": "low angle heroic shot",
+      "purpose": "镜头从地面向上仰视，极大凸显主角的威严、压迫感与霸道气场",
+      "keywords": "low angle camera looking up, monumental heroic perspective, dominant imposing stature"
+    },
+    {
+      "id": "shot-high",
+      "name": "俯瞰上帝视点 (High Angle)",
+      "en": "high angle overlooking shot",
+      "purpose": "从高处向下俯瞰，展现大军包围、深陷绝境或城市渺小全貌",
+      "keywords": "high angle view from above, bird eye perspective, overlooking vast army, isolated feeling"
+    },
+    {
+      "id": "shot-dutch",
+      "name": "荷兰角倾斜 (Dutch Angle)",
+      "en": "dutch tilt angle",
+      "purpose": "地平线倾斜 15-30 度，传达世界崩塌、危机临头或心理扭曲的紧绷感",
+      "keywords": "dutch tilt, tilted dynamic angle, psychological tension, disorienting perspective"
+    },
+    {
+      "id": "shot-ots",
+      "name": "过肩镜头 (Over-The-Shoulder)",
+      "en": "over-the-shoulder shot",
+      "purpose": "越过一方肩膀拍摄另一方表情，两人激烈对峙与谈判的标准配置",
+      "keywords": "over the shoulder view, confrontation conversation, foreground blurred shoulder, focused intense face"
+    }
+  ],
+  "lighting": [
+    {
+      "id": "light-tyndall",
+      "name": "丁达尔体积圣光 (Volumetric)",
+      "en": "volumetric tyndall light rays",
+      "atmosphere": "阳光穿透云层或神殿穹顶，神圣威严或希望降临",
+      "keywords": "volumetric morning rays, divine tyndall effect, atmospheric dust particles, god rays streaming down"
+    },
+    {
+      "id": "light-rembrandt",
+      "name": "伦勃朗侧逆光 (Rembrandt)",
+      "en": "rembrandt lighting with rim light",
+      "atmosphere": "侧面 45 度经典光，一侧脸庞带三角形光斑，深沉内敛",
+      "keywords": "dramatic rembrandt lighting, sharp rim light along jawline, cinematic chiaroscuro shadows"
+    },
+    {
+      "id": "light-cyberneon",
+      "name": "赛博霓虹双色温 (Cyber Neon)",
+      "en": "cyan and magenta dual neon lighting",
+      "atmosphere": "青色与洋红强烈冷暖碰撞，科技未来、迷幻夜景",
+      "keywords": "dual tone neon lighting, cyan and hot pink rim lights, wet pavement reflections"
+    },
+    {
+      "id": "light-rainynight",
+      "name": "暴雨夜冷调反光 (Rainy Night)",
+      "en": "dark rainy night cold lighting",
+      "atmosphere": "冷蓝黑夜、雨丝反光、阴冷绝望或无情猎杀",
+      "keywords": "heavy pouring rain, cold blue ambient light, shiny wet skin reflections, dark brooding tone"
+    },
+    {
+      "id": "light-topdown",
+      "name": "戏剧性顶光幽暗 (Top Down)",
+      "en": "dramatic top-down spotlight",
+      "atmosphere": "头顶直射聚光灯，眼眶深陷阴影，罪恶审判或地牢拷问",
+      "keywords": "overhead spotlight, deep eye socket shadows, high contrast black background, interrogation feel"
+    },
+    {
+      "id": "light-silhouette",
+      "name": "逆光金边剪影 (Golden Rim)",
+      "en": "golden hour silhouette with rim light",
+      "atmosphere": "夕阳逆光，身体勾勒璀璨金边，苍凉落幕或蓄势待发",
+      "keywords": "backlit sunset silhouette, glowing golden rim light outline, lens flare, dust embers in air"
+    },
+    {
+      "id": "light-lightning",
+      "name": "雷电瞬爆冷白光 (Lightning Flash)",
+      "en": "high contrast lightning flash lighting",
+      "atmosphere": "瞬间爆闪冷白光，撕裂黑暗，照亮脸庞极度杀意",
+      "keywords": "intense lightning flash, high contrast pure white light burst, momentary dramatic illumination"
+    },
+    {
+      "id": "light-candle",
+      "name": "微弱烛火暖昏光 (Candlelight)",
+      "en": "warm flickering candlelight",
+      "atmosphere": "深宫内闱、古刹秘阁、密谋私语，温暖而危机四伏",
+      "keywords": "flickering candlelight, warm ambient glow, intimate shadowed interior, ancient mystery"
+    }
+  ],
+  "emotions": [
+    {
+      "id": "emo-smirk",
+      "name": "冷酷嘲讽斜笑",
+      "en": "smirking coldly, disdainful expression",
+      "visualCue": "嘴角轻微上扬带着残忍戏谑，目光如同看蝼蚁",
+      "keywords": "subtle cruel smirk, mocking eyes, confident cold sneer, condescending aura"
+    },
+    {
+      "id": "emo-shock",
+      "name": "瞳孔地震震惊",
+      "en": "eyes dilated in utter shock and disbelief",
+      "visualCue": "双眼圆睁、瞳孔剧烈收缩，额头冷汗，不敢置信",
+      "keywords": "dilated eyes, wide open pupils, stunned disbelief, trembling jaw, utter shock"
+    },
+    {
+      "id": "emo-rage",
+      "name": "杀意凛然凝视",
+      "en": "murderous intent glare, veins pulsing",
+      "visualCue": "双眼通红布满血丝，牙齿紧咬，周围杀气如有实质",
+      "keywords": "deadly murderous glare, bloodshot eyes, terrifying wrath, clenched jaw, veins visible"
+    },
+    {
+      "id": "emo-tear",
+      "name": "悲愤隐忍含泪",
+      "en": "tears streaming down stoic face",
+      "visualCue": "眼眶泛红泪光闪烁，死死抿住嘴唇不愿屈服",
+      "keywords": "single tear running down cheek, reddish eyes, suppressing grief, proud defiant gaze"
+    },
+    {
+      "id": "emo-insane",
+      "name": "病娇癫狂冷笑",
+      "en": "manic crazy laughter, unhinged smile",
+      "visualCue": "眼神空洞神经质，笑容夸张咧到耳根，令人毛骨悚然",
+      "keywords": "unhinged manic grin, crazed bloodthirsty eyes, psychopathic laughter, chaotic aura"
+    },
+    {
+      "id": "emo-calm",
+      "name": "从容自若轻蔑",
+      "en": "calm serene indifference, unfazed",
+      "visualCue": "波澜不惊如深潭古井，仿佛天下万事尽在掌中",
+      "keywords": "unfazed expression, serene and aloof, untouched by chaos, master of destiny"
+    },
+    {
+      "id": "emo-exhausted",
+      "name": "重伤濒死虚弱",
+      "en": "exhausted heavily wounded, labored breathing",
+      "visualCue": "满脸血污、眼神涣散、嘴角溢血，依然死死握剑",
+      "keywords": "blood trickling from lips, bruised face, panting heavily, dying yet refusing to fall"
+    },
+    {
+      "id": "emo-roar",
+      "name": "仰天长啸咆哮",
+      "en": "roaring to the heavens in furious defiance",
+      "visualCue": "仰头向天，嘴巴张开怒吼，声嘶力竭震撼天地",
+      "keywords": "screaming in fury, head thrown back, vocal cords straining, overwhelming despair and wrath"
+    }
+  ],
+  "recipes": [
+    {
+      "id": "rec-xianxia-breakthrough",
+      "name": "仙侠 · 绝境一剑开天",
+      "style": "ps-xianxia",
+      "shot": "shot-low",
+      "lighting": "light-lightning",
+      "emotion": "emo-rage",
+      "subject": "白发青衣剑修主角，左手掐剑诀，右手古剑爆发百丈雷芒，衣袍在狂暴灵气中烈烈翻飞",
+      "action": "凌空一剑劈向苍穹滚滚雷劫云海，天地在这一瞬化为两半",
+      "bg": "九天玄雷悬崖绝巅，崩塌的古仙大阵碎石漂浮在半空",
+      "previewPrompt": "low angle heroic shot, Chinese Xianxia Cultivation, white hair cultivator in flowing teal robe, wielding ancient sword bursting with brilliant lightning arc, deadly murderous glare, sky splitting in half, high contrast lightning flash lighting, floating debris, 8k resolution, cinematic masterpiece, --ar 9:16 --v 6.1 --style raw"
+    },
+    {
+      "id": "rec-urban-boss",
+      "name": "都市 · 龙王归来打脸反转",
+      "style": "ps-darkwebtoon",
+      "shot": "shot-cu",
+      "lighting": "light-rembrandt",
+      "emotion": "emo-smirk",
+      "subject": "身着黑色高级修身西装的年轻龙王，冷酷拔出一根未点燃的香烟，身后八百黑衣战神肃立下跪",
+      "action": "居高临下俯视跪在地上的纨绔反派，眼神里满是不屑与绝对统治力",
+      "bg": "奢华金碧辉煌的财阀私人顶层宴会厅，落地窗外是暴雨滂沱的都市天际线",
+      "previewPrompt": "close-up shot of face, Dark Revenge Webtoon, handsome young mob boss in fitted black tailored suit, subtle cruel smirk, condescending cold gaze, dramatic rembrandt lighting, rain running down penthouse windows, intense cinematic atmosphere, --ar 9:16 --niji 6 --style expressive"
+    },
+    {
+      "id": "rec-cyber-infiltration",
+      "name": "赛博 · 雨夜潜行猎杀",
+      "style": "ps-cyberpunk",
+      "shot": "shot-dutch",
+      "lighting": "light-cyberneon",
+      "emotion": "emo-calm",
+      "subject": "冷艳短发赛博刺客，戴着发光半透明战术面罩，机械手臂弹出高频热能利刃",
+      "action": "在倾斜 20 度的霓虹高楼金属管道上疾驰突刺，身后留下一道粉青交织的光轨",
+      "bg": "充斥着全息立体广告牌的赛博巨型贫民窟雨夜街道，积水反射着斑斓霓虹",
+      "previewPrompt": "dutch tilt dynamic angle, Cyberpunk Sci-Fi, female cyborg assassin with glowing cybernetic blade, dual tone cyan and pink neon lighting, unfazed serene expression, splashing across wet rooftop pipes, holographic billboards in background, --ar 9:16 --v 6.1 --stylize 250"
+    },
+    {
+      "id": "rec-palace-darkening",
+      "name": "女频 · 深宫嫡女黑化复仇",
+      "style": "ps-cinematic",
+      "shot": "shot-ecu",
+      "lighting": "light-candle",
+      "emotion": "emo-smirk",
+      "subject": "头戴重工点翠凤冠的绝美冷艳贵妃，纤纤玉指缓缓抚摸着一杯泛着幽蓝毒光的青铜酒樽",
+      "action": "对着铜镜微微扬起一边唇角，眼中闪烁着筹谋多年的狠戾与释然",
+      "bg": "昏暗深邃的奢华寝宫，帷幔层叠飘动，几只烛火将阴影拉得极长",
+      "previewPrompt": "extreme close-up on eyes, Cinematic 8K Realism, stunning empress with intricate crown, single cruel smirk, flickering warm candlelight casting long shadows, poison cup in foreground, breathtaking tension, royal drama, --ar 9:16 --v 6.1 --style raw"
+    },
+    {
+      "id": "rec-wasteland-mech",
+      "name": "科幻 · 废土末日单挑巨兽",
+      "style": "ps-noir",
+      "shot": "shot-high",
+      "lighting": "light-silhouette",
+      "emotion": "emo-exhausted",
+      "subject": "全身重度磨损战痕的独臂机甲机师，拖着残破巨刃，站在数十米高的外星异形骸骨之上",
+      "action": "面对地平线上席卷而来的万千兽潮大军，用机甲喷射出最后一束红色警报光柱",
+      "bg": "黄沙弥漫的枯竭大地，落日如同巨大的血球沉入地平线",
+      "previewPrompt": "high angle view from above, Dark Comic Noir, lone battered warrior standing atop gargantuan alien corpse, backlit golden sunset silhouette, heavy grit, red warning flare, vast dust storm approaching, epic scale, --ar 9:16 --v 6.1"
+    },
+    {
+      "id": "rec-ink-clash",
+      "name": "武侠 · 孤舟蓑衣竹林决杀",
+      "style": "ps-ink",
+      "shot": "shot-ots",
+      "lighting": "light-rainynight",
+      "emotion": "emo-calm",
+      "subject": "头戴破损斗笠、身披蓑衣的无名剑客，只留一道苍凉背影，右手已然握住无鞘残剑之柄",
+      "action": "对面十步之外的三名锦衣卫杀手同时拔刀出鞘，雨滴在刀锋撞击中瞬间炸裂",
+      "bg": "暴雨倾盆的万竿苍翠竹林，狂风呼啸，竹叶如落雨漫天狂卷",
+      "previewPrompt": "over the shoulder view, Ink Wash Martial Arts, ronin swordsman in straw raincoat and bamboo hat, hand on hilt, dark rainy night cold lighting, splashing raindrops, ink splatter effect, minimalist poetic tension, --ar 9:16 --v 6.1 --style raw"
+    }
+  ]
+};
+DB.workflows = [
+  {
+    "id": "wf-rapid",
+    "name": "【零门槛极速流】（个人新人 1-7 天快速成片）",
+    "badge": "零门槛 · 极速闭环",
+    "tagline": "DeepSeek + 即梦一站式 + 剪映，单集成本 0-20 元，适合新手第 1-7 天验证跑通第一部作品。",
+    "costPerEp": "¥0 - 20",
+    "timePerEp": "2 - 4 小时",
+    "qualityGrade": "★★★☆☆ (B+ 商业可用)",
+    "teamSize": "1 人单兵兼职",
+    "platform": "抖音 / 视频号 / 快手轻量漫剧",
+    "toolchain": {
+      "script": "DeepSeek-V3 / Kimi 免费版（网文拆书分镜）",
+      "image": "即梦 AI 智能画布（免费每日积分）",
+      "video": "即梦 Seedance 2.5（首尾帧运镜直出）",
+      "audio": "剪映内置 TTS 配音（多角色自然音色）",
+      "assembly": "剪映电脑版（一键卡点与模板装配）"
+    },
+    "steps": [
+      {
+        "phase": "阶段 1：选题与剧本拆书（耗时 30 分钟）",
+        "tools": "DeepSeek-V3",
+        "input": "番茄/七猫开放授权章节或公版爽点网文（约 3000 字）。",
+        "action": "投喂结构化提示词：“将这章小说提炼为 98 秒短剧分镜表，严格 10-12 镜，输出 JSON 格式，标注运镜与主角情绪”。",
+        "output": "包含 11 个镜头的结构化分镜脚本与台词清单。"
+      },
+      {
+        "phase": "阶段 2：角色创建与画布连绘（耗时 45 分钟）",
+        "tools": "即梦智能画布",
+        "input": "主角外貌设定词 + 分镜画面描述。",
+        "action": "在即梦创建 1 个主角智能体角色卡，锁定正面母图；在画布上以母图为中心，按镜头序号拉出 10 张画面，调用 @主角名 连绘。",
+        "output": "10 张画风、服装完全一致的 9:16 高清分镜关键帧。"
+      },
+      {
+        "phase": "阶段 3：视频生成与运镜（耗时 40 分钟）",
+        "tools": "即梦 Seedance 2.5 视频模块",
+        "input": "分镜关键帧图 + 运镜提示词。",
+        "action": "重点对白镜头使用单图生视频（运镜设为推进/微仰），动作镜头使用相邻两张图做首尾帧过渡，每次生成 3-4 秒。",
+        "output": "10 段 1080P 高清视频切片（平均每个镜头 1-2 次抽卡成功）。"
+      },
+      {
+        "phase": "阶段 4：TTS 配音与对白剪辑（耗时 20 分钟）",
+        "tools": "剪映电脑版",
+        "input": "分镜台词文本。",
+        "action": "在剪映新建轨道，使用“文本朗读”为男女主各选定专属音色，按标点切断对齐画面。",
+        "output": "完整对白音频轨与精准字幕轨道。"
+      },
+      {
+        "phase": "阶段 5：音效、花字与合规导出（耗时 25 分钟）",
+        "tools": "剪映电脑版",
+        "input": "视频片段 + 音频轨。",
+        "action": "套用预置漫剧模板，添加打击 Whoosh/Boom 音效，右上角加入“AI 生成”合规标识，一键导出 1080P 60fps 竖屏成片。",
+        "output": "98 秒完整单集漫剧成品文件，准备发布。"
+      }
+    ],
+    "costs": [
+      {
+        "item": "剧本大模型 (DeepSeek)",
+        "cost": "¥0 (免费版)",
+        "note": "每日免费额度完全充足"
+      },
+      {
+        "item": "即梦生图与视频积分",
+        "cost": "¥0-15",
+        "note": "新号赠送积分 + 签到，会员仅需 ¥19/月"
+      },
+      {
+        "item": "剪映专业版",
+        "cost": "¥0",
+        "note": "普通功能完全满足，部分高级模板可选"
+      },
+      {
+        "item": "合计单集成本",
+        "cost": "约 ¥10 元",
+        "note": "边际成本极低，极适合新手练手"
+      }
+    ],
+    "pitfalls": [
+      "新手常犯错误：每张图都用全新提示词在生图大厅抽卡，导致角色完全换脸。牢记：必须在画布中用 @角色名 智能体连绘！",
+      "视频生成动作幅度调得过大（大于 6），导致人物脸部扭曲。牢记：单图推进运镜幅度控制在 3-4。"
+    ]
+  },
+  {
+    "id": "wf-volume",
+    "name": "【高性价比跑量流】（工作室批量日更高 ROI）",
+    "badge": "工作室批量 · 高 ROI 跑量",
+    "tagline": "Kimi/DeepSeek + 即梦图 + 可灵 3.0 Omni/海螺 + 剪映批处理，单集成本 40-70 元，适合批量跑分账。",
+    "costPerEp": "¥40 - 70",
+    "timePerEp": "1.5 小时 (流水线)",
+    "qualityGrade": "★★★★☆ (A级 分账标杆)",
+    "teamSize": "2-3 人小组协作",
+    "platform": "红果免费短剧 / 快手星芒 / 抖音漫剧剧场",
+    "toolchain": {
+      "script": "Kimi / Claude 3.5 Sonnet（网文拆解排期，一次性出 10 集）",
+      "image": "即梦 Pro / Midjourney 批量切图",
+      "video": "可灵 3.0 Omni 跑量版 / 海螺 AI Fast",
+      "audio": "MiniMax 语音大模型 API / 剪映高级声音克隆",
+      "assembly": "剪映批处理工程 + 调色 LUT 模板"
+    },
+    "steps": [
+      {
+        "phase": "阶段 1：十集联拆与工业排期（耗时 2 小时/10集）",
+        "tools": "Claude 3.5 / DeepSeek-R1",
+        "input": "整本 10 万字热门网文小说。",
+        "action": "批量拆分出 10 集连贯分镜表，统一设定主要角色、关键道具与场景代码库（如 SCENE_A_PALACE）。",
+        "output": "10 套标准化分镜 JSON，直接存入共享协同表格。"
+      },
+      {
+        "phase": "阶段 2：资产库复用与批量生图（耗时 30 分钟/集）",
+        "tools": "即梦 Pro / Midjourney",
+        "input": "分镜描述 + 预置角色/场景资产卡。",
+        "action": "调取固化角色母图，批量生成分镜图；固定场景直接复用已有背景图，仅更换人物动作。",
+        "output": "单集 12 张高规格关键帧，废片率压降至 15% 以下。"
+      },
+      {
+        "phase": "阶段 3：多任务并发排队视频（耗时 25 分钟/集）",
+        "tools": "可灵 3.0 Omni / 海螺 AI Fast",
+        "input": "关键帧图 + 预置运镜模板。",
+        "action": "开启多个子任务同时排队生成视频片段，利用 Omni 跑量模型的低成本高吞吐优势。",
+        "output": "12 段平滑视频切片，即时下载归档。"
+      },
+      {
+        "phase": "阶段 4：专业 TTS 批量渲染（耗时 10 分钟/集）",
+        "tools": "MiniMax 语音合成",
+        "input": "台词文本 JSON。",
+        "action": "脚本自动调用 MiniMax API 导出不同角色的高保真情感 WAV 音频，自动对齐 SRT 字幕。",
+        "output": "全集配音音频轨与时间轴对齐字幕。"
+      },
+      {
+        "phase": "阶段 5：模块化轨道流水线装配（耗时 25 分钟/集）",
+        "tools": "剪映母模板工程",
+        "input": "视频片段 + 音频 + 字幕。",
+        "action": "拖入预设时间轴，一键套用电影感 LUT 调色与统一音效包，批量渲染导出。",
+        "output": "成品单集，交付质检员进行内容安全与卡点审核。"
+      }
+    ],
+    "costs": [
+      {
+        "item": "大模型拆书与分镜",
+        "cost": "¥3-5 /集",
+        "note": "Claude / DeepSeek API 批量调用"
+      },
+      {
+        "item": "批量生图算力",
+        "cost": "¥10-15 /集",
+        "note": "即梦专业版会员 / Midjourney 标准版"
+      },
+      {
+        "item": "可灵 3.0 Omni 视频",
+        "cost": "¥25-40 /集",
+        "note": "单镜约 2-3 元，12 镜约 30 元"
+      },
+      {
+        "item": "配音与服务器",
+        "cost": "¥5-8 /集",
+        "note": "MiniMax 字符调用量"
+      },
+      {
+        "item": "合计单集成本",
+        "cost": "约 ¥55 元",
+        "note": "月产 40-60 集，ROI 极佳"
+      }
+    ],
+    "pitfalls": [
+      "流水线只图快而放松分镜检查，导致集与集之间剧情断档。",
+      "视频模型排队过多未及时核对废片，导致后期剪辑时缺关键镜头返工。"
+    ]
+  },
+  {
+    "id": "wf-studio",
+    "name": "【工业级高精流】（S级院线/爆款精品漫剧）",
+    "badge": "S 级院线画质 · 商业定制",
+    "tagline": "ChatGPT/Claude + Midjourney三视图 + ComfyUI LoRA + 可灵4.0/Runway + 达芬奇，适合商业定制大单与参赛。",
+    "costPerEp": "¥120 - 200",
+    "timePerEp": "1 - 2 天",
+    "qualityGrade": "★★★★★ (S级 顶级视觉大片)",
+    "teamSize": "3-5 人专业影视组",
+    "platform": "爱奇艺/腾讯独播短剧、品牌定制广告、海外电影节展映",
+    "toolchain": {
+      "script": "编剧深度精修 + Claude 3.5 分镜大师",
+      "image": "Midjourney v6.1 三视图 + ComfyUI 专属 LoRA 定制",
+      "video": "可灵 4.0 旗舰版 / Runway Gen-3 Alpha / Seedance 2.5",
+      "audio": "专业配音演员定向定制 / ElevenLabs 高级情感克隆",
+      "assembly": "达芬奇 DaVinci Resolve（专业电影调色与 5.1 混音）"
+    },
+    "steps": [
+      {
+        "phase": "阶段 1：电影级分镜本精修与视听设计（耗时 半天）",
+        "tools": "专业剧本软件 + Claude 3.5",
+        "input": "头部 IP 小说原著或商业定制脚本。",
+        "action": "按电影分镜台本深度规划，详细标注每个镜头的焦段（24mm/50mm/85mm）、灯光三点照明方案与情感曲线。",
+        "output": "图文并茂的导演分镜本（Storyboard）。"
+      },
+      {
+        "phase": "阶段 2：角色三视图建模与 LoRA 微调（耗时 1 天）",
+        "tools": "ComfyUI + LiblibAI",
+        "input": "Midjourney 生成的标准三视图与 40 张不同表情姿态图。",
+        "action": "训练专属于角色的高精度 LoRA 模型，测试在各种极端光影与角度下的一致性，确保 100% 固化人物形象。",
+        "output": "专属 .safetensors 权重模型与固定负面词库。"
+      },
+      {
+        "phase": "阶段 3：极致细节生图与局部重绘（耗时 半天）",
+        "tools": "ComfyUI + SDXL/Flux + 局部重绘",
+        "input": "分镜指令 + 专属 LoRA。",
+        "action": "4K 超分辨率出图，对手部、瞳孔、饰品细节进行多轮局部 Inpainting 精修，确保毫无任何 AI 畸变痕迹。",
+        "output": "画质惊艳的原画级分镜图。"
+      },
+      {
+        "phase": "阶段 4：大场面运镜与首尾帧视频生成（耗时 半天）",
+        "tools": "可灵 4.0 / Runway Gen-3",
+        "input": "高清精修分镜图 + 精准首尾帧。",
+        "action": "采用可灵 4.0 的 10 张关键帧控制能力，生成长镜头与大场面法术对轰，慢动作卡点，废片严格重跑。",
+        "output": "院线级视效片段，运镜极其平稳。"
+      },
+      {
+        "phase": "阶段 5：LivePortrait 口型与达芬奇院线级后期（耗时 半天）",
+        "tools": "LivePortrait + 达芬奇 DaVinci Resolve",
+        "input": "角色特写视频 + 专业配音音频。",
+        "action": "进行关键对白面部口型同步；在达芬奇中导入胶片颗粒、ACES 色彩空间调色、叠加粒子特效并完成母带混音。",
+        "output": "4K 60fps 院线画质大师级漫剧单集。"
+      }
+    ],
+    "costs": [
+      {
+        "item": "剧本深度精修与版权",
+        "cost": "¥20-30 /集",
+        "note": "专业编剧团队打磨"
+      },
+      {
+        "item": "LoRA 训练与高端生图",
+        "cost": "¥30-40 /集",
+        "note": "高端云端 GPU 算力"
+      },
+      {
+        "item": "可灵4.0 / Runway 视频",
+        "cost": "¥60-90 /集",
+        "note": "旗舰级 4K 视频点数，高抽卡预算"
+      },
+      {
+        "item": "ElevenLabs / 专业配音",
+        "cost": "¥20-30 /集",
+        "note": "大师级音色克隆"
+      },
+      {
+        "item": "合计单集成本",
+        "cost": "约 ¥150-180 元",
+        "note": "商业定制单报价通常 1000-2000 元/分，利润丰厚"
+      }
+    ],
+    "pitfalls": [
+      "时间周期拖得过长失去敏捷性。务必在前期将 LoRA 和视觉资产完全固化，再开机制作。",
+      "视频渲染过度消耗预算，关键帧控制必须在分镜阶段完全敲死。"
+    ]
+  },
+  {
+    "id": "wf-oversea",
+    "name": "【出海全英文流】（欧美与东南亚高客单变现）",
+    "badge": "出海变现 · 欧美高客单",
+    "tagline": "Claude 本地化剧本 + Midjourney 欧美厚涂 + Veo 3.1/Runway + ElevenLabs 纯正英文配音，单集成本 150-260 元。",
+    "costPerEp": "¥150 - 260",
+    "timePerEp": "1 - 2 天",
+    "qualityGrade": "★★★★★ (出海高标准)",
+    "teamSize": "1-3 人出海敏捷团队",
+    "platform": "ReelShort / DramaBox / ShortMax / TikTok / YouTube Shorts",
+    "toolchain": {
+      "script": "Claude 3.5 Sonnet（纯正美语俚语与西方短剧快节奏）",
+      "image": "Midjourney v6.1（欧美硬汉/白人写实/吸血鬼狼人厚涂）",
+      "video": "Google Veo 3.1 / Runway Gen-3 Alpha",
+      "audio": "ElevenLabs（好莱坞级电影对白配音）",
+      "assembly": "CapCut 国际版 / 剪映（纯英文字幕与欧美流行音效）"
+    },
+    "steps": [
+      {
+        "phase": "阶段 1：欧美爆款题材选型与本地化剧本（耗时 2 小时）",
+        "tools": "Claude 3.5 Sonnet",
+        "input": "欧美热门微短剧大纲（狼人 Alpha、吸血鬼始祖、亿万富翁隐藏身份、契约婚姻）。",
+        "action": "严格按照欧美短视频节奏，开局第 1 秒设置抓人冲突，使用地道美语对白与俚语。",
+        "output": "纯英文 98 秒分镜剧本。"
+      },
+      {
+        "phase": "阶段 2：欧美面孔角色库与厚涂风格确立（耗时 1 小时）",
+        "tools": "Midjourney v6.1",
+        "input": "Caucasian features, sharp jawline, cinematic dark fantasy prompt.",
+        "action": "锁定符合西方审美的男女主角外观（雕塑般深邃五官、硬朗身材），建立 --cref 资产。",
+        "output": "高辨识度欧美主角三视图与分镜关键帧。"
+      },
+      {
+        "phase": "阶段 3：国际旗舰模型视频生成（耗时 1 小时）",
+        "tools": "Veo 3.1 / Runway Gen-3",
+        "input": "英文分镜提示词 + 高清图。",
+        "action": "生成动作连贯、镜头感极强的电影级动态切片，重点突出戏剧性对视与动作张力。",
+        "output": "10-12 段 1080P 国际画质视频。"
+      },
+      {
+        "phase": "阶段 4：ElevenLabs 好莱坞级情感配音（耗时 30 分钟）",
+        "tools": "ElevenLabs",
+        "input": "英文对白文本。",
+        "action": "挑选带有情绪起伏的好莱坞配音员音色（如带有磁性英音或美式气泡音），微调稳定性与夸张度参数。",
+        "output": "富有戏剧张力的高保真英文配音。"
+      },
+      {
+        "phase": "阶段 5：CapCut 包装与海外合规上架（耗时 40 分钟）",
+        "tools": "CapCut 国际版",
+        "input": "视频 + 英文配音 + 商业配乐。",
+        "action": "添加海外流行卡点特效，自动生成标准英文字幕，适配 TikTok 与 ReelShort 规范导出。",
+        "output": "出海标准短剧成片，单集收益可达国内数倍。"
+      }
+    ],
+    "costs": [
+      {
+        "item": "Claude 剧本本地化",
+        "cost": "¥10-15 /集",
+        "note": "地道英文对白生成"
+      },
+      {
+        "item": "Midjourney 欧美厚涂出图",
+        "cost": "¥25-35 /集",
+        "note": "商业级插画画质"
+      },
+      {
+        "item": "Veo 3.1 / Runway 视频",
+        "cost": "¥80-140 /集",
+        "note": "出海视频生成点数"
+      },
+      {
+        "item": "ElevenLabs 高保真配音",
+        "cost": "¥35-50 /集",
+        "note": "好莱坞级专业语音"
+      },
+      {
+        "item": "合计单集成本",
+        "cost": "约 ¥180-220 元",
+        "note": "海外 IAP 充值单价高，单客收益丰厚"
+      }
+    ],
+    "pitfalls": [
+      "用国内的修仙/赘婿套路生搬硬套给老外看，老外根本无法理解背景文化。必须选用狼人/吸血鬼/亿万富翁等西方本土题材！",
+      "配音使用机械的免费 TTS，老外对英文配音的情感自然度要求极高，必须使用 ElevenLabs 等高品质语音。"
+    ]
+  }
+];
+DB.quizComprehensive = [
+  {
+    "id": "qc-01",
+    "category": "剧本与叙事结构",
+    "q": "在 98 秒标准 AI 漫剧单集结构中，关于「黄金 3 秒」的核心任务，以下描述最准确的是？",
+    "opts": [
+      "A. 详细介绍主角的家世背景、门派传承与世界观世界地图",
+      "B. 播放一段舒缓优美的片头曲，让观众沉浸到艺术氛围中",
+      "C. 展现极致冲突或视觉奇观（如刀架在咽喉/万剑凌空），瞬间拉高完播留存",
+      "D. 让男女主角在室内静坐，交代前一集发生的事情经过"
+    ],
+    "ans": 2,
+    "analysis": "短视频平台的生死线在第 1-3 秒。平台算法根据前 3 秒的跳出率来决定是否推流。前 3 秒必须开门见山直接抛出悬念、危机或视觉奇观，绝对不能交代慢节奏背景或放片头。"
+  },
+  {
+    "id": "qc-02",
+    "category": "剧本与叙事结构",
+    "q": "网文小说原著章节通常有 2000-3000 字，在将其拆解为单集 98 秒分镜时，以下哪项操作是正确的？",
+    "opts": [
+      "A. 忠实保留原著的所有心理活动与景物环境描写",
+      "B. 砍掉约 70% 旁白，将心理描写转化为角色的具体神态与外在动作",
+      "C. 将全部台词由配音员用最快语速念完，确保一字不漏",
+      "D. 将镜头拉长到 5 分钟，避免删减剧情"
+    ],
+    "ans": 1,
+    "analysis": "漫剧是视听语言，不是有声书。网文中的大量心理独白必须转化为角色可演出的微表情（如眼神冷冽、嘴角冷笑）和动作（如拔剑、捏碎酒杯），大幅删减书面化旁白。"
+  },
+  {
+    "id": "qc-03",
+    "category": "剧本与叙事结构",
+    "q": "单集漫剧的第 80-98 秒阶段（收尾卡点），编剧最核心的目标是什么？",
+    "opts": [
+      "A. 将本集所有矛盾彻底平息，主角心满意足地上床睡觉",
+      "B. 留出 15 秒展示主创团队名单和感谢致辞",
+      "C. 戛然而止在更大危机或新人物登场的悬念瞬间，倒逼观众点击下一集",
+      "D. 详细预告下一集完整的剧情发展过程"
+    ],
+    "ans": 2,
+    "analysis": "短剧连贯性的秘诀在于“断章留钩（Hook）”。在结尾处必须抛出全新反转或未知威胁，卡在情绪最高峰戛然而止，促使观众忍不住付费或立即观看下一集。"
+  },
+  {
+    "id": "qc-04",
+    "category": "剧本与叙事结构",
+    "q": "利用大模型（如 DeepSeek、Claude）批量生成分镜脚本时，以下哪种 Prompt 约束最能保障生产效率？",
+    "opts": [
+      "A. “请帮我写一段很帅的漫剧打架分镜，越详细越好”",
+      "B. 严格约束输出为 JSON 数组，明确限定 10-12 镜，每镜包含 shot_id、camera、duration、action、dialogue",
+      "C. 让大模型自由发挥，不要做任何格式限制",
+      "D. 让大模型直接生成最终视频文件"
+    ],
+    "ans": 1,
+    "analysis": "工业化流水线依赖结构化数据。通过 JSON 格式规范严格约束字段与镜头数量，既能防止大模型胡言乱语发散，又可以直接导入下游分镜编辑器或自动化脚本。"
+  },
+  {
+    "id": "qc-05",
+    "category": "角色一致性",
+    "q": "在 Midjourney 中使用角色参考功能时，参数 `--cw 0` 和 `--cw 100` 的核心区别是什么？",
+    "opts": [
+      "A. `--cw 0` 生成黑白图，`--cw 100` 生成彩色图",
+      "B. `--cw 0` 只锁定角色脸部五官特征（允许换衣服），`--cw 100` 强力锁定脸部和衣服饰品",
+      "C. `--cw 0` 降低图片分辨率，`--cw 100` 提升至 4K",
+      "D. `--cw 0` 关闭 AI 运算，`--cw 100` 开启双倍算力"
+    ],
+    "ans": 1,
+    "analysis": "Midjourney 的 `--cw` 代表 Character Weight（角色权重）。默认是 100（锁定脸部五官 + 发型 + 服装全套）；设置为 0 时仅提取面部特征，适合角色需要换战甲、便服、睡衣等换装场景。"
+  },
+  {
+    "id": "qc-06",
+    "category": "角色一致性",
+    "q": "制作团队计划开发一部长达 80 集的商业 S 级仙侠漫剧，要求主角在所有镜头中 100% 保持面部一致，最根本的底层技术方案是？",
+    "opts": [
+      "A. 每次生图都靠运气多抽卡，直到抽出一张看起来像的",
+      "B. 收集 30-50 张多角度训练图，在 ComfyUI / LiblibAI 训练专属角色 LoRA 模型",
+      "C. 只拍主角的背影和手部特写，避免拍摄脸部",
+      "D. 每次都找画师手工重绘每一张分镜图"
+    ],
+    "ans": 1,
+    "analysis": "长篇商业连载必须依赖专有 LoRA 权重模型。LoRA 能够将角色的五官几何特征深深刻入大模型权重中，在任意复杂视角、极端光影和动作下均能稳定输出同一张脸。"
+  },
+  {
+    "id": "qc-07",
+    "category": "角色一致性",
+    "q": "如果生成的角色分镜图中手部出现了“多出一根手指（6指）”的常见 AI 瑕疵，最高效的专业抢救方法是？",
+    "opts": [
+      "A. 立即废弃整张图片，重新花几十点算力重新生成",
+      "B. 导入修图软件使用橡皮擦直接把手擦掉",
+      "C. 使用局部重绘（Inpainting）涂抹手部区域，提示词写明“5 fingers hand, holding sword”，重绘幅度设在 0.5 左右",
+      "D. 不用管它，手机屏幕小观众根本看不清"
+    ],
+    "ans": 2,
+    "analysis": "局部重绘（Inpainting）是 AI 漫剧的核心救场手艺。只针对瑕疵区域进行微调涂抹，保留 95% 以上的原画构图与光影，既省算力又能精准修复多指与变形。"
+  },
+  {
+    "id": "qc-08",
+    "category": "角色一致性",
+    "q": "关于角色三视图（Character Sheet）母图的制作要求，以下哪项是正确的？",
+    "opts": [
+      "A. 背景必须尽可能复杂奢华，带很多光效和家具",
+      "B. 采用纯白或纯色干净背景，包含正面、侧面、背面、特写，并清晰呈现角色的专属标志（如伤疤、发型、饰品）",
+      "C. 只能生成全身大远景，不能有面部特写",
+      "D. 三视图只需要一张大头照即可，不需要全身和侧面"
+    ],
+    "ans": 1,
+    "analysis": "三视图是全剧的视觉基因母本。纯白无干扰背景能确保 AI 提取参考特征时不被杂物污染；多角度呈现为后续不同机位的镜头提供了绝对权威的视觉对照。"
+  },
+  {
+    "id": "qc-09",
+    "category": "镜头语言与运镜",
+    "q": "当剧情发展到“主角经历漫长屈辱后，突然爆发惊天气场压制全场反派”时，最适合采用的运镜语言与景别组合是？",
+    "opts": [
+      "A. 高俯角上帝视角 + 镜头快速远离缩小",
+      "B. 荷兰角微倾斜 + 低角度仰拍（Low Angle）+ 镜头极速推进（Zoom In）至面部特写",
+      "C. 固定平视中景 + 毫无镜头运动",
+      "D. 镜头围绕反派旋转，主角完全不出镜"
+    ],
+    "ans": 1,
+    "analysis": "低仰角（从下往上拍）在电影语言中代表绝对的力量、威严与压迫感；配合推进特写与倾斜张力，能将主角的气场爆发表现得淋漓尽致。"
+  },
+  {
+    "id": "qc-10",
+    "category": "镜头语言与运镜",
+    "q": "在可灵或即梦等视频模型中，运动强度参数（Motion Amplitude / Motion Brush）通常推荐设置在什么区间？",
+    "opts": [
+      "A. 设为最大值 10，让画面动得越烈越好",
+      "B. 设为 0，完全不动变成纯静态图片",
+      "C. 设在 3 到 5 之间，在动作流畅度与形体稳定性之间取得最佳平衡",
+      "D. 随意设置，该参数对生成效果毫无影响"
+    ],
+    "ans": 2,
+    "analysis": "运动幅度参数过高（>6-7）会导致视频生成时肢体撕裂、面部融化抽搐；过低（<2）则人物如同定格 PPT。3-5 是行业实测最稳健的黄金平衡点。"
+  },
+  {
+    "id": "qc-11",
+    "category": "镜头语言与运镜",
+    "q": "连续两个镜头之间若想实现视觉无缝过渡，所谓的「尾帧连环链」技术是指？",
+    "opts": [
+      "A. 将前一个镜头的最后一帧（尾帧）保存下来，作为后一个镜头的起始关键帧（首帧）进行延展生成",
+      "B. 两个镜头之间加入 3 秒黑屏转场",
+      "C. 把前一个镜头的音频复制到后一个镜头",
+      "D. 两个镜头必须使用完全相同的提示词"
+    ],
+    "ans": 0,
+    "analysis": "尾帧链（Tail-frame chaining）是解决镜头突变断裂的革命性技术。以 A 镜的动作落点作为 B 镜的动作起点，保证空间、光影、人物姿态在时间轴上物理连续。"
+  },
+  {
+    "id": "qc-12",
+    "category": "镜头语言与运镜",
+    "q": "在电影视听语言中，经典的「180度轴线原则（Axis of Action）」在漫剧双人对话镜头中的作用是？",
+    "opts": [
+      "A. 确保摄像机每 3 秒旋转 180 度",
+      "B. 确保摄像机始终在两人视线连线的一侧拍摄，避免画面中两人朝向同一侧造成视线混乱",
+      "C. 保证两人身高完全相同",
+      "D. 限制镜头时长不能超过 180 秒"
+    ],
+    "ans": 1,
+    "analysis": "越轴（Crossing the line）是新手最容易犯的低级错误。一旦机位跳过轴线，画面里两个原本面对面交谈的人会变成看向同一个方向，让观众产生空间迷失感。"
+  },
+  {
+    "id": "qc-13",
+    "category": "AI 视频生成",
+    "q": "使用首尾帧（Start & End Frame）生成视频时，若中间过程发生了“画面崩塌融化成团”，最常见的根本原因是？",
+    "opts": [
+      "A. 电脑显示器刷新率太低",
+      "B. 首帧与尾帧之间的动作跨度过大（例如首帧坐着，尾帧在天上飞），超出物理常理内 3 秒可完成的合理位移",
+      "C. 视频生成时使用了中文提示词",
+      "D. 导出视频时选择了 MP4 格式"
+    ],
+    "ans": 1,
+    "analysis": "首尾帧控制的铁律是“帧差合理性”。AI 视频模型本质是在首尾两帧之间进行潜空间物理插值。如果动作跨度过大，模型无法计算出平滑过渡路径，就会产生画面撕裂与融化。"
+  },
+  {
+    "id": "qc-14",
+    "category": "AI 视频生成",
+    "q": "2026 年行业公认的视频模型选型实战口诀中，关于叙事段落与大场面的主流推荐是？",
+    "opts": [
+      "A. 任何镜头全部用同一个免费模型硬扛",
+      "B. 叙事台词戏用即梦 Seedance / 可灵，大场面旗舰 4K 用可灵 4.0，跑量短平快用海螺 Fast / 可灵 3.0 Omni",
+      "C. 彻底放弃 AI 视频，全部采用手工定格动画",
+      "D. 出海必须使用纯国产免费模型"
+    ],
+    "ans": 1,
+    "analysis": "成熟工作室全部采用“混合编排”策略：跑量镜头用低成本模型压降单集成本，关键高潮镜头用旗舰模型拉升视觉上限，兼顾商业 ROI 与画面品质。"
+  },
+  {
+    "id": "qc-15",
+    "category": "声音与剪辑工程",
+    "q": "在剪辑短剧音频轨道时，所谓的「音频闪避（Audio Ducking）」是指什么处理技巧？",
+    "opts": [
+      "A. 将所有声音都消除掉变成无声短剧",
+      "B. 当主角说话台词出现时，背景音乐（BGM）自动平滑压低 6-10 dB，台词结束后 BGM 自动恢复，确保听清对白",
+      "C. 故意让配音和画面错位 2 秒",
+      "D. 让多个人同时用最大音量喊话"
+    ],
+    "ans": 1,
+    "analysis": "Ducking 是专业影视混音标配。短剧台词传递核心剧情，若 BGM 音量过大盖过台词，观众会极其烦躁并迅速滑走。"
+  },
+  {
+    "id": "qc-16",
+    "category": "声音与剪辑工程",
+    "q": "想要让静态生成的角色肖像在说台词时“嘴唇动作、眨眼神态与台词精确同步”，当前最成熟的开源/轻量方案是？",
+    "opts": [
+      "A. LivePortrait / SadTalker 等面部驱动技术",
+      "B. 逐帧在 Photoshop 里手绘嘴巴开合",
+      "C. 用马赛克挡住角色的嘴巴",
+      "D. 让角色戴上面具不露嘴"
+    ],
+    "ans": 0,
+    "analysis": "LivePortrait 等音画驱动模型能够根据输入的音频波形，精准预测声母韵母对应的嘴唇形态，并驱动眼部与面部肌肉微动，让角色说话充满生命力。"
+  },
+  {
+    "id": "qc-17",
+    "category": "合规与政策红线",
+    "q": "依据网信办及各大短视频平台 2026 年针对生成式 AI 短剧的监管要求，以下哪项是必须执行的硬性规定？",
+    "opts": [
+      "A. 严禁使用任何电脑软件辅助制作",
+      "B. 在作品画面显著位置（如右上角或片尾）添加显式“AI 辅助生成”标识，且具备正规改编版权授权",
+      "C. 每部剧必须由真人演员出镜 50% 以上",
+      "D. 只能在凌晨发布，白天禁止播出"
+    ],
+    "ans": 1,
+    "analysis": "“三门票”原则是 2026 年入行底线：显式 AI 标识是法律法规强制要求，版权授权是变现结算前提，平台备案防下架是安全保障。缺少任何一环都可能遭遇封号或停更。"
+  },
+  {
+    "id": "qc-18",
+    "category": "商业变现与接单",
+    "q": "创作者接受商业品牌或外部客户委托制作 AI 漫剧商单时，在付款节奏上最稳妥的行业通行法则是？",
+    "opts": [
+      "A. 零定金开工，全片做完发高清无水印母片后再等客户付款",
+      "B. 签约收取 30%-50% 定金开工，分镜定稿收进度款，带水印验收通过结清尾款后再交付无水印原片",
+      "C. 客户说满意就付款，口头承诺即可无需合同",
+      "D. 让客户用虚拟货币私下转账"
+    ],
+    "ans": 1,
+    "analysis": "商业接单切忌“先交货后付款”。“定金开工 + 分阶段确认 + 水印验收 + 尾款结清交片”四步法是保护创作者劳动成果、防止被白嫖跑路的行业铁律。"
+  },
+  {
+    "id": "qc-19",
+    "category": "商业变现与接单",
+    "q": "在给商业客户制定漫剧制作报价时，合同中应当如何约定「修改轮次」以防止陷入无休止修改陷阱？",
+    "opts": [
+      "A. 承诺“无限次免费修改，改到客户满意为止”",
+      "B. 约定在分镜确认后仅提供 2 轮以内微调（修改量不超过 15%），推翻剧本重做需追加费用",
+      "C. 规定成片后不接受任何修改哪怕有错别字",
+      "D. 每次修改由客户随缘打赏"
+    ],
+    "ans": 1,
+    "analysis": "无休止修改是压垮独立工作室的头号杀手。合同中必须白纸黑字写明修改轮次界限，分镜确认代表剧情方向锁定，后期只修细节瑕疵，颠覆性改动必须加钱。"
+  },
+  {
+    "id": "qc-20",
+    "category": "商业变现与接单",
+    "q": "当前（2026年）红果免费短剧等主流分账平台的有效播放万播收益区间大约在多少，这对创作者的启示是什么？",
+    "opts": [
+      "A. 依然在 2024 年的万播 100-300 元，随便做做就能暴富",
+      "B. 万播收益已通缩至 5-30 元区间，单集必须严控算力成本，并依靠系列化长尾效应与多平台分发盈利",
+      "C. 收益为零，所有创作者都在做慈善",
+      "D. 万播收益固定为 1000 元"
+    ],
+    "ans": 1,
+    "analysis": "根据 2026 年行业权威数据，万播收益已从早期的 30-100 元回落至 5-30 元。这意味着漫剧进入了精细化工业时代：单集成本必须控制在 20-60 元合理区间，靠长篇连载与有效完播率盈利。"
+  }
+];
+
 if (typeof window !== 'undefined') window.DB = DB;
 if (typeof module !== 'undefined') module.exports = DB;

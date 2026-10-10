@@ -1,7 +1,8 @@
 /* 漫剧研究学习平台 · Service Worker
    策略：全部同源 GET 网络优先（保证每周研究更新即时可见），失败时回退缓存（离线可用）。 */
-const CACHE = 'manju-v3.1';
+const CACHE = 'manju-v3.2';
 const CORE = ['index.html', 'css/style.css', 'js/data.js', 'js/research-data.js', 'js/app.js', 'icon.svg', 'manifest.webmanifest',
+  'js/feat-course.js', 'js/feat-consistency.js', 'js/feat-promptgen.js', 'js/feat-workflows.js', 'js/feat-quizhub.js',
   'js/feat-mcsim.js', 'js/feat-storyboard.js', 'js/feat-studyhub.js', 'js/feat-framesim.js', 'js/feat-picker.js'];
 
 self.addEventListener('install', (e) => {
